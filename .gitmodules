@@ -1,0 +1,3 @@
+[submodule "eye"]
+	path = eye
+	url = https://github.com/mgroth0/hurricanefx-eye
