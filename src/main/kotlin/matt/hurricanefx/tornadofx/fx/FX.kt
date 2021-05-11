@@ -16,6 +16,7 @@ import javafx.scene.Scene
 import javafx.scene.SubScene
 import javafx.scene.control.ButtonBase
 import javafx.scene.control.CustomMenuItem
+import javafx.scene.control.Label
 import javafx.scene.control.MenuItem
 import javafx.scene.control.ScrollPane
 import javafx.scene.control.SplitPane
@@ -32,6 +33,7 @@ import matt.hurricanefx.eye.collect.ListConversionListener
 import matt.hurricanefx.eye.collect.MapConversionListener
 import matt.hurricanefx.eye.collect.SetConversionListener
 import matt.hurricanefx.eye.collect.bind
+import matt.kjlib.log.err
 
 
 /**
@@ -103,7 +105,14 @@ fun EventTarget.addChildIfPossible(node: Node, index: Int? = null) {
 	is MenuItem       -> {
 	  graphic = node
 	}
-	else              -> getChildList()?.apply {
+	is Label          -> {
+	  /*matt was here*/
+	  graphic = node
+	}
+	else              -> if (this::class.simpleName == "Region") {
+	  /*matt was here.. because this was getting really confusing*/
+	  err("$this is a region. It can't add children.")
+	} else getChildList()?.apply {
 	  if (!contains(node)) {
 		if (index != null && index < size)
 		  add(index, node)
@@ -164,7 +173,7 @@ fun EventTarget.getChildList(): MutableList<Node>? = when (this) {
   is HBox      -> children
   is VBox      -> children
   //    is Control -> (skin as? SkinBase<*>)?.children ?: getChildrenReflectively()
-  //    is Parent -> getChildrenReflectively()
+  //      is Parent -> getChildrenReflectively()
   else         -> null
 }
 

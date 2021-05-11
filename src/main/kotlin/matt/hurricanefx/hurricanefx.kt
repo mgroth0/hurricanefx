@@ -6,6 +6,7 @@ import javafx.beans.property.DoubleProperty
 import javafx.beans.property.SimpleDoubleProperty
 import javafx.scene.Node
 import javafx.scene.Parent
+import javafx.scene.control.Button
 import javafx.scene.control.ScrollPane
 import javafx.scene.image.ImageView
 import javafx.scene.layout.ColumnConstraints
@@ -14,7 +15,7 @@ import javafx.scene.layout.RowConstraints
 import matt.hurricanefx.eye.lang.BProp
 import matt.hurricanefx.eye.lang.DProp
 import matt.hurricanefx.tornadofx.async.runLater
-import matt.kjlib.NEVER
+import matt.kjlib.log.NEVER
 import matt.klib.dmap.withStoringDefault
 import java.util.WeakHashMap
 
@@ -148,3 +149,11 @@ var Node.visibleAndManaged: Boolean
 fun BooleanProperty.toggle() {
   value = !value
 }
+
+var Button.op: ()->Unit
+  set(value) {
+	setOnAction {
+	  value()
+	}
+  }
+  get() = NEVER
