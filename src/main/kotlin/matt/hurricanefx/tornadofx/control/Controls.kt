@@ -59,19 +59,19 @@ internal val EventTarget.properties: ObservableMap<Any, Any>
         else -> throw IllegalArgumentException("Don't know how to extract properties object from $this")
     }
 
-var EventTarget.tagProperty: Property<Any?>
-    get() = properties.getOrPut("tornadofx.value") {
-        SimpleObjectProperty<Any?>()
-    } as SimpleObjectProperty<Any?>
-    set(value) {
-        properties["tornadofx.value"] = value
-    }
+//var EventTarget.tagProperty: Property<Any?>
+//    get() = properties.getOrPut("tornadofx.value") {
+//        SimpleObjectProperty<Any?>()
+//    } as SimpleObjectProperty<Any?>
+//    set(value) {
+//        properties["tornadofx.value"] = value
+//    }
 
-var EventTarget.tag: Any?
-    get() = tagProperty.value
-    set(value) {
-        tagProperty.value = value
-    }
+//var EventTarget.tag: Any?
+//    get() = tagProperty.value
+//    set(value) {
+//        tagProperty.value = value
+//    }
 
 @Deprecated(
     "Properties set on the fake node would be lost. Do not use this function.",

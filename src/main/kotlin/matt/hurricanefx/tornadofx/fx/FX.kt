@@ -109,10 +109,11 @@ fun EventTarget.addChildIfPossible(node: Node, index: Int? = null) {
 	  /*matt was here*/
 	  graphic = node
 	}
-	else              -> if (this::class.simpleName == "Region") {
+	else              -> if (this !is Pane) {
 	  /*matt was here.. because this was getting really confusing*/
 	  err("$this is a region. It can't add children.")
 	} else getChildList()?.apply {
+
 	  if (!contains(node)) {
 		if (index != null && index < size)
 		  add(index, node)
