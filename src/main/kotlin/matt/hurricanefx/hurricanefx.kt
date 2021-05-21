@@ -12,6 +12,7 @@ import javafx.scene.image.ImageView
 import javafx.scene.layout.ColumnConstraints
 import javafx.scene.layout.Region
 import javafx.scene.layout.RowConstraints
+import javafx.stage.Stage
 import matt.hurricanefx.eye.lang.BProp
 import matt.hurricanefx.eye.lang.DProp
 import matt.hurricanefx.tornadofx.async.runLater
@@ -157,3 +158,5 @@ var Button.op: ()->Unit
 	}
   }
   get() = NEVER
+
+val Node.stage get() = (scene.window as? Stage)
