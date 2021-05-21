@@ -4,6 +4,8 @@ package matt.hurricanefx
 import javafx.beans.property.BooleanProperty
 import javafx.beans.property.DoubleProperty
 import javafx.beans.property.SimpleDoubleProperty
+import javafx.beans.value.ChangeListener
+import javafx.beans.value.ObservableValue
 import javafx.scene.Node
 import javafx.scene.Parent
 import javafx.scene.control.Button
@@ -15,9 +17,11 @@ import javafx.scene.layout.RowConstraints
 import javafx.stage.Stage
 import matt.hurricanefx.eye.lang.BProp
 import matt.hurricanefx.eye.lang.DProp
+import matt.hurricanefx.eye.lib.ChangeListener
 import matt.hurricanefx.tornadofx.async.runLater
 import matt.kjlib.log.NEVER
 import matt.klib.dmap.withStoringDefault
+import java.lang.ref.WeakReference
 import java.util.WeakHashMap
 
 
@@ -160,3 +164,19 @@ var Button.op: ()->Unit
   get() = NEVER
 
 val Node.stage get() = (scene.window as? Stage)
+
+fun <T> ObservableValue<T>.onChangeWithWeak(
+  o: Any,
+  op: (T?)->Unit
+) = apply {
+
+  var listener: ChangeListener<T>? = null
+  val weakRef = WeakReference(o)
+  listener = ChangeListener { _, _, new ->
+	if (weakRef.get() == null) {
+	  removeListener(listener!!)
+	}
+	op(new)
+  }
+  addListener(listener)
+}
