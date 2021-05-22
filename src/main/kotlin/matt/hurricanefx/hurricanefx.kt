@@ -11,18 +11,25 @@ import javafx.scene.Parent
 import javafx.scene.control.Button
 import javafx.scene.control.ScrollPane
 import javafx.scene.image.ImageView
+import javafx.scene.input.TransferMode
 import javafx.scene.layout.ColumnConstraints
 import javafx.scene.layout.Region
 import javafx.scene.layout.RowConstraints
+import javafx.scene.paint.Color
 import javafx.stage.Stage
 import matt.hurricanefx.eye.lang.BProp
 import matt.hurricanefx.eye.lang.DProp
 import matt.hurricanefx.eye.lib.ChangeListener
 import matt.hurricanefx.tornadofx.async.runLater
+import matt.hurricanefx.tornadofx.clip.putFiles
+import matt.kjlib.cache.LRUCache
 import matt.kjlib.log.NEVER
 import matt.klib.dmap.withStoringDefault
+import java.awt.image.BufferedImage
+import java.io.File
 import java.lang.ref.WeakReference
 import java.util.WeakHashMap
+import javax.swing.JFileChooser
 
 
 inline fun <T: Any, V> inRunLater(crossinline op: T.(V)->Unit): T.(V)->Unit {
@@ -180,3 +187,26 @@ fun <T> ObservableValue<T>.onChangeWithWeak(
   }
   addListener(listener)
 }
+
+fun intColorToFXColor(i: Int): Color {
+  return Color.rgb(i shr 16 and 0xFF, i shr 8 and 0xFF, i and 0xFF)
+}
+
+fun Node.drags(file: File) {
+  setOnDragDetected {
+    val db = startDragAndDrop(*TransferMode.ANY)
+	db.putFiles(mutableListOf(file))
+	it.consume()
+  }
+}
+val fileIcons = LRUCache<File, BufferedImage>(50).withStoringDefault {
+  val icon = JFileChooser().let { it.ui.getFileView(it) }.getIcon(it)
+  val bufferedImage = BufferedImage(
+	icon.iconWidth,
+	icon.iconHeight,
+	BufferedImage.TYPE_INT_ARGB
+  )
+  icon.paintIcon(null, bufferedImage.graphics, 0, 0)
+  bufferedImage
+}
+
