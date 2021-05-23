@@ -191,21 +191,7 @@ fun <T> ObservableValue<T>.onChangeWithWeak(
   addListener(listener)
 }
 
-fun <E> ObservableList<E>.onChangeWithWeak(
-  o: Any,
-  op: ()->Unit
-) = apply {
 
-  var listener: ListChangeListener<E>? = null
-  val weakRef = WeakReference(o)
-  listener = ListChangeListener {
-	if (weakRef.get() == null) {
-	  removeListener(listener!!)
-	}
-	op()
-  }
-  addListener(listener)
-}
 
 fun intColorToFXColor(i: Int): Color {
   return Color.rgb(i shr 16 and 0xFF, i shr 8 and 0xFF, i and 0xFF)
