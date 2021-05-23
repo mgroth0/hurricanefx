@@ -6,8 +6,6 @@ import javafx.beans.property.DoubleProperty
 import javafx.beans.property.SimpleDoubleProperty
 import javafx.beans.value.ChangeListener
 import javafx.beans.value.ObservableValue
-import javafx.collections.ListChangeListener
-import javafx.collections.ObservableList
 import javafx.scene.Node
 import javafx.scene.Parent
 import javafx.scene.control.Button
@@ -18,6 +16,7 @@ import javafx.scene.layout.ColumnConstraints
 import javafx.scene.layout.Region
 import javafx.scene.layout.RowConstraints
 import javafx.scene.paint.Color
+import javafx.scene.web.WebView
 import javafx.stage.Stage
 import matt.hurricanefx.eye.lang.BProp
 import matt.hurricanefx.eye.lang.DProp
@@ -111,12 +110,32 @@ fun RowConstraints.exactHeightProperty() = SimpleDoubleProperty().also {
   maxHeightProperty().bind(it)
 }
 
+fun WebView.exactWidthProperty() = SimpleDoubleProperty().also {
+  minWidthProperty().bind(it)
+  maxWidthProperty().bind(it)
+}
+
+fun WebView.exactHeightProperty() = SimpleDoubleProperty().also {
+  minHeightProperty().bind(it)
+  maxHeightProperty().bind(it)
+}
+
 var Region.exactWidth: Number
   set(value) {
 	exactWidthProperty().bind(DProp(value.toDouble()))
   }
   get() = NEVER
 var Region.exactHeight: Number
+  set(value) {
+	exactHeightProperty().bind(DProp(value.toDouble()))
+  }
+  get() = NEVER
+var WebView.exactWidth: Number
+  set(value) {
+	exactWidthProperty().bind(DProp(value.toDouble()))
+  }
+  get() = NEVER
+var WebView.exactHeight: Number
   set(value) {
 	exactHeightProperty().bind(DProp(value.toDouble()))
   }
