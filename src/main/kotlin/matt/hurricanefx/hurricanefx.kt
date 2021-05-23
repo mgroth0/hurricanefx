@@ -6,6 +6,8 @@ import javafx.beans.property.DoubleProperty
 import javafx.beans.property.SimpleDoubleProperty
 import javafx.beans.value.ChangeListener
 import javafx.beans.value.ObservableValue
+import javafx.collections.ListChangeListener
+import javafx.collections.ObservableList
 import javafx.scene.Node
 import javafx.scene.Parent
 import javafx.scene.control.Button
@@ -30,6 +32,7 @@ import java.io.File
 import java.lang.ref.WeakReference
 import java.util.WeakHashMap
 import javax.swing.JFileChooser
+
 
 
 inline fun <T: Any, V> inRunLater(crossinline op: T.(V)->Unit): T.(V)->Unit {
@@ -188,17 +191,34 @@ fun <T> ObservableValue<T>.onChangeWithWeak(
   addListener(listener)
 }
 
+fun <E> ObservableList<E>.onChangeWithWeak(
+  o: Any,
+  op: ()->Unit
+) = apply {
+
+  var listener: ListChangeListener<E>? = null
+  val weakRef = WeakReference(o)
+  listener = ListChangeListener {
+	if (weakRef.get() == null) {
+	  removeListener(listener!!)
+	}
+	op()
+  }
+  addListener(listener)
+}
+
 fun intColorToFXColor(i: Int): Color {
   return Color.rgb(i shr 16 and 0xFF, i shr 8 and 0xFF, i and 0xFF)
 }
 
 fun Node.drags(file: File) {
   setOnDragDetected {
-    val db = startDragAndDrop(*TransferMode.ANY)
+	val db = startDragAndDrop(*TransferMode.ANY)
 	db.putFiles(mutableListOf(file))
 	it.consume()
   }
 }
+
 val fileIcons = LRUCache<File, BufferedImage>(50).withStoringDefault {
   val icon = JFileChooser().let { it.ui.getFileView(it) }.getIcon(it)
   val bufferedImage = BufferedImage(
