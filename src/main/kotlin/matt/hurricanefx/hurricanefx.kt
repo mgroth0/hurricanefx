@@ -50,28 +50,28 @@ val Node.boundsInScreen
   get() = localToScreen(boundsInLocal)
 
 fun Node.minYRelativeTo(ancestor: Node): Double? {
-  println("${this} minYRelative to ${ancestor}")
+  //  println("${this} minYRelative to ${ancestor}")
   var p: Parent? = parent
   var y = boundsInParent.minY
-  tab("y = ${y}")
+  //  tab("y = ${y}")
   var r: Double? = null
   while (true) {
 	tab("p=${p}")
 	when (p) {
 	  null     -> {
 		r = null
-		tab("r=null")
+		//		tab("r=null")
 		break
 	  }
 	  ancestor -> {
 		r = y
-		tab("r=${y}")
+		//		tab("r=${y}")
 		break
 	  }
 	  else     -> {
 		y += p.boundsInParent.minY
-		tab("p.boundsInParent.minY=${p.boundsInParent.minY}")
-		tab("y=${y}")
+		//		tab("p.boundsInParent.minY=${p.boundsInParent.minY}")
+		//		tab("y=${y}")
 		p = p.parent
 	  }
 	}
@@ -113,7 +113,7 @@ fun Node.isFullyVisibleIn(sp: ScrollPane): Boolean {
   if (!this.isManaged) return false
   val minY = this.minYRelativeTo(sp.content)
   val maxY = this.maxYRelativeTo(sp.content)
-  println("vValueConverted=${sp.vValueConverted},vValueConvertedMax=${sp.vValueConvertedMax},minY=${minY},maxY=${maxY}") /*,boundsInParent.height=${boundsInParent.height},boundsInLocal.height=${boundsInLocal.height},boundsInScene.height=${boundsInScene.height}*/
+  // /* println("vValueConverted=${sp.vValueConverted},vValueConvertedMax=${sp.vValueConvertedMax},minY=${minY},maxY=${maxY}")*/ /*,boundsInParent.height=${boundsInParent.height},boundsInLocal.height=${boundsInLocal.height},boundsInScene.height=${boundsInScene.height}*/
   require(minY != null && maxY != null)
   return minY >= sp.vValueConverted && maxY <= sp.vValueConvertedMax
 }
