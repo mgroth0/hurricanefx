@@ -25,13 +25,14 @@ import matt.hurricanefx.tornadofx.async.runLater
 import matt.hurricanefx.tornadofx.clip.putFiles
 import matt.kjlib.cache.LRUCache
 import matt.kjlib.log.NEVER
+import matt.kjlib.recurse.chain
+import matt.kjlib.str.tab
 import matt.klib.dmap.withStoringDefault
 import java.awt.image.BufferedImage
 import java.io.File
 import java.lang.ref.WeakReference
 import java.util.WeakHashMap
 import javax.swing.JFileChooser
-
 
 
 inline fun <T: Any, V> inRunLater(crossinline op: T.(V)->Unit): T.(V)->Unit {
@@ -49,18 +50,37 @@ val Node.boundsInScreen
   get() = localToScreen(boundsInLocal)
 
 fun Node.minYRelativeTo(ancestor: Node): Double? {
+  println("${this} minYRelative to ${ancestor}")
   var p: Parent? = parent
   var y = boundsInParent.minY
+  tab("y = ${y}")
+  var r: Double? = null
   while (true) {
+	tab("p=${p}")
 	when (p) {
-	  null     -> return null
-	  ancestor -> return y
+	  null     -> {
+		r = null
+		tab("r=null")
+		break
+	  }
+	  ancestor -> {
+		r = y
+		tab("r=${y}")
+		break
+	  }
 	  else     -> {
-		y += p.boundsInParent.minY  //NOTE: maxY may not be this simple
+		y += p.boundsInParent.minY
+		tab("p.boundsInParent.minY=${p.boundsInParent.minY}")
+		tab("y=${y}")
 		p = p.parent
 	  }
 	}
   }
+  return r
+}
+
+fun Node.maxYRelativeTo(ancestor: Node): Double? {
+  return minYRelativeTo(ancestor)?.plus(boundsInParent.height)
 }
 
 interface Scrolls {
@@ -72,21 +92,30 @@ fun Scrolls.scrollToMinYOf(node: Node) {
 }
 
 fun ScrollPane.scrollToMinYOf(node: Node): Boolean {
-  val height: Double = content.boundsInLocal.height
-  //  val y = node.boundsInParent.maxY
-  val y = node.minYRelativeTo(content)
-
-  // scrolling values range from 0 to 1
-  y?.let {
-	vvalue = (it/height)*1.1 // NOTE: IDK why, but y is always coming up a bit short, but this fixes it
+  /*scrolling values range from 0 to 1*/
+  node.minYRelativeTo(content)?.let {
+	vvalue = (it/content.boundsInLocal.height)*1.1 /*IDK why, but y is always coming up a bit short, but this fixes it*/
 	return true
   }
   return false
+}
 
-  //  hvalue = x/width
+val ScrollPane.vValueConverted
+  get() = vvalue*((content.boundsInParent.height - viewportBounds.height).takeIf { it > 0 } ?: 0.0)
 
-  // just for usability
-  //  node.requestFocus()
+val ScrollPane.vValueConvertedMax get() = vValueConverted + viewportBounds.height
+
+fun Node.isFullyVisibleIn(sp: ScrollPane): Boolean {
+  require(sp.vmin == 0.0)
+  require(sp.vmax == 1.0)
+  if (this.parent.chain { it.parent }.none { it == sp }) return false
+  if (!this.isVisible) return false
+  if (!this.isManaged) return false
+  val minY = this.minYRelativeTo(sp.content)
+  val maxY = this.maxYRelativeTo(sp.content)
+  println("vValueConverted=${sp.vValueConverted},vValueConvertedMax=${sp.vValueConvertedMax},minY=${minY},maxY=${maxY}") /*,boundsInParent.height=${boundsInParent.height},boundsInLocal.height=${boundsInLocal.height},boundsInScene.height=${boundsInScene.height}*/
+  require(minY != null && maxY != null)
+  return minY >= sp.vValueConverted && maxY <= sp.vValueConvertedMax
 }
 
 
@@ -209,7 +238,6 @@ fun <T> ObservableValue<T>.onChangeWithWeak(
   }
   addListener(listener)
 }
-
 
 
 fun intColorToFXColor(i: Int): Color {
