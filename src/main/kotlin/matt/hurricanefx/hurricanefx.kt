@@ -26,7 +26,6 @@ import matt.hurricanefx.tornadofx.clip.putFiles
 import matt.kjlib.cache.LRUCache
 import matt.kjlib.log.NEVER
 import matt.kjlib.recurse.chain
-import matt.kjlib.str.tab
 import matt.klib.dmap.withStoringDefault
 import java.awt.image.BufferedImage
 import java.io.File
@@ -56,7 +55,6 @@ fun Node.minYRelativeTo(ancestor: Node): Double? {
   //  tab("y = ${y}")
   var r: Double? = null
   while (true) {
-	tab("p=${p}")
 	when (p) {
 	  null     -> {
 		r = null
