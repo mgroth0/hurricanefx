@@ -6,11 +6,16 @@ import javafx.beans.property.DoubleProperty
 import javafx.beans.property.SimpleDoubleProperty
 import javafx.beans.value.ChangeListener
 import javafx.beans.value.ObservableValue
+import javafx.embed.swing.SwingFXUtils
 import javafx.scene.Node
 import javafx.scene.Parent
+import javafx.scene.SnapshotParameters
 import javafx.scene.control.Button
 import javafx.scene.control.ScrollPane
+import javafx.scene.control.Tab
 import javafx.scene.image.ImageView
+import javafx.scene.input.DataFormat
+import javafx.scene.input.MouseEvent
 import javafx.scene.input.TransferMode
 import javafx.scene.layout.ColumnConstraints
 import javafx.scene.layout.Region
@@ -21,9 +26,13 @@ import javafx.stage.Stage
 import matt.hurricanefx.eye.lang.BProp
 import matt.hurricanefx.eye.lang.DProp
 import matt.hurricanefx.eye.lib.ChangeListener
+import matt.hurricanefx.eye.lib.onChangeUntilAfterFirst
 import matt.hurricanefx.tornadofx.async.runLater
+import matt.hurricanefx.tornadofx.clip.put
 import matt.hurricanefx.tornadofx.clip.putFiles
 import matt.kjlib.cache.LRUCache
+import matt.kjlib.commons.TEMP_DIR
+import matt.kjlib.file.get
 import matt.kjlib.log.NEVER
 import matt.kjlib.recurse.chain
 import matt.klib.dmap.withStoringDefault
@@ -31,6 +40,7 @@ import java.awt.image.BufferedImage
 import java.io.File
 import java.lang.ref.WeakReference
 import java.util.WeakHashMap
+import javax.imageio.ImageIO
 import javax.swing.JFileChooser
 
 
@@ -261,3 +271,31 @@ val fileIcons = LRUCache<File, BufferedImage>(50).withStoringDefault {
   bufferedImage
 }
 
+
+fun Node.dragsSnapshot() {
+  addEventFilter(MouseEvent.DRAG_DETECTED) {
+	println("drag detected")
+	val params = SnapshotParameters()
+	params.fill = Color.BLACK
+	val snapshot = snapshot(params, null)
+	val img = SwingFXUtils.fromFXImage(snapshot, null)
+	val imgFile = TEMP_DIR["drag_image.png"]
+	ImageIO.write(img, "png", imgFile)
+	val db = startDragAndDrop(*TransferMode.ANY)
+	db.put(DataFormat.FILES, mutableListOf(imgFile))
+	it.consume()
+	println("drag consumed")
+  }
+}
+
+fun lazyTab(name: String, nodeOp: ()->Node) = Tab(name).apply {
+  if (isSelected) {
+	content = nodeOp()
+  } else {
+	selectedProperty().onChangeUntilAfterFirst(true) {
+	  if (it == true) {
+		content = nodeOp()
+	  }
+	}
+  }
+}
