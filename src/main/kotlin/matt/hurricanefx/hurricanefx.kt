@@ -256,6 +256,7 @@ fun Node.drags(file: File) {
   setOnDragDetected {
 	val db = startDragAndDrop(*TransferMode.ANY)
 	db.putFiles(mutableListOf(file))
+	db.dragView = this.snapshot(SnapshotParameters(), null)
 	it.consume()
   }
 }
