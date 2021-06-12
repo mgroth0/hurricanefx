@@ -7,22 +7,31 @@ import javafx.beans.property.SimpleDoubleProperty
 import javafx.beans.value.ChangeListener
 import javafx.beans.value.ObservableValue
 import javafx.embed.swing.SwingFXUtils
+import javafx.scene.Cursor
 import javafx.scene.Node
 import javafx.scene.Parent
 import javafx.scene.SnapshotParameters
 import javafx.scene.control.Button
 import javafx.scene.control.ScrollPane
 import javafx.scene.control.Tab
+import javafx.scene.image.Image
 import javafx.scene.image.ImageView
 import javafx.scene.input.DataFormat
 import javafx.scene.input.MouseEvent
 import javafx.scene.input.TransferMode
 import javafx.scene.layout.ColumnConstraints
+import javafx.scene.layout.Pane
 import javafx.scene.layout.Region
 import javafx.scene.layout.RowConstraints
 import javafx.scene.paint.Color
+import javafx.scene.shape.Rectangle
 import javafx.scene.web.WebView
+import javafx.stage.FileChooser
 import javafx.stage.Stage
+import matt.hurricanefx.Corner.NE
+import matt.hurricanefx.Corner.NW
+import matt.hurricanefx.Corner.SE
+import matt.hurricanefx.Corner.SW
 import matt.hurricanefx.eye.lang.BProp
 import matt.hurricanefx.eye.lang.DProp
 import matt.hurricanefx.eye.lib.ChangeListener
@@ -30,6 +39,7 @@ import matt.hurricanefx.eye.lib.onChangeUntilAfterFirst
 import matt.hurricanefx.tornadofx.async.runLater
 import matt.hurricanefx.tornadofx.clip.put
 import matt.hurricanefx.tornadofx.clip.putFiles
+import matt.hurricanefx.tornadofx.nodes.add
 import matt.kjlib.cache.LRUCache
 import matt.kjlib.commons.TEMP_DIR
 import matt.kjlib.file.get
@@ -42,6 +52,16 @@ import java.lang.ref.WeakReference
 import java.util.WeakHashMap
 import javax.imageio.ImageIO
 import javax.swing.JFileChooser
+
+fun Node.saveChoose(
+  initialDir: File,
+  title: String
+): File? {
+  return FileChooser().apply {
+	initialDirectory = initialDir
+	this.title = title
+  }.showSaveDialog(stage)
+}
 
 
 inline fun <T: Any, V> inRunLater(crossinline op: T.(V)->Unit): T.(V)->Unit {
@@ -279,14 +299,98 @@ fun Node.dragsSnapshot() {
 	val params = SnapshotParameters()
 	params.fill = Color.BLACK
 	val snapshot = snapshot(params, null)
-	val img = SwingFXUtils.fromFXImage(snapshot, null)
-	val imgFile = TEMP_DIR["drag_image.png"]
-	ImageIO.write(img, "png", imgFile)
+	val imgFile = snapshot.save(TEMP_DIR["drag_image.png"])
 	val db = startDragAndDrop(*TransferMode.ANY)
 	db.put(DataFormat.FILES, mutableListOf(imgFile))
 	it.consume()
 	println("drag consumed")
   }
+}
+
+enum class Corner { NW, NE, SW, SE }
+
+fun Pane.resizer(corner: Corner) {
+  /*var y = 0.0
+  var x = 0.0*/
+  var initEventX = 0.0
+  var initEventY = 0.0
+  var initStageX = 0.0
+  var initStageY = 0.0
+  var initStageWidth = 0.0
+  var initStageHeight = 0.0
+  var initStageMaxX = 0.0
+  var initStageMaxY = 0.0
+  /*val MIN = 100.0*/
+  var dragging = false
+  fun isInDraggableZone(event: MouseEvent): Boolean {
+	/*return event.y > region.height - RESIZE_MARGIN*/
+	return true
+  }
+  add(Rectangle(50.0, 50.0, Color.BLUE).apply {
+	setOnMouseReleased {
+	  dragging = false
+	  cursor = Cursor.DEFAULT
+	}
+	setOnMouseMoved {
+	  cursor = if (isInDraggableZone(it) || dragging) {
+		when (corner) {
+		  NW -> Cursor.NW_RESIZE
+		  NE -> Cursor.NE_RESIZE
+		  SW -> Cursor.SW_RESIZE
+		  SE -> Cursor.SE_RESIZE
+		}
+	  } else {
+		Cursor.DEFAULT
+	  }
+	}
+	setOnMouseDragged {
+	  if (dragging) {
+
+		when (corner) {
+		  NW -> {
+			stage!!.y = initStageY + (it.screenY - initEventY)
+			stage!!.height = initStageMaxY - stage!!.y
+			stage!!.x = initStageX + (it.screenX - initEventX)
+			stage!!.width = initStageMaxX - stage!!.x
+		  }
+		  NE -> {
+			stage!!.y = initStageY + (it.screenY - initEventY)
+			stage!!.height = initStageMaxY - stage!!.y
+			stage!!.width = initStageWidth + (it.screenX - initEventX)
+		  }
+		  SW -> {
+			stage!!.height = initStageHeight + (it.screenY - initEventY)
+			stage!!.x = initStageX + (it.screenX - initEventX)
+			stage!!.width = initStageMaxX - stage!!.x
+		  }
+		  SE -> {
+			stage!!.height = initStageHeight + (it.screenY - initEventY)
+			stage!!.width = initStageWidth + (it.screenX - initEventX)
+		  }
+		}
+	  }
+	}
+	setOnMousePressed {
+	  if (isInDraggableZone(it)) {
+		dragging = true
+		initEventX = it.screenX
+		initEventY = it.screenY
+		initStageHeight = stage!!.height
+		initStageWidth = stage!!.width
+		initStageX = stage!!.x
+		initStageY = stage!!.y
+		initStageMaxY = initStageHeight + initStageY
+		initStageMaxX = initStageWidth + initStageX
+	  }
+	}
+  })
+
+}
+
+fun Image.save(file: File): File {
+  val img = SwingFXUtils.fromFXImage(this, null)
+  ImageIO.write(img, file.extension, file)
+  return file
 }
 
 fun lazyTab(name: String, nodeOp: ()->Node) = Tab(name).apply {
