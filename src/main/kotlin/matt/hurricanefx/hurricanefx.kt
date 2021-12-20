@@ -54,8 +54,7 @@ import javax.imageio.ImageIO
 import javax.swing.JFileChooser
 
 fun Node.saveChoose(
-  initialDir: File,
-  title: String
+  initialDir: File, title: String
 ): File? {
   return FileChooser().apply {
 	initialDirectory = initialDir
@@ -78,27 +77,22 @@ val Node.boundsInScene
 val Node.boundsInScreen
   get() = localToScreen(boundsInLocal)
 
-fun Node.minYRelativeTo(ancestor: Node): Double? {
-  //  println("${this} minYRelative to ${ancestor}")
+fun Node.minYRelativeTo(ancestor: Node): Double? { //  println("${this} minYRelative to ${ancestor}")
   var p: Parent? = parent
-  var y = boundsInParent.minY
-  //  tab("y = ${y}")
+  var y = boundsInParent.minY //  tab("y = ${y}")
   var r: Double? = null
   while (true) {
 	when (p) {
 	  null     -> {
-		r = null
-		//		tab("r=null")
+		r = null        //		tab("r=null")
 		break
 	  }
 	  ancestor -> {
-		r = y
-		//		tab("r=${y}")
+		r = y        //		tab("r=${y}")
 		break
 	  }
 	  else     -> {
-		y += p.boundsInParent.minY
-		//		tab("p.boundsInParent.minY=${p.boundsInParent.minY}")
+		y += p.boundsInParent.minY        //		tab("p.boundsInParent.minY=${p.boundsInParent.minY}")
 		//		tab("y=${y}")
 		p = p.parent
 	  }
@@ -119,8 +113,7 @@ fun Scrolls.scrollToMinYOf(node: Node) {
   scrollPane.scrollToMinYOf(node)
 }
 
-fun ScrollPane.scrollToMinYOf(node: Node): Boolean {
-  /*scrolling values range from 0 to 1*/
+fun ScrollPane.scrollToMinYOf(node: Node): Boolean {/*scrolling values range from 0 to 1*/
   node.minYRelativeTo(content)?.let {
 	vvalue = (it/content.boundsInLocal.height)*1.1 /*IDK why, but y is always coming up a bit short, but this fixes it*/
 	return true
@@ -140,8 +133,8 @@ fun Node.isFullyVisibleIn(sp: ScrollPane): Boolean {
   if (!this.isVisible) return false
   if (!this.isManaged) return false
   val minY = this.minYRelativeTo(sp.content)
-  val maxY = this.maxYRelativeTo(sp.content)
-  // /* println("vValueConverted=${sp.vValueConverted},vValueConvertedMax=${sp.vValueConvertedMax},minY=${minY},maxY=${maxY}")*/ /*,boundsInParent.height=${boundsInParent.height},boundsInLocal.height=${boundsInLocal.height},boundsInScene.height=${boundsInScene.height}*/
+  val maxY =
+	  this.maxYRelativeTo(sp.content) // /* println("vValueConverted=${sp.vValueConverted},vValueConvertedMax=${sp.vValueConvertedMax},minY=${minY},maxY=${maxY}")*/ /*,boundsInParent.height=${boundsInParent.height},boundsInLocal.height=${boundsInLocal.height},boundsInScene.height=${boundsInScene.height}*/
   require(minY != null && maxY != null)
   return minY >= sp.vValueConverted && maxY <= sp.vValueConvertedMax
 }
@@ -252,8 +245,7 @@ var Button.op: ()->Unit
 val Node.stage get() = (scene.window as? Stage)
 
 fun <T> ObservableValue<T>.onChangeWithWeak(
-  o: Any,
-  op: (T?)->Unit
+  o: Any, op: (T?)->Unit
 ) = apply {
 
   var listener: ChangeListener<T>? = null
@@ -284,20 +276,18 @@ fun Node.drags(file: File) {
 val fileIcons = LRUCache<File, BufferedImage>(50).withStoringDefault {
   val icon = JFileChooser().let { it.ui.getFileView(it) }.getIcon(it)
   val bufferedImage = BufferedImage(
-	icon.iconWidth,
-	icon.iconHeight,
-	BufferedImage.TYPE_INT_ARGB
+	icon.iconWidth, icon.iconHeight, BufferedImage.TYPE_INT_ARGB
   )
   icon.paintIcon(null, bufferedImage.graphics, 0, 0)
   bufferedImage
 }
 
 
-fun Node.dragsSnapshot() {
+fun Node.dragsSnapshot(fill: Color = Color.BLACK) {
   addEventFilter(MouseEvent.DRAG_DETECTED) {
 	println("drag detected")
 	val params = SnapshotParameters()
-	params.fill = Color.BLACK
+	params.fill = fill
 	val snapshot = snapshot(params, null)
 	val imgFile = snapshot.save(TEMP_DIR["drag_image.png"])
 	val db = startDragAndDrop(*TransferMode.ANY)
@@ -307,10 +297,60 @@ fun Node.dragsSnapshot() {
   }
 }
 
+var dummyDragBoard: Any? = null
+const val DUMMY_TEXT = "DUMMY TEXT"
+
+fun Node.easyDrag(data: Any, getSnapshotNode: ()->Node? = { null }) = easyDrag({ true }, { data }, getSnapshotNode)
+
+fun Node.easyDrag(condition: ()->Boolean = { true }, getData: ()->Any, getSnapshotNode: ()->Node? = { null }) {
+  this.cursor = Cursor.DEFAULT /*just never change it please*/
+  setOnDragDone {
+	this.cursor = Cursor.DEFAULT /*just never change it please*/
+	dummyDragBoard = null
+	it.consume()
+  }
+  setOnDragDetected {
+	this.cursor = Cursor.DEFAULT /*just never change it please*/
+	if (condition()) {
+	  val params = SnapshotParameters()
+	  params.fill = Color.TRANSPARENT
+	  val db = startDragAndDrop(TransferMode.MOVE)
+	  val snapNode = getSnapshotNode() ?: this
+	  db.dragView = snapNode.snapshot(params, null)
+	  db.put(DataFormat.PLAIN_TEXT, DUMMY_TEXT)
+	  dummyDragBoard = getData()
+	  it.consume()
+	}
+  }
+}
+
+fun Node.easyDrop(handler: ((Any)->Unit)) {
+  this.cursor = Cursor.DEFAULT /*just never change it please*/
+  setOnDragEntered {
+	this.cursor = Cursor.DEFAULT /*just never change it please*/
+	/*it.acceptTransferModes(*TransferMode.ANY)*/
+	it.consume()
+  }
+  setOnDragOver {
+	it.acceptTransferModes(TransferMode.MOVE)
+	this.cursor = Cursor.DEFAULT /*just never change it please*/
+	it.consume()
+  }
+  setOnDragDropped {
+	this.cursor = Cursor.DEFAULT /*just never change it please*/
+	/*if (it.dragboard.getContent(DataFormat.PLAIN_TEXT) == DUMMY_TEXT) {*/
+	  handler(dummyDragBoard!!)
+	  dummyDragBoard = null
+	  it.isDropCompleted = true
+	  it.consume()
+	/*}*/
+  }
+}
+
+
 enum class Corner { NW, NE, SW, SE }
 
-fun Pane.resizer(corner: Corner) {
-  /*var y = 0.0
+fun Pane.resizer(corner: Corner) {/*var y = 0.0
   var x = 0.0*/
   var initEventX = 0.0
   var initEventY = 0.0
@@ -319,11 +359,9 @@ fun Pane.resizer(corner: Corner) {
   var initStageWidth = 0.0
   var initStageHeight = 0.0
   var initStageMaxX = 0.0
-  var initStageMaxY = 0.0
-  /*val MIN = 100.0*/
+  var initStageMaxY = 0.0/*val MIN = 100.0*/
   var dragging = false
-  fun isInDraggableZone(event: MouseEvent): Boolean {
-	/*return event.y > region.height - RESIZE_MARGIN*/
+  fun isInDraggableZone(event: MouseEvent): Boolean {    /*return event.y > region.height - RESIZE_MARGIN*/
 	return true
   }
   add(Rectangle(50.0, 50.0, Color.BLUE).apply {
