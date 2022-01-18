@@ -35,8 +35,6 @@ import javafx.scene.layout.VBox
 import matt.hurricanefx.tornadofx.fx.getChildList
 import matt.hurricanefx.tornadofx.fx.opcr
 import matt.hurricanefx.tornadofx.nodes.add
-import matt.hurricanefx.eye.prop.getValue
-import matt.hurricanefx.eye.prop.setValue
 import matt.hurricanefx.tornadofx.nodes.hgrow
 import matt.hurricanefx.tornadofx.style.all
 import matt.hurricanefx.tornadofx.style.copy
