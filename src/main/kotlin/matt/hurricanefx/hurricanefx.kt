@@ -134,7 +134,7 @@ fun Node.isFullyVisibleIn(sp: ScrollPane): Boolean {
   if (!this.isManaged) return false
   val minY = this.minYRelativeTo(sp.content)
   val maxY =
-	  this.maxYRelativeTo(sp.content) // /* println("vValueConverted=${sp.vValueConverted},vValueConvertedMax=${sp.vValueConvertedMax},minY=${minY},maxY=${maxY}")*/ /*,boundsInParent.height=${boundsInParent.height},boundsInLocal.height=${boundsInLocal.height},boundsInScene.height=${boundsInScene.height}*/
+	this.maxYRelativeTo(sp.content) // /* println("vValueConverted=${sp.vValueConverted},vValueConvertedMax=${sp.vValueConvertedMax},minY=${minY},maxY=${maxY}")*/ /*,boundsInParent.height=${boundsInParent.height},boundsInLocal.height=${boundsInLocal.height},boundsInScene.height=${boundsInScene.height}*/
   require(minY != null && maxY != null)
   return minY >= sp.vValueConverted && maxY <= sp.vValueConvertedMax
 }
@@ -339,10 +339,10 @@ fun Node.easyDrop(handler: ((Any)->Unit)) {
   setOnDragDropped {
 	this.cursor = Cursor.DEFAULT /*just never change it please*/
 	/*if (it.dragboard.getContent(DataFormat.PLAIN_TEXT) == DUMMY_TEXT) {*/
-	  handler(dummyDragBoard!!)
-	  dummyDragBoard = null
-	  it.isDropCompleted = true
-	  it.consume()
+	handler(dummyDragBoard!!)
+	dummyDragBoard = null
+	it.isDropCompleted = true
+	it.consume()
 	/*}*/
   }
 }
@@ -426,8 +426,7 @@ fun Pane.resizer(corner: Corner) {/*var y = 0.0
 }
 
 fun Image.save(file: File): File {
-  val img = SwingFXUtils.fromFXImage(this, null)
-  ImageIO.write(img, file.extension, file)
+  ImageIO.write(toBufferedImage(), file.extension, file)
   return file
 }
 
@@ -442,3 +441,6 @@ fun lazyTab(name: String, nodeOp: ()->Node) = Tab(name).apply {
 	}
   }
 }
+
+fun Image.toBufferedImage(): BufferedImage = SwingFXUtils.fromFXImage(this, null)
+fun BufferedImage.toFXImage(): Image = SwingFXUtils.toFXImage(this, null)
