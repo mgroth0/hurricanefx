@@ -296,24 +296,24 @@ fun <T> TableView<T>.onUserSelect(clickCount: Int = 2, action: (T)->Unit) {
   }
 }
 
-fun Node.onDoubleClick(action: ()->Unit) {
+fun Node.onDoubleClick(action: (MouseEvent)->Unit) {
   setOnMouseClicked {
 	if (it.clickCount == 2)
-	  action()
+	  action(it)
   }
 }
 
-fun Node.onLeftClick(clickCount: Int = 1, action: ()->Unit) {
+fun Node.onLeftClick(clickCount: Int = 1, action: (MouseEvent)->Unit) {
   setOnMouseClicked {
 	if (it.clickCount == clickCount && it.button === MouseButton.PRIMARY)
-	  action()
+	  action(it)
   }
 }
 
-fun Node.onRightClick(clickCount: Int = 1, action: ()->Unit) {
+fun Node.onRightClick(clickCount: Int = 1, action: (MouseEvent)->Unit) {
   setOnMouseClicked {
 	if (it.clickCount == clickCount && it.button === MouseButton.SECONDARY)
-	  action()
+	  action(it)
   }
 }
 
