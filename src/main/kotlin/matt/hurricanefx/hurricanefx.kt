@@ -7,6 +7,9 @@ import javafx.beans.property.SimpleDoubleProperty
 import javafx.beans.value.ChangeListener
 import javafx.beans.value.ObservableValue
 import javafx.embed.swing.SwingFXUtils
+import javafx.event.Event
+import javafx.event.EventHandler
+import javafx.event.EventType
 import javafx.scene.Cursor
 import javafx.scene.Node
 import javafx.scene.Parent
@@ -16,6 +19,7 @@ import javafx.scene.control.ScrollPane
 import javafx.scene.control.Tab
 import javafx.scene.image.Image
 import javafx.scene.image.ImageView
+import javafx.scene.input.ContextMenuEvent
 import javafx.scene.input.DataFormat
 import javafx.scene.input.MouseEvent
 import javafx.scene.input.TransferMode
@@ -462,3 +466,23 @@ fun lazyTab(name: String, nodeOp: () -> Node) = Tab(name).apply {
 
 fun Image.toBufferedImage(): BufferedImage = SwingFXUtils.fromFXImage(this, null)
 fun BufferedImage.toFXImage(): Image = SwingFXUtils.toFXImage(this, null)
+
+fun Node.disableContextMenu() {
+    addEventFilter(ContextMenuEvent.ANY) {
+        it.consume()
+    }
+}
+
+fun <T : Event> Node.filterAndConsume(eventType: EventType<T>, handler: EventHandler<T>) {
+    addEventFilter(eventType) {
+        handler.handle(it)
+        it.consume()
+    }
+}
+
+fun <T : Event> Node.handleAndConsume(eventType: EventType<T>, handler: EventHandler<T>) {
+    addEventHandler(eventType) {
+        handler.handle(it)
+        it.consume()
+    }
+}
