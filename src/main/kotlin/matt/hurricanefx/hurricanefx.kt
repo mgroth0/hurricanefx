@@ -279,7 +279,7 @@ fun Node.drags(file: File) {
     }
 }
 
-val fileIcons = LRUCache<File, BufferedImage>(50).withStoringDefault {
+val fileIcons = LRUCache<File, BufferedImage>(500).withStoringDefault {
 
     if (thisMachine == Machine.WINDOWS) jswingIconToImage(
         FileSystemView.getFileSystemView().getSystemIcon(it)
