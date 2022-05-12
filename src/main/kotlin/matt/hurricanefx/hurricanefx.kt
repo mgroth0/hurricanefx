@@ -1,6 +1,7 @@
 package matt.hurricanefx
 
 
+import javafx.application.Application
 import javafx.beans.property.BooleanProperty
 import javafx.beans.property.DoubleProperty
 import javafx.beans.property.SimpleDoubleProperty
@@ -485,4 +486,8 @@ fun <T : Event> Node.handleAndConsume(eventType: EventType<T>, handler: EventHan
         handler.handle(it)
         it.consume()
     }
+}
+
+class DummyAppForFxThreadForScreen: Application() {
+    override fun start(primaryStage: Stage?) = Unit
 }
