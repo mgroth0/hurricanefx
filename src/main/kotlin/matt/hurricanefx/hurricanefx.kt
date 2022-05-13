@@ -15,6 +15,7 @@ import javafx.scene.Cursor
 import javafx.scene.Node
 import javafx.scene.Parent
 import javafx.scene.SnapshotParameters
+import javafx.scene.chart.NumberAxis
 import javafx.scene.control.Button
 import javafx.scene.control.ScrollPane
 import javafx.scene.control.Tab
@@ -494,4 +495,9 @@ fun <T : Event> Node.handleAndConsume(eventType: EventType<T>, handler: EventHan
 
 class DummyAppForFxThreadForScreen: Application() {
     override fun start(primaryStage: Stage?) = Unit
+}
+
+fun minimalNumberAxis() = NumberAxis().apply {
+    minorTickCount = 0
+    isAutoRanging = false
 }
