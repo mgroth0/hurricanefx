@@ -33,6 +33,7 @@ import javafx.scene.shape.Rectangle
 import javafx.scene.web.WebView
 import javafx.stage.FileChooser
 import javafx.stage.Stage
+import javafx.util.StringConverter
 import matt.hurricanefx.Corner.*
 import matt.hurricanefx.eye.lang.BProp
 import matt.hurricanefx.eye.lang.DProp
@@ -42,9 +43,12 @@ import matt.hurricanefx.tornadofx.async.runLater
 import matt.hurricanefx.tornadofx.clip.put
 import matt.hurricanefx.tornadofx.clip.putFiles
 import matt.hurricanefx.tornadofx.nodes.add
+import matt.kjlib.byte.ByteSize
 import matt.kjlib.cache.LRUCache
 import matt.kjlib.commons.TEMP_DIR
+import matt.kjlib.date.formatDate
 import matt.kjlib.file.get
+import matt.kjlib.jmath.sigFigs
 import matt.kjlib.log.NEVER
 import matt.kjlib.recurse.chain
 import matt.klib.dmap.withStoringDefault
