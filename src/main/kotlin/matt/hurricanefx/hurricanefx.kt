@@ -46,14 +46,14 @@ import matt.hurricanefx.tornadofx.async.runLater
 import matt.hurricanefx.tornadofx.clip.put
 import matt.hurricanefx.tornadofx.clip.putFiles
 import matt.hurricanefx.tornadofx.nodes.add
+import matt.kbuild.Machine
+import matt.kbuild.thisMachine
 import matt.kjlib.cache.LRUCache
 import matt.kjlib.commons.TEMP_DIR
 import matt.kjlib.file.get
 import matt.kjlib.log.NEVER
 import matt.kjlib.recurse.chain
 import matt.klib.dmap.withStoringDefault
-import matt.reflect.Machine
-import matt.reflect.thisMachine
 import java.awt.image.BufferedImage
 import java.io.File
 import java.lang.ref.WeakReference
