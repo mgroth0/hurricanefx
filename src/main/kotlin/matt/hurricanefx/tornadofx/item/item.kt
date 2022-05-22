@@ -51,6 +51,7 @@ import matt.hurricanefx.tornadofx.bind.bind
 import matt.hurricanefx.tornadofx.fx.attachTo
 import matt.hurricanefx.tornadofx.nodes.selectedItem
 import matt.hurricanefx.tornadofx.sflist.SortedFilteredList
+import matt.kjlib.log.err
 import matt.kjlib.str.decap
 import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
@@ -81,7 +82,8 @@ fun <T> EventTarget.spinner(
         if (event.deltaY < 0) it.decrement()
     }
 
-    if (editable) it.focusedProperty().addListener { _, _, newValue ->
+    if (editable) it.focusedProperty().addListener { _, _, newValue: Boolean? ->
+        if (newValue == null) err("here it is")
         if (!newValue) it.increment(0)
     }
 }
@@ -110,7 +112,8 @@ inline fun <reified T : Number> EventTarget.spinner(min: T? = null, max: T? = nu
     }
 
     if (editable) {
-        spinner.focusedProperty().addListener { _, _, newValue ->
+        spinner.focusedProperty().addListener { _, _, newValue: Boolean? ->
+            if (newValue == null) err("here it is")
             if (!newValue) {
                 spinner.increment(0)
             }
@@ -138,7 +141,8 @@ fun <T> EventTarget.spinner(
         if (event.deltaY < 0) it.decrement()
     }
 
-    if (editable) it.focusedProperty().addListener { _, _, newValue ->
+    if (editable) it.focusedProperty().addListener { _, _, newValue: Boolean? ->
+        if (newValue == null) err("here it is")
         if (!newValue) it.increment(0)
     }
 }
@@ -161,7 +165,8 @@ fun <T> EventTarget.spinner(
         if (event.deltaY < 0) it.decrement()
     }
 
-    if (editable) it.focusedProperty().addListener { _, _, newValue ->
+    if (editable) it.focusedProperty().addListener { _, _, newValue: Boolean? ->
+        if (newValue == null) err("here it is")
         if (!newValue) it.increment(0)
     }
 }

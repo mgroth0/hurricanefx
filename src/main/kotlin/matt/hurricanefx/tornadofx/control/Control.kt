@@ -29,6 +29,7 @@ import matt.hurricanefx.tornadofx.bind.bind
 import matt.hurricanefx.tornadofx.fx.attachTo
 import matt.hurricanefx.tornadofx.fx.opcr
 import matt.hurricanefx.tornadofx.nodes.getToggleGroup
+import matt.kjlib.log.err
 import java.time.LocalDate
 
 fun EventTarget.webview(op: WebView.() -> Unit = {}) = WebView().attachTo(this, op)
@@ -445,7 +446,8 @@ fun <T : Any?> Property<T>.mutateOnChange(mutator: (T?) -> T?) = onChange {
 /**
  * Remove leading or trailing whitespace from a Text Input Control.
  */
-fun TextInputControl.trimWhitespace() = focusedProperty().onChange { focused ->
+fun TextInputControl.trimWhitespace() = focusedProperty().onChange { focused: Boolean? ->
+    if (focused == null) err("here it is")
     if (!focused && text != null) text = text.trim()
 }
 
