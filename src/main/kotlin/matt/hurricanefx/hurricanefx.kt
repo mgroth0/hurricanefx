@@ -93,7 +93,7 @@ fun Node.minYRelativeTo(ancestor: Node): Double? { //  println("${this} minYRela
   var r: Double? = null
   while (true) {
 	when (p) {
-	  null -> {
+	  null     -> {
 		r = null        //		tab("r=null")
 		break
 	  }
@@ -101,7 +101,7 @@ fun Node.minYRelativeTo(ancestor: Node): Double? { //  println("${this} minYRela
 		r = y        //		tab("r=${y}")
 		break
 	  }
-	  else -> {
+	  else     -> {
 		y += p.boundsInParent.minY        //		tab("p.boundsInParent.minY=${p.boundsInParent.minY}")
 		//		tab("y=${y}")
 		p = p.parent
@@ -503,8 +503,10 @@ fun minimalNumberAxis() = NumberAxis().apply {
   isAutoRanging = false
 }
 
-fun <N: Node> Parent.addr(child: N, op: (N.() -> Unit)? = null): N {
+fun <N: Node> Parent.addr(child: N, op: (N.()->Unit)? = null): N {
   op?.invoke(child)
   add(child)
   return child
 }
+
+fun matt.kjlib.date.Duration.toFXDuration() = javafx.util.Duration.millis(this.inMilliseconds)
