@@ -1,3 +1,5 @@
+@file:Suppress("unused")
+
 package matt.hurricanefx
 
 
@@ -11,6 +13,7 @@ import javafx.embed.swing.SwingFXUtils
 import javafx.event.Event
 import javafx.event.EventHandler
 import javafx.event.EventType
+import javafx.geometry.Bounds
 import javafx.scene.Cursor
 import javafx.scene.Node
 import javafx.scene.Parent
@@ -81,34 +84,29 @@ inline fun <T: Any, V> inRunLater(crossinline op: T.(V)->Unit): T.(V)->Unit {
   }
 }
 
-val Node.boundsInScene
+val Node.boundsInScene: Bounds
   get() = localToScene(boundsInLocal)
 
-val Node.boundsInScreen
+val Node.boundsInScreen: Bounds
   get() = localToScreen(boundsInLocal)
 
 fun Node.minYRelativeTo(ancestor: Node): Double? { //  println("${this} minYRelative to ${ancestor}")
   var p: Parent? = parent
   var y = boundsInParent.minY //  tab("y = ${y}")
-  var r: Double? = null
   while (true) {
 	when (p) {
-	  null     -> {
-		r = null        //		tab("r=null")
-		break
+	  null -> {
+		return null
 	  }
 	  ancestor -> {
-		r = y        //		tab("r=${y}")
-		break
+		return y
 	  }
-	  else     -> {
-		y += p.boundsInParent.minY        //		tab("p.boundsInParent.minY=${p.boundsInParent.minY}")
-		//		tab("y=${y}")
+	  else -> {
+		y += p.boundsInParent.minY
 		p = p.parent
 	  }
 	}
   }
-  return r
 }
 
 fun Node.maxYRelativeTo(ancestor: Node): Double? {
@@ -265,7 +263,7 @@ fun <T> ObservableValue<T>.onChangeWithWeak(
   val weakRef = WeakReference(o)
   listener = ChangeListener { _, _, new ->
 	if (weakRef.get() == null) {
-	  removeListener(listener!!)
+	  removeListener(listener)
 	}
 	op(new)
   }
@@ -286,12 +284,12 @@ fun Node.drags(file: File) {
   }
 }
 
-val fileIcons = LRUCache<File, BufferedImage>(500).withStoringDefault {
+val fileIcons = LRUCache<File, BufferedImage>(500).withStoringDefault { f ->
 
   if (thisMachine == Machine.WINDOWS) jswingIconToImage(
-	FileSystemView.getFileSystemView().getSystemIcon(it)
+	FileSystemView.getFileSystemView().getSystemIcon(f)
   )!!.toBufferedImage() else {
-	val icon = JFileChooser().let { it.ui.getFileView(it) }.getIcon(it)
+	val icon = JFileChooser().let { it.ui.getFileView(it) }.getIcon(f)
 	val bi = BufferedImage(
 	  icon.iconWidth, icon.iconHeight, BufferedImage.TYPE_INT_ARGB
 	)
@@ -390,7 +388,11 @@ fun Pane.resizer(corner: Corner) {/*var y = 0.0
   var initStageMaxX = 0.0
   var initStageMaxY = 0.0/*val MIN = 100.0*/
   var dragging = false
-  fun isInDraggableZone(event: MouseEvent): Boolean {    /*return event.y > region.height - RESIZE_MARGIN*/
+  fun isInDraggableZone(
+	@Suppress(
+	  "UNUSED_PARAMETER"
+	) event: MouseEvent
+  ): Boolean {    /*return event.y > region.height - RESIZE_MARGIN*/
 	return true
   }
   add(Rectangle(50.0, 50.0, Color.BLUE).apply {
@@ -509,4 +511,6 @@ fun <N: Node> Parent.addr(child: N, op: (N.()->Unit)? = null): N {
   return child
 }
 
-fun matt.kjlib.date.Duration.toFXDuration() = javafx.util.Duration.millis(this.inMilliseconds)
+typealias FXDuration = javafx.util.Duration
+
+fun matt.kjlib.date.Duration.toFXDuration(): FXDuration = FXDuration.millis(this.inMilliseconds)

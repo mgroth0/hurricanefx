@@ -1,3 +1,5 @@
+@file:Suppress("unused", "MemberVisibilityCanBePrivate")
+
 package matt.hurricanefx.tornadofx.datetimepicker
 
 import javafx.beans.property.ObjectProperty
@@ -71,7 +73,7 @@ class DateTimePicker: DatePicker() {
 	}
 
 	override fun fromString(value: String): LocalDate? {
-	  if (value == null || value.isEmpty()) {
+	  if (value.isEmpty()) {
 		dateTimeValue.set(null)
 		return null
 	  }
@@ -96,8 +98,8 @@ class DateTimePicker: DatePicker() {
 	converter = InternalConverter()
 	alignColumnCountWithFormat()
 
-	// Syncronize changes to the underlying date value back to the dateTimeValue
-	valueProperty().addListener { observable: ObservableValue<out LocalDate?>?, oldValue: LocalDate?, newValue: LocalDate? ->
+	// Synchronize changes to the underlying date value back to the dateTimeValue
+	valueProperty().addListener { _: ObservableValue<out LocalDate?>?, _: LocalDate?, newValue: LocalDate? ->
 	  if (newValue == null) {
 		dateTimeValue.set(null)
 	  } else {
@@ -110,8 +112,8 @@ class DateTimePicker: DatePicker() {
 	  }
 	}
 
-	// Syncronize changes to dateTimeValue back to the underlying date value
-	dateTimeValue.addListener { observable: ObservableValue<out LocalDateTime?>?, oldValue: LocalDateTime?, newValue: LocalDateTime? ->
+	// Synchronize changes to dateTimeValue back to the underlying date value
+	dateTimeValue.addListener { _: ObservableValue<out LocalDateTime?>?, _: LocalDateTime?, newValue: LocalDateTime? ->
 	  if (newValue != null) {
 		val dateValue = newValue.toLocalDate()
 		val forceUpdate = dateValue == valueProperty().get()
@@ -125,6 +127,6 @@ class DateTimePicker: DatePicker() {
 
 	// Persist changes onblur
 	editor.focusedProperty()
-	  .addListener { observable: ObservableValue<out Boolean?>?, oldValue: Boolean?, newValue: Boolean? -> if (!newValue!!) simulateEnterPressed() }
+	  .addListener { _: ObservableValue<out Boolean?>?, _: Boolean?, newValue: Boolean? -> if (!newValue!!) simulateEnterPressed() }
   }
 }
