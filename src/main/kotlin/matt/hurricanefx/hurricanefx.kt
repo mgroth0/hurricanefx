@@ -54,7 +54,7 @@ import matt.kbuild.thisMachine
 import matt.kjlib.cache.LRUCache
 import matt.kjlib.commons.TEMP_DIR
 import matt.kjlib.file.get
-import matt.kjlib.log.NEVER
+import matt.kjlib.lang.NEVER
 import matt.kjlib.recurse.chain
 import matt.klib.dmap.withStoringDefault
 import java.awt.image.BufferedImage
