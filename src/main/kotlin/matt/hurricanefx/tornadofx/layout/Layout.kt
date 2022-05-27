@@ -105,7 +105,7 @@ fun GridPane.constraintsForColumn(columnIndex: Int) = constraintsFor(columnConst
 
 fun GridPane.constraintsForRow(rowIndex: Int) = constraintsFor(rowConstraints, rowIndex)
 
-//constraints for row and column can be handled the same way
+//constraints for row and matt.hurricanefx.tableview.coolColumn can be handled the same way
 internal inline fun <reified T : ConstraintsBase> constraintsFor(constraints: ObservableList<T>, index: Int): T {
 //    while (constraints.size <= index) constraints.add(T::class.createInstance())
     while (constraints.size <= index) constraints.add(T::class.constructors.first().call())
