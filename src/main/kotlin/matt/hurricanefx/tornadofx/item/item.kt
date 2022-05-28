@@ -52,7 +52,7 @@ import matt.hurricanefx.tornadofx.fx.attachTo
 import matt.hurricanefx.tornadofx.nodes.selectedItem
 import matt.hurricanefx.tornadofx.sflist.SortedFilteredList
 import matt.klib.lang.decap
-import matt.kjlib.lang.err
+import matt.klib.lang.err
 import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
 import kotlin.reflect.KMutableProperty1

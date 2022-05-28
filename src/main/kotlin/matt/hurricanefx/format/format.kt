@@ -4,7 +4,7 @@ import javafx.util.StringConverter
 import matt.async.date.formatDate
 import matt.kjlib.byte.ByteSize
 import matt.kjlib.jmath.sigFigs
-import matt.kjlib.lang.NEVER
+import matt.klib.lang.NEVER
 import java.util.Date
 
 val BYTE_SIZE_FORMATTER = object: StringConverter<Number>() {

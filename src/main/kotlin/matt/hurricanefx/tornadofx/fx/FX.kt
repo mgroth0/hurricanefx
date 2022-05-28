@@ -33,7 +33,7 @@ import matt.hurricanefx.eye.collect.ListConversionListener
 import matt.hurricanefx.eye.collect.MapConversionListener
 import matt.hurricanefx.eye.collect.SetConversionListener
 import matt.hurricanefx.eye.collect.bind
-import matt.kjlib.lang.err
+import matt.klib.lang.err
 
 
 /**

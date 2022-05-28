@@ -53,9 +53,9 @@ import matt.klib.commons.thisMachine
 import matt.kjlib.cache.LRUCache
 import matt.klib.commons.TEMP_DIR
 import matt.klib.commons.get
-import matt.kjlib.lang.NEVER
 import matt.kjlib.stream.recurse.chain
 import matt.klib.dmap.withStoringDefault
+import matt.klib.lang.NEVER
 import matt.klib.sys.Machine
 import java.awt.image.BufferedImage
 import java.io.File

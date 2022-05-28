@@ -29,7 +29,7 @@ import matt.hurricanefx.tornadofx.bind.bind
 import matt.hurricanefx.tornadofx.fx.attachTo
 import matt.hurricanefx.tornadofx.fx.opcr
 import matt.hurricanefx.tornadofx.nodes.getToggleGroup
-import matt.kjlib.lang.err
+import matt.klib.lang.err
 import java.time.LocalDate
 
 fun EventTarget.webview(op: WebView.() -> Unit = {}) = WebView().attachTo(this, op)
