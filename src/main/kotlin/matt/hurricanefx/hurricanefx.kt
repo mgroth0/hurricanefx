@@ -513,4 +513,4 @@ fun <N: Node> Parent.addr(child: N, op: (N.()->Unit)? = null): N {
 
 typealias FXDuration = javafx.util.Duration
 
-fun matt.kjlib.date.Duration.toFXDuration(): FXDuration = FXDuration.millis(this.inMilliseconds)
+fun matt.async.date.Duration.toFXDuration(): FXDuration = FXDuration.millis(this.inMilliseconds)
