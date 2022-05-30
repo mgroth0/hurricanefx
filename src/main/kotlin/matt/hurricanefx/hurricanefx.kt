@@ -20,6 +20,8 @@ import javafx.scene.Parent
 import javafx.scene.SnapshotParameters
 import javafx.scene.chart.NumberAxis
 import javafx.scene.control.Button
+import javafx.scene.control.CheckBox
+import javafx.scene.control.Label
 import javafx.scene.control.ScrollPane
 import javafx.scene.control.Tab
 import javafx.scene.image.Image
@@ -95,13 +97,13 @@ fun Node.minYRelativeTo(ancestor: Node): Double? { //  println("${this} minYRela
   var y = boundsInParent.minY //  tab("y = ${y}")
   while (true) {
 	when (p) {
-	  null -> {
+	  null     -> {
 		return null
 	  }
 	  ancestor -> {
 		return y
 	  }
-	  else -> {
+	  else     -> {
 		y += p.boundsInParent.minY
 		p = p.parent
 	  }
@@ -170,7 +172,6 @@ fun RowConstraints.exactHeightProperty() = SimpleDoubleProperty().also {
   minHeightProperty().bind(it)
   maxHeightProperty().bind(it)
 }
-
 
 
 var Region.exactWidth: Number
@@ -282,7 +283,6 @@ val fileIcons = LRUCache<File, BufferedImage>(500).withStoringDefault { f ->
 
 
 }
-
 
 
 fun Node.dragsSnapshot(fill: Color = Color.BLACK) {
@@ -449,7 +449,6 @@ fun lazyTab(name: String, nodeOp: ()->Node) = Tab(name).apply {
 }
 
 
-
 fun Node.disableContextMenu() {
   addEventFilter(ContextMenuEvent.ANY) {
 	it.consume()
@@ -490,3 +489,9 @@ typealias FXDuration = javafx.util.Duration
 fun matt.async.date.Duration.toFXDuration(): FXDuration = FXDuration.millis(this.inMilliseconds)
 
 
+fun BooleanProperty.checkbox() = CheckBox(name).also {
+  it.selectedProperty().bindBidirectional(this)
+}
+
+fun Pane.addAll(vararg nodes: Node) = children.addAll(nodes)
+fun Pane.addAll(nodes: Iterable<Node>) = children.addAll(nodes)
