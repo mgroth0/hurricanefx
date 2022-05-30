@@ -6,5 +6,5 @@ dependencies {
   api(libs.fx.controls)
   api(libs.fx.media)
   api(libs.fx.web)
-  api(libs.fx.swing)
+//  api(libs.fx.swing)
 }
