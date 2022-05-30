@@ -34,7 +34,6 @@ import javafx.scene.layout.Region
 import javafx.scene.layout.RowConstraints
 import javafx.scene.paint.Color
 import javafx.scene.shape.Rectangle
-import javafx.scene.web.WebView
 import javafx.stage.FileChooser
 import javafx.stage.Stage
 import matt.fx.image.jswingIconToImage
@@ -172,15 +171,7 @@ fun RowConstraints.exactHeightProperty() = SimpleDoubleProperty().also {
   maxHeightProperty().bind(it)
 }
 
-fun WebView.exactWidthProperty() = SimpleDoubleProperty().also {
-  minWidthProperty().bind(it)
-  maxWidthProperty().bind(it)
-}
 
-fun WebView.exactHeightProperty() = SimpleDoubleProperty().also {
-  minHeightProperty().bind(it)
-  maxHeightProperty().bind(it)
-}
 
 var Region.exactWidth: Number
   set(value) {
@@ -192,16 +183,7 @@ var Region.exactHeight: Number
 	exactHeightProperty().bind(DProp(value.toDouble()))
   }
   get() = NEVER
-var WebView.exactWidth: Number
-  set(value) {
-	exactWidthProperty().bind(DProp(value.toDouble()))
-  }
-  get() = NEVER
-var WebView.exactHeight: Number
-  set(value) {
-	exactHeightProperty().bind(DProp(value.toDouble()))
-  }
-  get() = NEVER
+
 var ColumnConstraints.exactWidth: Number
   set(value) {
 	exactWidthProperty().bind(DProp(value.toDouble()))

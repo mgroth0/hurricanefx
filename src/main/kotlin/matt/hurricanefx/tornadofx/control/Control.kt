@@ -19,8 +19,6 @@ import javafx.scene.layout.Pane
 import javafx.scene.paint.Color
 import javafx.scene.text.Text
 import javafx.scene.text.TextFlow
-import javafx.scene.web.HTMLEditor
-import javafx.scene.web.WebView
 import javafx.util.StringConverter
 import matt.hurricanefx.eye.lib.onChange
 import matt.hurricanefx.eye.prop.objectBinding
@@ -32,7 +30,7 @@ import matt.hurricanefx.tornadofx.nodes.getToggleGroup
 import matt.klib.lang.err
 import java.time.LocalDate
 
-fun EventTarget.webview(op: WebView.() -> Unit = {}) = WebView().attachTo(this, op)
+
 
 
 fun EventTarget.colorpicker(
@@ -161,9 +159,7 @@ fun EventTarget.buttonbar(buttonOrder: String? = null, op: (ButtonBar.() -> Unit
     if (buttonOrder != null) it.buttonOrder = buttonOrder
 }
 
-fun EventTarget.htmleditor(html: String? = null, op: HTMLEditor.() -> Unit = {}) = HTMLEditor().attachTo(this, op) {
-    if (html != null) it.htmlText = html
-}
+
 
 fun EventTarget.checkbox(text: String? = null, property: Property<Boolean>? = null, op: CheckBox.() -> Unit = {}) =
     CheckBox(text).attachTo(this, op) {

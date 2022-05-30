@@ -5,7 +5,7 @@ dependencies {
   api(libs.fx.graphics)
   api(libs.fx.controls)
   api(libs.fx.media)
-  api(libs.fx.web)
+//  api(libs.fx.web)
 //  api(libs.fx.swing)
   api(projects.kj.fx.image)
 }
