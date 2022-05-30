@@ -3,13 +3,13 @@
 package matt.hurricanefx
 
 
+//import javafx.embed.swing.SwingFXUtils
 import javafx.application.Application
 import javafx.beans.property.BooleanProperty
 import javafx.beans.property.DoubleProperty
 import javafx.beans.property.SimpleDoubleProperty
 import javafx.beans.value.ChangeListener
 import javafx.beans.value.ObservableValue
-import javafx.embed.swing.SwingFXUtils
 import javafx.event.Event
 import javafx.event.EventHandler
 import javafx.event.EventType
@@ -37,6 +37,8 @@ import javafx.scene.shape.Rectangle
 import javafx.scene.web.WebView
 import javafx.stage.FileChooser
 import javafx.stage.Stage
+import matt.fx.image.jswingIconToImage
+import matt.fx.image.toBufferedImage
 import matt.hurricanefx.Corner.NE
 import matt.hurricanefx.Corner.NW
 import matt.hurricanefx.Corner.SE
@@ -49,20 +51,19 @@ import matt.hurricanefx.tornadofx.async.runLater
 import matt.hurricanefx.tornadofx.clip.put
 import matt.hurricanefx.tornadofx.clip.putFiles
 import matt.hurricanefx.tornadofx.nodes.add
-import matt.klib.commons.thisMachine
 import matt.kjlib.cache.LRUCache
 import matt.klib.commons.TEMP_DIR
 import matt.klib.commons.get
-import matt.stream.recurse.chain
+import matt.klib.commons.thisMachine
 import matt.klib.dmap.withStoringDefault
 import matt.klib.lang.NEVER
 import matt.klib.sys.Machine
+import matt.stream.recurse.chain
 import java.awt.image.BufferedImage
 import java.io.File
 import java.lang.ref.WeakReference
 import java.util.WeakHashMap
 import javax.imageio.ImageIO
-import javax.swing.Icon
 import javax.swing.JFileChooser
 import javax.swing.filechooser.FileSystemView
 
@@ -300,14 +301,6 @@ val fileIcons = LRUCache<File, BufferedImage>(500).withStoringDefault { f ->
 
 }
 
-private fun jswingIconToImage(jswingIcon: Icon): Image? {
-  val bufferedImage = BufferedImage(
-	jswingIcon.iconWidth, jswingIcon.iconHeight,
-	BufferedImage.TYPE_INT_ARGB
-  )
-  jswingIcon.paintIcon(null, bufferedImage.graphics, 0, 0)
-  return SwingFXUtils.toFXImage(bufferedImage, null)
-}
 
 
 fun Node.dragsSnapshot(fill: Color = Color.BLACK) {
@@ -473,8 +466,7 @@ fun lazyTab(name: String, nodeOp: ()->Node) = Tab(name).apply {
   }
 }
 
-fun Image.toBufferedImage(): BufferedImage = SwingFXUtils.fromFXImage(this, null)
-fun BufferedImage.toFXImage(): Image = SwingFXUtils.toFXImage(this, null)
+
 
 fun Node.disableContextMenu() {
   addEventFilter(ContextMenuEvent.ANY) {
