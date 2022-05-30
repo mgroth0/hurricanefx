@@ -4,7 +4,7 @@ dependencies {
   api(libs.fx.base)
   api(libs.fx.graphics)
   api(libs.fx.controls)
-  api(libs.fx.media) // todo: separate?
-  api(libs.fx.web) // todo: separate?
+  api(libs.fx.media)
+  api(libs.fx.web)
   api(libs.fx.swing)
 }
