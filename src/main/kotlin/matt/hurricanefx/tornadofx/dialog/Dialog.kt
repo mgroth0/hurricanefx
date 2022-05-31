@@ -12,7 +12,9 @@ import javafx.stage.Window
 import matt.hurricanefx.tornadofx.dialog.FileChooserMode.Multi
 import matt.hurricanefx.tornadofx.dialog.FileChooserMode.Save
 import matt.hurricanefx.tornadofx.dialog.FileChooserMode.Single
-import java.io.File
+import matt.klib.file.MFile
+import matt.klib.file.toMFile
+
 
 /**
  * Show a confirmation dialog and execute the given action if confirmButton is clicked. The button types
@@ -115,11 +117,11 @@ enum class FileChooserMode { None, Single, Multi, Save }
 fun chooseFile(
     title: String? = null,
     filters: Array<out FileChooser.ExtensionFilter>,
-    initialDirectory: File? = null,
+    initialDirectory: MFile? = null,
     mode: FileChooserMode = Single,
     owner: Window? = null,
     op: FileChooser.() -> Unit = {}
-): List<File> {
+): List<MFile> {
     val chooser = FileChooser()
     if (title != null) chooser.title = title
     chooser.extensionFilters.addAll(filters)
@@ -127,12 +129,12 @@ fun chooseFile(
     op(chooser)
     return when (mode) {
         Single -> {
-            val result = chooser.showOpenDialog(owner)
+            val result = chooser.showOpenDialog(owner).toMFile()
             if (result == null) emptyList() else listOf(result)
         }
-        Multi -> chooser.showOpenMultipleDialog(owner) ?: emptyList()
+        Multi -> chooser.showOpenMultipleDialog(owner).map { it.toMFile() } ?: emptyList()
         Save -> {
-            val result = chooser.showSaveDialog(owner)
+            val result = chooser.showSaveDialog(owner).toMFile()
             if (result == null) emptyList() else listOf(result)
         }
         else -> emptyList()
@@ -141,15 +143,15 @@ fun chooseFile(
 
 fun chooseDirectory(
     title: String? = null,
-    initialDirectory: File? = null,
+    initialDirectory: MFile? = null,
     owner: Window? = null,
     op: DirectoryChooser.() -> Unit = {}
-): File? {
+): MFile? {
     val chooser = DirectoryChooser()
     if (title != null) chooser.title = title
     if (initialDirectory != null) chooser.initialDirectory = initialDirectory
     op(chooser)
-    return chooser.showDialog(owner)
+    return chooser.showDialog(owner).toMFile()
 }
 
 fun Dialog<*>.toFront() = (dialogPane.scene.window as? Stage)?.toFront()

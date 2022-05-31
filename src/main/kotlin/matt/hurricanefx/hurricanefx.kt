@@ -57,11 +57,14 @@ import matt.klib.commons.TEMP_DIR
 import matt.klib.commons.get
 import matt.klib.commons.thisMachine
 import matt.klib.dmap.withStoringDefault
+import matt.klib.file.MFile
+import matt.klib.file.toMFile
 import matt.klib.lang.NEVER
 import matt.klib.sys.Machine
+import matt.klib.sys.WINDOWS
 import matt.stream.recurse.chain
 import java.awt.image.BufferedImage
-import java.io.File
+
 import java.lang.ref.WeakReference
 import java.util.WeakHashMap
 import javax.imageio.ImageIO
@@ -69,12 +72,12 @@ import javax.swing.JFileChooser
 import javax.swing.filechooser.FileSystemView
 
 fun Node.saveChoose(
-  initialDir: File, title: String
-): File? {
+  initialDir: MFile, title: String
+): MFile? {
   return FileChooser().apply {
 	initialDirectory = initialDir
 	this.title = title
-  }.showSaveDialog(stage)
+  }.showSaveDialog(stage).toMFile()
 }
 
 
@@ -259,7 +262,7 @@ fun intColorToFXColor(i: Int): Color {
   return Color.rgb(i shr 16 and 0xFF, i shr 8 and 0xFF, i and 0xFF)
 }
 
-fun Node.drags(file: File) {
+fun Node.drags(file: MFile) {
   setOnDragDetected {
 	val db = startDragAndDrop(*TransferMode.ANY)
 	db.putFiles(mutableListOf(file))
@@ -268,9 +271,9 @@ fun Node.drags(file: File) {
   }
 }
 
-val fileIcons = LRUCache<File, BufferedImage>(500).withStoringDefault { f ->
+val fileIcons = LRUCache<MFile, BufferedImage>(500).withStoringDefault { f ->
 
-  if (thisMachine == Machine.WINDOWS) jswingIconToImage(
+  if (thisMachine is WINDOWS) jswingIconToImage(
 	FileSystemView.getFileSystemView().getSystemIcon(f)
   )!!.toBufferedImage() else {
 	val icon = JFileChooser().let { it.ui.getFileView(it) }.getIcon(f)
@@ -431,7 +434,7 @@ fun Pane.resizer(corner: Corner) {/*var y = 0.0
 
 }
 
-fun Image.save(file: File): File {
+fun Image.save(file: MFile): MFile {
   ImageIO.write(toBufferedImage(), file.extension, file)
   return file
 }

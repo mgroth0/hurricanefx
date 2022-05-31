@@ -95,7 +95,7 @@ fun Scene.reloadStylesheets() {
                 val query = urlAndQuery[1]
 
                 val pairs = query.split("&")
-                pairs.filterNot { it.startsWith("squash=") }.forEach { queryPairs.add(it) }
+                pairs.filterNot { s.startsWith("squash=") }.forEach { queryPairs.add(it) }
             } else {
                 b.append(s)
             }
