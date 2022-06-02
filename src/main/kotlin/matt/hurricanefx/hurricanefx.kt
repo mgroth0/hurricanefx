@@ -52,6 +52,7 @@ import matt.hurricanefx.tornadofx.async.runLater
 import matt.hurricanefx.tornadofx.clip.put
 import matt.hurricanefx.tornadofx.clip.putFiles
 import matt.hurricanefx.tornadofx.nodes.add
+import matt.hurricanefx.tsprogressbar.ThreadSafeNodeWrapper
 import matt.kjlib.cache.LRUCache
 import matt.klib.commons.TEMP_DIR
 import matt.klib.commons.get
@@ -103,9 +104,11 @@ fun Node.minYRelativeTo(ancestor: Node): Double? { //  println("${this} minYRela
 	  null     -> {
 		return null
 	  }
+
 	  ancestor -> {
 		return y
 	  }
+
 	  else     -> {
 		y += p.boundsInParent.minY
 		p = p.parent
@@ -225,6 +228,20 @@ var Node.visibleAndManaged: Boolean
   set(value) {
 	isVisible = value
 	isManaged = value
+  }
+
+fun ThreadSafeNodeWrapper<*>.visibleAndManagedProp(): BooleanProperty {
+  val r = BProp(node.isVisible && node.isManaged)
+  node.visibleProperty().bind(r)
+  node.managedProperty().bind(r)
+  return r
+}
+
+var ThreadSafeNodeWrapper<*>.visibleAndManaged: Boolean
+  get() = node.isVisible && node.isManaged
+  set(value) {
+	node.isVisible = value
+	node.isManaged = value
   }
 
 
@@ -400,16 +417,19 @@ fun Pane.resizer(corner: Corner) {/*var y = 0.0
 			stage!!.x = initStageX + (it.screenX - initEventX)
 			stage!!.width = initStageMaxX - stage!!.x
 		  }
+
 		  NE -> {
 			stage!!.y = initStageY + (it.screenY - initEventY)
 			stage!!.height = initStageMaxY - stage!!.y
 			stage!!.width = initStageWidth + (it.screenX - initEventX)
 		  }
+
 		  SW -> {
 			stage!!.height = initStageHeight + (it.screenY - initEventY)
 			stage!!.x = initStageX + (it.screenX - initEventX)
 			stage!!.width = initStageMaxX - stage!!.x
 		  }
+
 		  SE -> {
 			stage!!.height = initStageHeight + (it.screenY - initEventY)
 			stage!!.width = initStageWidth + (it.screenX - initEventX)

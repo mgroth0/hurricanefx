@@ -33,6 +33,7 @@ import matt.hurricanefx.eye.collect.ListConversionListener
 import matt.hurricanefx.eye.collect.MapConversionListener
 import matt.hurricanefx.eye.collect.SetConversionListener
 import matt.hurricanefx.eye.collect.bind
+import matt.hurricanefx.tsprogressbar.NodeWrapper
 import matt.klib.lang.err
 
 
@@ -60,6 +61,7 @@ inline fun <T: Node> T.attachTo(
   before: (T)->Unit
 ) = this.also(before).attachTo(parent, after)
 
+fun EventTarget.addChildIfPossible(nw: NodeWrapper, index: Int? = null) = addChildIfPossible(nw.node, index)
 
 @Suppress("UNNECESSARY_SAFE_CALL")
 fun EventTarget.addChildIfPossible(node: Node, index: Int? = null) {
@@ -73,21 +75,25 @@ fun EventTarget.addChildIfPossible(node: Node, index: Int? = null) {
 	is SubScene       -> {
 	  root = node as Parent
 	}
+
 	is ScrollPane     -> content = node
 	is Tab            -> {
 	  // Map the tab to the UIComponent for later retrieval. Used to close tab with UIComponent.close()
 	  // and to connect the onTabSelected callback
 	  content = node
 	}
+
 	is ButtonBase     -> {
 	  graphic = node
 	}
+
 	is BorderPane     -> {
 	} // Either pos = builder { or caught by builderTarget above
 	is TabPane        -> {
 	  val tab = Tab(node.toString(), node)
 	  tabs.add(tab)
 	}
+
 	is TitledPane     -> {
 	  if (content is Pane) {
 		content.addChildIfPossible(node, index)
@@ -99,16 +105,20 @@ fun EventTarget.addChildIfPossible(node: Node, index: Int? = null) {
 		content = node
 	  }
 	}
+
 	is CustomMenuItem -> {
 	  content = node
 	}
+
 	is MenuItem       -> {
 	  graphic = node
 	}
+
 	is Label          -> {
 	  /*matt was here*/
 	  graphic = node
 	}
+
 	else              -> if (this !is Pane) {
 	  /*matt was here.. because this was getting really confusing*/
 	  err("$this is a region. It can't add children.")
@@ -133,7 +143,7 @@ fun <T> EventTarget.bindChildren(
   sourceList: ObservableList<T>,
   converter: (T)->Node
 ): ListConversionListener<T, Node> =
-	requireNotNull(getChildList()?.bind(sourceList, converter)) { "Unable to extract child nodes from $this" }
+  requireNotNull(getChildList()?.bind(sourceList, converter)) { "Unable to extract child nodes from $this" }
 
 /**
  * Bind the children of this Layout node to the items of the given ListPropery by converting
@@ -141,7 +151,7 @@ fun <T> EventTarget.bindChildren(
  * will be reflected in the children list of this layout node.
  */
 fun <T> EventTarget.bindChildren(sourceList: ListProperty<T>, converter: (T)->Node): ListConversionListener<T, Node> =
-	requireNotNull(getChildList()?.bind(sourceList, converter)) { "Unable to extract child nodes from $this" }
+  requireNotNull(getChildList()?.bind(sourceList, converter)) { "Unable to extract child nodes from $this" }
 
 /**
  * Bind the children of this Layout node to the given observable set of items

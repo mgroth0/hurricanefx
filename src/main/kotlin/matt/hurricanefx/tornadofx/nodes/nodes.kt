@@ -70,6 +70,8 @@ import matt.hurricanefx.tornadofx.fx.getChildList
 import matt.hurricanefx.tornadofx.layout.paddingAll
 import matt.hurricanefx.tornadofx.layout.paddingHorizontal
 import matt.hurricanefx.tornadofx.layout.paddingVertical
+import matt.hurricanefx.tsprogressbar.NodeWrapper
+import matt.hurricanefx.tsprogressbar.ThreadSafeNodeWrapper
 
 fun EventTarget.getToggleGroup(): ToggleGroup? = properties["tornadofx.togglegroup"] as ToggleGroup?
 
@@ -120,6 +122,9 @@ fun EventTarget.replaceChildren(vararg node: Node) {
 operator fun EventTarget.plusAssign(node: Node) {
     addChildIfPossible(node)
 }
+operator fun EventTarget.plusAssign(node: NodeWrapper) {
+    addChildIfPossible(node)
+}
 
 fun Pane.clear() {
     children.clear()
@@ -131,6 +136,7 @@ fun <T : EventTarget> T.replaceChildren(op: T.() -> Unit) {
 }
 
 fun EventTarget.add(node: Node) = plusAssign(node)
+fun EventTarget.add(nw: NodeWrapper) = plusAssign(nw)
 
 var Region.useMaxWidth: Boolean
     get() = maxWidth == Double.MAX_VALUE
