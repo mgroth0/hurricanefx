@@ -214,7 +214,7 @@ fun ImageView.bindFitTo(r: Region) {
 }
 
 fun Node.visibleAndManagedProp(): BooleanProperty {
-  val r = BProp()
+  val r = BProp(isVisible && isManaged)
   visibleProperty().bind(r)
   managedProperty().bind(r)
   return r
