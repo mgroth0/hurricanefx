@@ -132,7 +132,7 @@ enum class FileChooserMode { None, Single, Multi, Save }
             val result = chooser.showOpenDialog(owner).toMFile()
             if (result == null) emptyList() else listOf(result)
         }
-        Multi -> chooser.showOpenMultipleDialog(owner).map { it.toMFile() } ?: emptyList()
+        Multi -> chooser.showOpenMultipleDialog(owner).map { it.toMFile() } /*?: emptyList()*/
         Save -> {
             val result = chooser.showSaveDialog(owner).toMFile()
             if (result == null) emptyList() else listOf(result)
