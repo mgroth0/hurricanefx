@@ -114,7 +114,7 @@ enum class FileChooserMode { None, Single, Multi, Save }
  *
  * If the user cancels, the returnedfile list will be empty.
  */
-fun chooseFile(
+@Suppress("SENSELESS_COMPARISON") fun chooseFile(
     title: String? = null,
     filters: Array<out FileChooser.ExtensionFilter>,
     initialDirectory: MFile? = null,
