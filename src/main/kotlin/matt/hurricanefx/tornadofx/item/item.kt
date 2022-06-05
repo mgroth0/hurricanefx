@@ -47,7 +47,7 @@ import matt.hurricanefx.eye.collect.asObservable
 import matt.hurricanefx.eye.lib.onChange
 import matt.hurricanefx.eye.prop.observable
 import matt.hurricanefx.eye.prop.stringBinding
-import matt.hurricanefx.eye.bind.bind
+import matt.hurricanefx.tornadofx.control.bind
 import matt.hurricanefx.tornadofx.fx.attachTo
 import matt.hurricanefx.tornadofx.nodes.selectedItem
 import matt.hurricanefx.tornadofx.sflist.SortedFilteredList
