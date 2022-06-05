@@ -51,6 +51,7 @@ import matt.hurricanefx.tornadofx.control.bind
 import matt.hurricanefx.tornadofx.fx.attachTo
 import matt.hurricanefx.tornadofx.nodes.selectedItem
 import matt.hurricanefx.eye.sflist.SortedFilteredList
+import matt.hurricanefx.tornadofx.control.bindTo
 import matt.klib.lang.decap
 import matt.klib.lang.err
 import kotlin.reflect.KClass
