@@ -16,9 +16,9 @@ import javafx.beans.value.ObservableValue
 import javafx.beans.value.WritableValue
 import javafx.collections.FXCollections
 import javafx.collections.ObservableList
-import javafx.scene.control.*
-import javafx.scene.paint.Color
-import javafx.scene.text.Text
+//import javafx.scene.control.*
+//import javafx.scene.paint.Color
+//import javafx.scene.text.Text
 import javafx.util.StringConverter
 import javafx.util.converter.*
 import matt.hurricanefx.eye.lib.onChange
@@ -32,68 +32,7 @@ import java.util.*
 import java.util.concurrent.Callable
 
 
-private fun <T> Property<T>.internalBind(property: ObservableValue<T>, readonly: Boolean) {
-    if (readonly || (property !is Property<*>)) bind(property) else bindBidirectional(property as Property<T>)
-}
 
-
-fun <T> ComboBoxBase<T>.bind(property: ObservableValue<T>, readonly: Boolean = false) =
-    valueProperty().internalBind(property, readonly)
-
-fun ColorPicker.bind(property: ObservableValue<Color>, readonly: Boolean = false) =
-    valueProperty().internalBind(property, readonly)
-
-fun DatePicker.bind(property: ObservableValue<LocalDate>, readonly: Boolean = false) =
-    valueProperty().internalBind(property, readonly)
-
-fun ProgressIndicator.bind(property: ObservableValue<Number>, readonly: Boolean = false) =
-    progressProperty().internalBind(property, readonly)
-
-fun <T> ChoiceBox<T>.bind(property: ObservableValue<T>, readonly: Boolean = false) =
-    valueProperty().internalBind(property, readonly)
-
-fun CheckBox.bind(property: ObservableValue<Boolean>, readonly: Boolean = false) =
-    selectedProperty().internalBind(property, readonly)
-
-fun CheckMenuItem.bind(property: ObservableValue<Boolean>, readonly: Boolean = false) =
-    selectedProperty().internalBind(property, readonly)
-
-fun Slider.bind(property: ObservableValue<Number>, readonly: Boolean = false) =
-    valueProperty().internalBind(property, readonly)
-
-fun <T> Spinner<T>.bind(property: ObservableValue<T>, readonly: Boolean = false) =
-    valueFactory.valueProperty().internalBind(property, readonly)
-
-
-inline fun <reified S : T, reified T : Any> Labeled.bind(
-    property: ObservableValue<S>,
-    readonly: Boolean = false,
-    converter: StringConverter<T>? = null,
-    format: Format? = null
-) {
-    bindStringProperty(textProperty(), converter, format, property, readonly)
-}
-
-inline fun <reified S : T, reified T : Any> TitledPane.bind(
-    property: ObservableValue<S>,
-    readonly: Boolean = false,
-    converter: StringConverter<T>? = null,
-    format: Format? = null
-) = bindStringProperty(textProperty(), converter, format, property, readonly)
-
-inline fun <reified S : T, reified T : Any> Text.bind(
-    property: ObservableValue<S>,
-    readonly: Boolean = false,
-    converter: StringConverter<T>? = null,
-    format: Format? = null
-) = bindStringProperty(textProperty(), converter, format, property, readonly)
-
-inline fun <reified S : T, reified T : Any> TextInputControl.bind(
-    property: ObservableValue<S>,
-    readonly: Boolean = false,
-    converter: StringConverter<T>? = null,
-    format: Format? = null
-) = bindStringProperty(textProperty(), converter, format, property, readonly)
 
 inline fun <reified S : T, reified T : Any> bindStringProperty(
     stringProperty: StringProperty,

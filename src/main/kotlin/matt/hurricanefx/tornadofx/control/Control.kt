@@ -20,14 +20,16 @@ import javafx.scene.paint.Color
 import javafx.scene.text.Text
 import javafx.scene.text.TextFlow
 import javafx.util.StringConverter
+import matt.hurricanefx.eye.bind.internalBind
 import matt.hurricanefx.eye.lib.onChange
 import matt.hurricanefx.eye.prop.objectBinding
 import matt.hurricanefx.eye.prop.stringBinding
-import matt.hurricanefx.tornadofx.bind.bind
+import matt.hurricanefx.tornadofx.bind.bindStringProperty
 import matt.hurricanefx.tornadofx.fx.attachTo
 import matt.hurricanefx.tornadofx.fx.opcr
 import matt.hurricanefx.tornadofx.nodes.getToggleGroup
 import matt.klib.lang.err
+import java.text.Format
 import java.time.LocalDate
 
 
@@ -467,3 +469,66 @@ fun ChoiceBox<*>.action(op: () -> Unit) = setOnAction { op() }
 fun ButtonBase.action(op: () -> Unit) = setOnAction { op() }
 fun TextField.action(op: () -> Unit) = setOnAction { op() }
 fun MenuItem.action(op: () -> Unit) = setOnAction { op() }
+
+
+
+fun <T> ComboBoxBase<T>.bind(property: ObservableValue<T>, readonly: Boolean = false) =
+    valueProperty().internalBind(property, readonly)
+
+fun ColorPicker.bind(property: ObservableValue<Color>, readonly: Boolean = false) =
+    valueProperty().internalBind(property, readonly)
+
+fun DatePicker.bind(property: ObservableValue<LocalDate>, readonly: Boolean = false) =
+    valueProperty().internalBind(property, readonly)
+
+fun ProgressIndicator.bind(property: ObservableValue<Number>, readonly: Boolean = false) =
+    progressProperty().internalBind(property, readonly)
+
+fun <T> ChoiceBox<T>.bind(property: ObservableValue<T>, readonly: Boolean = false) =
+    valueProperty().internalBind(property, readonly)
+
+fun CheckBox.bind(property: ObservableValue<Boolean>, readonly: Boolean = false) =
+    selectedProperty().internalBind(property, readonly)
+
+fun CheckMenuItem.bind(property: ObservableValue<Boolean>, readonly: Boolean = false) =
+    selectedProperty().internalBind(property, readonly)
+
+fun Slider.bind(property: ObservableValue<Number>, readonly: Boolean = false) =
+    valueProperty().internalBind(property, readonly)
+
+fun <T> Spinner<T>.bind(property: ObservableValue<T>, readonly: Boolean = false) =
+    valueFactory.valueProperty().internalBind(property, readonly)
+
+
+
+
+
+inline fun <reified S : T, reified T : Any> Labeled.bind(
+    property: ObservableValue<S>,
+    readonly: Boolean = false,
+    converter: StringConverter<T>? = null,
+    format: Format? = null
+) {
+    bindStringProperty(textProperty(), converter, format, property, readonly)
+}
+
+inline fun <reified S : T, reified T : Any> TitledPane.bind(
+    property: ObservableValue<S>,
+    readonly: Boolean = false,
+    converter: StringConverter<T>? = null,
+    format: Format? = null
+) = bindStringProperty(textProperty(), converter, format, property, readonly)
+
+inline fun <reified S : T, reified T : Any> Text.bind(
+    property: ObservableValue<S>,
+    readonly: Boolean = false,
+    converter: StringConverter<T>? = null,
+    format: Format? = null
+) = bindStringProperty(textProperty(), converter, format, property, readonly)
+
+inline fun <reified S : T, reified T : Any> TextInputControl.bind(
+    property: ObservableValue<S>,
+    readonly: Boolean = false,
+    converter: StringConverter<T>? = null,
+    format: Format? = null
+) = bindStringProperty(textProperty(), converter, format, property, readonly)
