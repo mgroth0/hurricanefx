@@ -4,6 +4,7 @@ package matt.hurricanefx
 
 
 //import javafx.embed.swing.SwingFXUtils
+
 import javafx.application.Application
 import javafx.beans.property.BooleanProperty
 import javafx.beans.property.DoubleProperty
@@ -21,7 +22,6 @@ import javafx.scene.SnapshotParameters
 import javafx.scene.chart.NumberAxis
 import javafx.scene.control.Button
 import javafx.scene.control.CheckBox
-import javafx.scene.control.Label
 import javafx.scene.control.ScrollPane
 import javafx.scene.control.Tab
 import javafx.scene.image.Image
@@ -61,11 +61,9 @@ import matt.klib.dmap.withStoringDefault
 import matt.klib.file.MFile
 import matt.klib.file.toMFile
 import matt.klib.lang.NEVER
-import matt.klib.sys.Machine
 import matt.klib.sys.WINDOWS
 import matt.stream.recurse.chain
 import java.awt.image.BufferedImage
-
 import java.lang.ref.WeakReference
 import java.util.WeakHashMap
 import javax.imageio.ImageIO
