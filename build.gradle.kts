@@ -1,3 +1,5 @@
+modtype = LIB
+
 dependencies {
   api(projects.kj.async)
   api(projects.kj.hurricanefx.eye)
