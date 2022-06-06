@@ -3,11 +3,14 @@ package matt.hurricanefx.tornadofx.async
 /*slightly modified code I stole from tornadofx*/
 
 import javafx.application.Platform
+import matt.async.date.Duration
 import java.util.*
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
+import java.util.concurrent.Semaphore
 import java.util.concurrent.ThreadFactory
 import java.util.concurrent.atomic.AtomicLong
+import kotlin.concurrent.thread
 
 private enum class ThreadPoolType { NoDaemon, Daemon }
 
@@ -46,3 +49,39 @@ private class TFXThreadFactory(val daemon: Boolean) : ThreadFactory {
 fun runLater(op: () -> Unit) = Platform.runLater(op)
 
 private val runLaterTimer: Timer by lazy { Timer(true) }
+
+
+/*MATT'S STUFF BELOW*/
+
+fun <T> runLaterReturn(op: ()->T): T {
+    var r: T? = null
+    val sem = Semaphore(0)
+    try {
+        runLater {
+            r = op()
+            sem.release()
+        }
+    } catch (e: Exception) {
+        sem.release()
+        e.printStackTrace()
+    }
+    sem.acquire()
+    return r!!
+}
+
+
+fun runMuchLater(d: Duration, op: ()->Unit) {
+    thread {
+        Thread.sleep(d.inMilliseconds.toLong())
+        runLater {
+            op()
+        }
+    }
+}
+
+fun runMuchLaterReturn(d: Duration, op: ()->Unit) {
+    Thread.sleep(d.inMilliseconds.toLong())
+    runLaterReturn {
+        op()
+    }
+}
