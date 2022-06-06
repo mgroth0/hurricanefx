@@ -243,9 +243,7 @@ var ThreadSafeNodeWrapper<*>.visibleAndManaged: Boolean
   }
 
 
-fun BooleanProperty.toggle() {
-  value = !value
-}
+
 
 var Button.op: ()->Unit
   set(value) {
@@ -516,3 +514,13 @@ fun BooleanProperty.checkbox() = CheckBox(name).also {
 
 fun Pane.addAll(vararg nodes: Node) = children.addAll(nodes)
 fun Pane.addAll(nodes: Iterable<Node>) = children.addAll(nodes)
+
+
+fun Node.onDoubleClickConsume(action: ()->Unit) {
+  setOnMouseClicked {
+	if (it.clickCount == 2) {
+	  action()
+	  it.consume()
+	}
+  }
+}
