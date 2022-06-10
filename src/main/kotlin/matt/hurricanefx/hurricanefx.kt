@@ -49,8 +49,6 @@ import matt.hurricanefx.eye.lang.BProp
 import matt.hurricanefx.eye.lang.DProp
 import matt.hurricanefx.eye.lib.ChangeListener
 import matt.hurricanefx.eye.lib.onChangeUntilAfterFirst
-import matt.hurricanefx.tornadofx.clip.put
-import matt.hurricanefx.tornadofx.clip.putFiles
 import matt.hurricanefx.tornadofx.nodes.add
 import matt.hurricanefx.tsprogressbar.ThreadSafeNodeWrapper
 import matt.kjlib.cache.LRUCache
@@ -275,14 +273,6 @@ fun intColorToFXColor(i: Int): Color {
   return Color.rgb(i shr 16 and 0xFF, i shr 8 and 0xFF, i and 0xFF)
 }
 
-fun Node.drags(file: MFile) {
-  setOnDragDetected {
-	val db = startDragAndDrop(*TransferMode.ANY)
-	db.putFiles(mutableListOf(file))
-	db.dragView = this.snapshot(SnapshotParameters(), null)
-	it.consume()
-  }
-}
 
 val fileIcons = LRUCache<MFile, BufferedImage>(500).withStoringDefault { f ->
 
@@ -301,69 +291,7 @@ val fileIcons = LRUCache<MFile, BufferedImage>(500).withStoringDefault { f ->
 }
 
 
-fun Node.dragsSnapshot(fill: Color = Color.BLACK) {
-  addEventFilter(MouseEvent.DRAG_DETECTED) {
-	println("drag detected")
-	val params = SnapshotParameters()
-	params.fill = fill
-	val snapshot = snapshot(params, null)
-	val imgFile = snapshot.save(TEMP_DIR["drag_image.png"])
-	val db = startDragAndDrop(*TransferMode.ANY)
-	db.put(DataFormat.FILES, mutableListOf(imgFile))
-	it.consume()
-	println("drag consumed")
-  }
-}
 
-var dummyDragBoard: Any? = null
-const val DUMMY_TEXT = "DUMMY TEXT"
-
-fun Node.easyDrag(data: Any, getSnapshotNode: ()->Node? = { null }) = easyDrag({ true }, { data }, getSnapshotNode)
-
-fun Node.easyDrag(condition: ()->Boolean = { true }, getData: ()->Any, getSnapshotNode: ()->Node? = { null }) {
-  this.cursor = Cursor.DEFAULT /*just never change it please*/
-  setOnDragDone {
-	this.cursor = Cursor.DEFAULT /*just never change it please*/
-	dummyDragBoard = null
-	it.consume()
-  }
-  setOnDragDetected {
-	this.cursor = Cursor.DEFAULT /*just never change it please*/
-	if (condition()) {
-	  val params = SnapshotParameters()
-	  params.fill = Color.TRANSPARENT
-	  val db = startDragAndDrop(TransferMode.MOVE)
-	  val snapNode = getSnapshotNode() ?: this
-	  db.dragView = snapNode.snapshot(params, null)
-	  db.put(DataFormat.PLAIN_TEXT, DUMMY_TEXT)
-	  dummyDragBoard = getData()
-	  it.consume()
-	}
-  }
-}
-
-fun Node.easyDrop(handler: ((Any)->Unit)) {
-  this.cursor = Cursor.DEFAULT /*just never change it please*/
-  setOnDragEntered {
-	this.cursor = Cursor.DEFAULT /*just never change it please*/
-	/*it.acceptTransferModes(*TransferMode.ANY)*/
-	it.consume()
-  }
-  setOnDragOver {
-	it.acceptTransferModes(TransferMode.MOVE)
-	this.cursor = Cursor.DEFAULT /*just never change it please*/
-	it.consume()
-  }
-  setOnDragDropped {
-	this.cursor = Cursor.DEFAULT /*just never change it please*/
-	/*if (it.dragboard.getContent(DataFormat.PLAIN_TEXT) == DUMMY_TEXT) {*/
-	handler(dummyDragBoard!!)
-	dummyDragBoard = null
-	it.isDropCompleted = true
-	it.consume()
-	/*}*/
-  }
-}
 
 
 enum class Corner { NW, NE, SW, SE }
