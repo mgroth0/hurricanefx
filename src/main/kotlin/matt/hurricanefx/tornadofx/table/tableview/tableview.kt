@@ -1,4 +1,4 @@
-package matt.hurricanefx.tableview
+package matt.hurricanefx.tornadofx.table.tableview
 
 import javafx.beans.property.SimpleObjectProperty
 import javafx.scene.control.TableColumn
