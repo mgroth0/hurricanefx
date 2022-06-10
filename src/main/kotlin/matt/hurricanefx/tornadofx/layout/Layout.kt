@@ -36,7 +36,7 @@ import matt.hurricanefx.tornadofx.fx.getChildList
 import matt.hurricanefx.tornadofx.fx.opcr
 import matt.hurricanefx.tornadofx.nodes.add
 import matt.hurricanefx.tornadofx.nodes.hgrow
-import matt.hurricanefx.tornadofx.style.all
+import matt.fx.graphics.style.all
 import matt.hurricanefx.tornadofx.style.copy
 import matt.hurricanefx.tornadofx.style.horizontal
 import matt.hurricanefx.tornadofx.style.insets
