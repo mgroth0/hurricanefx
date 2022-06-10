@@ -132,20 +132,7 @@ val Parent.gridpaneColumnConstraints: ColumnConstraints?
 
 fun Parent.gridpaneColumnConstraints(op: ColumnConstraints.() -> Unit) = gridpaneColumnConstraints?.apply { op() }
 
-fun ToolBar.spacer(prio: Priority = Priority.ALWAYS, op: Pane.() -> Unit = {}): Pane {
-    val pane = Pane().apply {
-        hgrow = prio
-    }
-    op(pane)
-    add(pane)
-    return pane
-}
 
-fun HBox.spacer(prio: Priority = Priority.ALWAYS, op: Pane.() -> Unit = {}) =
-    opcr(this, Pane().apply { HBox.setHgrow(this, prio) }, op)
-
-fun VBox.spacer(prio: Priority = Priority.ALWAYS, op: Pane.() -> Unit = {}) =
-    opcr(this, Pane().apply { VBox.setVgrow(this, prio) }, op)
 
 fun EventTarget.toolbar(vararg nodes: Node, op: ToolBar.() -> Unit = {}): ToolBar {
     val toolbar = ToolBar()
