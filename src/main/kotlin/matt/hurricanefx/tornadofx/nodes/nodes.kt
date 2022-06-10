@@ -67,9 +67,6 @@ import matt.hurricanefx.eye.bind.toBinding
 import matt.hurricanefx.tornadofx.control.properties
 import matt.hurricanefx.tornadofx.fx.addChildIfPossible
 import matt.hurricanefx.tornadofx.fx.getChildList
-import matt.hurricanefx.tornadofx.layout.paddingAll
-import matt.hurricanefx.tornadofx.layout.paddingHorizontal
-import matt.hurricanefx.tornadofx.layout.paddingVertical
 import matt.hurricanefx.tsprogressbar.NodeWrapper
 
 fun EventTarget.getToggleGroup(): ToggleGroup? = properties["tornadofx.togglegroup"] as ToggleGroup?
