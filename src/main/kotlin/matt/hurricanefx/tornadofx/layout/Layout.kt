@@ -35,12 +35,6 @@ import javafx.scene.layout.VBox
 import matt.hurricanefx.tornadofx.fx.getChildList
 import matt.hurricanefx.tornadofx.fx.opcr
 import matt.hurricanefx.tornadofx.nodes.add
-import matt.hurricanefx.tornadofx.nodes.hgrow
-import matt.fx.graphics.style.all
-import matt.hurricanefx.tornadofx.style.copy
-import matt.hurricanefx.tornadofx.style.horizontal
-import matt.hurricanefx.tornadofx.style.insets
-import matt.hurricanefx.tornadofx.style.vertical
 
 private val GridPaneRowIdKey = "TornadoFX.GridPaneRowId"
 private val GridPaneParentObjectKey = "TornadoFX.GridPaneParentObject"
