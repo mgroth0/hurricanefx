@@ -48,7 +48,7 @@ import matt.hurricanefx.eye.lib.ChangeListener
 import matt.hurricanefx.eye.lib.onChangeUntilAfterFirst
 import matt.hurricanefx.tornadofx.nodes.add
 import matt.hurricanefx.tsprogressbar.ThreadSafeNodeWrapper
-import matt.kjlib.cache.LRUCache
+import matt.caching.cache.LRUCache
 import matt.klib.commons.thisMachine
 import matt.klib.dmap.withStoringDefault
 import matt.klib.file.MFile
