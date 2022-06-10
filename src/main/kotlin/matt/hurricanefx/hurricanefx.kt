@@ -19,7 +19,6 @@ import javafx.geometry.Bounds
 import javafx.scene.Cursor
 import javafx.scene.Node
 import javafx.scene.Parent
-import javafx.scene.SnapshotParameters
 import javafx.scene.chart.NumberAxis
 import javafx.scene.control.Button
 import javafx.scene.control.CheckBox
@@ -28,9 +27,7 @@ import javafx.scene.control.Tab
 import javafx.scene.image.Image
 import javafx.scene.image.ImageView
 import javafx.scene.input.ContextMenuEvent
-import javafx.scene.input.DataFormat
 import javafx.scene.input.MouseEvent
-import javafx.scene.input.TransferMode
 import javafx.scene.layout.ColumnConstraints
 import javafx.scene.layout.Pane
 import javafx.scene.layout.Region
@@ -52,8 +49,6 @@ import matt.hurricanefx.eye.lib.onChangeUntilAfterFirst
 import matt.hurricanefx.tornadofx.nodes.add
 import matt.hurricanefx.tsprogressbar.ThreadSafeNodeWrapper
 import matt.kjlib.cache.LRUCache
-import matt.klib.commons.TEMP_DIR
-import matt.klib.commons.get
 import matt.klib.commons.thisMachine
 import matt.klib.dmap.withStoringDefault
 import matt.klib.file.MFile
@@ -378,10 +373,7 @@ fun Pane.resizer(corner: Corner) {/*var y = 0.0
 
 }
 
-fun Image.save(file: MFile): MFile {
-  ImageIO.write(toBufferedImage(), file.extension, file)
-  return file
-}
+
 
 fun lazyTab(name: String, nodeOp: ()->Node) = Tab(name).apply {
   if (isSelected) {
