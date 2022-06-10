@@ -6,4 +6,5 @@ dependencies {
   api(libs.fx.controls)
   api(projects.kj.fx.image)
   implementation(projects.kj.caching)
+  implementation(projects.k.stream)
 }
