@@ -12,7 +12,7 @@ import javafx.scene.layout.Pane
 import javafx.scene.layout.VBox
 import matt.hurricanefx.eye.lib.onChange
 import matt.hurricanefx.eye.prop.cleanBind
-import matt.hurricanefx.tornadofx.bind.toBinding
+import matt.hurricanefx.tornadofx.eye.bind.toBinding
 import matt.hurricanefx.tornadofx.fx.attachTo
 import matt.hurricanefx.tornadofx.nodes.removeFromParent
 
