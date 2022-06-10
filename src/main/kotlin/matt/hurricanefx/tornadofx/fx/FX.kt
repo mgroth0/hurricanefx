@@ -25,7 +25,6 @@ import javafx.scene.control.TabPane
 import javafx.scene.control.TitledPane
 import javafx.scene.control.ToolBar
 import javafx.scene.layout.BorderPane
-import javafx.scene.layout.HBox
 import javafx.scene.layout.Pane
 import javafx.scene.layout.VBox
 import javafx.stage.Window
@@ -181,8 +180,6 @@ fun EventTarget.getChildList(): MutableList<Node>? = when (this) {
   is ToolBar   -> items
   is Pane      -> children
   is Group     -> children
-  is HBox      -> children
-  is VBox      -> children
   //    is Control -> (skin as? SkinBase<*>)?.children ?: getChildrenReflectively()
   //      is Parent -> getChildrenReflectively()
   else         -> null
