@@ -5,6 +5,7 @@ package matt.hurricanefx
 
 //import javafx.embed.swing.SwingFXUtils
 
+import com.sun.javafx.application.PlatformImpl.runLater
 import javafx.application.Application
 import javafx.beans.property.BooleanProperty
 import javafx.beans.property.DoubleProperty
@@ -48,7 +49,6 @@ import matt.hurricanefx.eye.lang.BProp
 import matt.hurricanefx.eye.lang.DProp
 import matt.hurricanefx.eye.lib.ChangeListener
 import matt.hurricanefx.eye.lib.onChangeUntilAfterFirst
-import matt.hurricanefx.tornadofx.async.runLater
 import matt.hurricanefx.tornadofx.clip.put
 import matt.hurricanefx.tornadofx.clip.putFiles
 import matt.hurricanefx.tornadofx.nodes.add

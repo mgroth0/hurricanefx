@@ -1,8 +1,8 @@
 package matt.hurricanefx.tsprogressbar
 
+import javafx.application.Platform.runLater
 import javafx.scene.Node
 import javafx.scene.control.ProgressBar
-import matt.hurricanefx.tornadofx.async.runLater
 
 
 /*easier to write in functions than ThreadSafeNodeWrapper<*>*/

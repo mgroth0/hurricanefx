@@ -1,10 +1,10 @@
 package matt.hurricanefx.laterprops
 
+import javafx.application.Platform.runLater
 import javafx.beans.property.BooleanProperty
 import javafx.beans.property.DoubleProperty
 import javafx.beans.property.SimpleBooleanProperty
 import javafx.beans.property.SimpleDoubleProperty
-import matt.hurricanefx.tornadofx.async.runLater
 import matt.klib.lang.jDefault
 
 fun BooleanProperty.later() = LaterBoolean().apply {
