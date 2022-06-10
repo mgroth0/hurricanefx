@@ -54,6 +54,8 @@ import matt.hurricanefx.eye.sflist.SortedFilteredList
 import matt.hurricanefx.tornadofx.control.bindTo
 import matt.klib.lang.decap
 import matt.klib.lang.err
+import kotlin.contracts.InvocationKind.EXACTLY_ONCE
+import kotlin.contracts.contract
 import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
 import kotlin.reflect.KMutableProperty1
@@ -193,12 +195,15 @@ fun <T> EventTarget.combobox(property: Property<T>? = null, values: List<T>? = n
   }
 
 
-fun <T> EventTarget.choicebox(property: Property<T>? = null, values: List<T>? = null, op: ChoiceBox<T>.()->Unit = {}) =
-  ChoiceBox<T>().attachTo(this, op) {
+inline fun <T> EventTarget.choicebox(property: Property<T>? = null, values: List<T>? = null, op: ChoiceBox<T>.()->Unit = {}): ChoiceBox<T> {
+  contract {
+	callsInPlace(op,EXACTLY_ONCE)
+  }
+  return ChoiceBox<T>().attachTo(this, op) {
 	if (values != null) it.items = (values as? ObservableList<T>) ?: values.asObservable()
 	if (property != null) it.bind(property)
   }
-
+}
 fun <T> EventTarget.listview(values: ObservableList<T>? = null, op: ListView<T>.()->Unit = {}) =
   ListView<T>().attachTo(this, op) {
 	if (values != null) {

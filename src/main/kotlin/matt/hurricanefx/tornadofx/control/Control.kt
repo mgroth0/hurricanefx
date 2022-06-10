@@ -32,6 +32,8 @@ import matt.hurricanefx.eye.sflist.SortedFilteredList
 import matt.klib.lang.err
 import java.text.Format
 import java.time.LocalDate
+import kotlin.contracts.InvocationKind.EXACTLY_ONCE
+import kotlin.contracts.contract
 
 
 fun EventTarget.colorpicker(
@@ -209,11 +211,14 @@ fun <T> EventTarget.slider(
 
 
 // Buttons
-fun EventTarget.button(text: String = "", graphic: Node? = null, op: Button.()->Unit = {}) =
-  Button(text).attachTo(this, op) {
+inline fun EventTarget.button(text: String = "", graphic: Node? = null, op: Button.()->Unit = {}): Button {
+  contract {
+	callsInPlace(op,EXACTLY_ONCE)
+  }
+  return Button(text).attachTo(this, op) {
 	if (graphic != null) it.graphic = graphic
   }
-
+}
 fun EventTarget.menubutton(text: String = "", graphic: Node? = null, op: MenuButton.()->Unit = {}) =
   MenuButton(text).attachTo(this, op) {
 	if (graphic != null) it.graphic = graphic

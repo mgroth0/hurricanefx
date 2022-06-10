@@ -34,21 +34,33 @@ import matt.hurricanefx.eye.collect.SetConversionListener
 import matt.hurricanefx.eye.collect.bind
 import matt.hurricanefx.tsprogressbar.NodeWrapper
 import matt.klib.lang.err
+import kotlin.contracts.InvocationKind.EXACTLY_ONCE
+import kotlin.contracts.contract
 
 
 /**
  * Add the given node to the pane, invoke the node operation and return the node. The `opcr` name
  * is an acronym for "op connect & return".
  */
-inline fun <T: Node> opcr(parent: EventTarget, node: T, op: T.()->Unit = {}) = node.apply {
-  parent.addChildIfPossible(this)
-  op(this)
+inline fun <T: Node> opcr(parent: EventTarget, node: T, op: T.()->Unit = {}): T {
+  contract {
+	callsInPlace(op, EXACTLY_ONCE)
+  }
+  return node.apply {
+	parent.addChildIfPossible(this)
+	op(this)
+  }
 }
 
 /**
  * Attaches the node to the pane and invokes the node operation.
  */
-inline fun <T: Node> T.attachTo(parent: EventTarget, op: T.()->Unit = {}): T = opcr(parent, this, op)
+inline fun <T: Node> T.attachTo(parent: EventTarget, op: T.()->Unit = {}): T {
+  contract {
+	callsInPlace(op, EXACTLY_ONCE)
+  }
+  return opcr(parent, this, op)
+}
 
 /**
  * Attaches the node to the pane and invokes the node operation.
@@ -58,7 +70,13 @@ inline fun <T: Node> T.attachTo(
   parent: EventTarget,
   after: T.()->Unit,
   before: (T)->Unit
-) = this.also(before).attachTo(parent, after)
+): T {
+  contract {
+	callsInPlace(before, EXACTLY_ONCE)
+	callsInPlace(after, EXACTLY_ONCE)
+  }
+  return this.also(before).attachTo(parent, after)
+}
 
 fun EventTarget.addChildIfPossible(nw: NodeWrapper, index: Int? = null) = addChildIfPossible(nw.node, index)
 
