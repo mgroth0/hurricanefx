@@ -63,7 +63,7 @@ import matt.hurricanefx.eye.lib.onChange
 import matt.hurricanefx.eye.lib.proxypropDouble
 import matt.hurricanefx.eye.prop.booleanBinding
 import matt.hurricanefx.eye.prop.cleanBind
-import matt.hurricanefx.tornadofx.eye.bind.toBinding
+import matt.hurricanefx.eye.bind.toBinding
 import matt.hurricanefx.tornadofx.control.properties
 import matt.hurricanefx.tornadofx.fx.addChildIfPossible
 import matt.hurricanefx.tornadofx.fx.getChildList

@@ -24,7 +24,7 @@ import matt.hurricanefx.eye.bind.internalBind
 import matt.hurricanefx.eye.lib.onChange
 import matt.hurricanefx.eye.prop.objectBinding
 import matt.hurricanefx.eye.prop.stringBinding
-import matt.hurricanefx.tornadofx.eye.bind.bindStringProperty
+import matt.hurricanefx.eye.bind.bindStringProperty
 import matt.hurricanefx.tornadofx.fx.attachTo
 import matt.hurricanefx.tornadofx.fx.opcr
 import matt.hurricanefx.tornadofx.nodes.getToggleGroup
