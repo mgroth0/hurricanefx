@@ -283,7 +283,7 @@ fun Node.togglegroup(property: ObservableValue<Any>? = null, op: ToggleGroup.()-
 
 /**
  * Bind the selectedValueProperty of this toggle group to the given property. Passing in a writeable value
- * will result in a bidirectional binding, while passing in a read only value will result in a unidirectional binding.
+ * will result in a bidirectional matt.klib.bind.binding, while passing in a read only value will result in a unidirectional matt.klib.bind.binding.
  *
  * If the toggles are configured with the value parameter (@see #togglebutton and #radiogroup), the corresponding
  * button will be selected when the value is changed. Likewise, if the selected toggle is changed,
