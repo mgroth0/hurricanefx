@@ -7,5 +7,5 @@ dependencies {
   api(projects.kj.fx.fxImage)
   implementation(projects.kj.caching)
   implementation(projects.k.stream)
-  implementation(projects.kj.async)
+  implementation(projects.k.async)
 }
