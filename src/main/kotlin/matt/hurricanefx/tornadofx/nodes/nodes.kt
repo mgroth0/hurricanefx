@@ -298,7 +298,7 @@ fun <T> TableView<T>.onUserSelect(clickCount: Int = 2, action: (T) -> Unit) {
     }
 }
 
-fun Node.onDoubleClick(filter: Boolean = false, action: (MouseEvent) -> Unit) {
+fun Node.setOnDoubleClick(filter: Boolean = false, action: (MouseEvent) -> Unit) {
     if (filter) {
         addEventFilter(MouseEvent.MOUSE_CLICKED) {
             if (it.clickCount == 2)

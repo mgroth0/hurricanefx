@@ -24,6 +24,7 @@ import javafx.scene.control.Button
 import javafx.scene.control.CheckBox
 import javafx.scene.control.ScrollPane
 import javafx.scene.control.Tab
+import javafx.scene.control.TreeTableView
 import javafx.scene.image.Image
 import javafx.scene.image.ImageView
 import javafx.scene.input.ContextMenuEvent
@@ -236,8 +237,6 @@ var ThreadSafeNodeWrapper<*>.visibleAndManaged: Boolean
   }
 
 
-
-
 var Button.op: ()->Unit
   set(value) {
 	setOnAction {
@@ -284,9 +283,6 @@ val fileIcons = LRUCache<MFile, BufferedImage>(500).withStoringDefault { f ->
 
 
 }
-
-
-
 
 
 enum class Corner { NW, NE, SW, SE }
@@ -374,7 +370,6 @@ fun Pane.resizer(corner: Corner) {/*var y = 0.0
 }
 
 
-
 fun lazyTab(name: String, nodeOp: ()->Node) = Tab(name).apply {
   if (isSelected) {
 	content = nodeOp()
@@ -441,6 +436,19 @@ fun Node.onDoubleClickConsume(action: ()->Unit) {
 	if (it.clickCount == 2) {
 	  action()
 	  it.consume()
+	}
+  }
+}
+
+class TreeTableTreeView<T>(val table: Boolean): TreeTableView<T>() {
+  override fun resize(width: Double, height: Double) {
+	super.resize(width, height)
+	if (!table) {
+	  val header = lookup("TableHeaderRow") as Pane
+	  header.minHeight = 0.0
+	  header.prefHeight = 0.0
+	  header.maxHeight = 0.0
+	  header.isVisible = false
 	}
   }
 }
