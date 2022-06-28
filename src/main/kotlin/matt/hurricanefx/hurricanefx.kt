@@ -52,8 +52,8 @@ import matt.hurricanefx.tsprogressbar.ThreadSafeNodeWrapper
 import matt.caching.cache.LRUCache
 import matt.klib.commons.thisMachine
 import matt.klib.dmap.withStoringDefault
-import matt.klib.file.MFile
-import matt.klib.file.toMFile
+import matt.file.MFile
+import matt.file.toMFile
 import matt.klib.lang.NEVER
 import matt.klib.sys.WINDOWS
 import matt.stream.recurse.chain

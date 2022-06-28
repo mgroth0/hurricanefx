@@ -12,8 +12,8 @@ import javafx.stage.Window
 import matt.hurricanefx.tornadofx.dialog.FileChooserMode.Multi
 import matt.hurricanefx.tornadofx.dialog.FileChooserMode.Save
 import matt.hurricanefx.tornadofx.dialog.FileChooserMode.Single
-import matt.klib.file.MFile
-import matt.klib.file.toMFile
+import matt.file.MFile
+import matt.file.toMFile
 
 
 /**
