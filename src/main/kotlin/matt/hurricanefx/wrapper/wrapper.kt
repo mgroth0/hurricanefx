@@ -9,6 +9,7 @@ import javafx.scene.layout.VBox
 import matt.hurricanefx.addAll
 import matt.hurricanefx.stage
 import matt.hurricanefx.tornadofx.nodes.add
+import matt.hurricanefx.tornadofx.nodes.plusAssign
 
 private typealias NW = NodeWrapper<*>
 
@@ -30,6 +31,13 @@ interface NodeWrapper<N: Node> {
 	this@NodeWrapper.node.add(this)
   }
 
+  operator fun plusAssign(n: Node) {
+	node += n
+  }
+
+  operator fun plusAssign(n: NodeWrapper<*>) {
+	node += n.node
+  }
 
 }
 
