@@ -25,7 +25,6 @@ import javafx.scene.control.CheckBox
 import javafx.scene.control.ScrollPane
 import javafx.scene.control.Tab
 import javafx.scene.control.TreeTableView
-import javafx.scene.image.Image
 import javafx.scene.image.ImageView
 import javafx.scene.input.ContextMenuEvent
 import javafx.scene.input.MouseEvent
@@ -37,6 +36,9 @@ import javafx.scene.paint.Color
 import javafx.scene.shape.Rectangle
 import javafx.stage.FileChooser
 import javafx.stage.Stage
+import matt.caching.cache.LRUCache
+import matt.file.MFile
+import matt.file.toMFile
 import matt.fx.image.jswingIconToImage
 import matt.fx.image.toBufferedImage
 import matt.hurricanefx.Corner.NE
@@ -49,18 +51,15 @@ import matt.hurricanefx.eye.lib.ChangeListener
 import matt.hurricanefx.eye.lib.onChangeUntilAfterFirst
 import matt.hurricanefx.tornadofx.nodes.add
 import matt.hurricanefx.tsprogressbar.ThreadSafeNodeWrapper
-import matt.caching.cache.LRUCache
+import matt.hurricanefx.wrapper.NodeWrapper
 import matt.klib.commons.thisMachine
 import matt.klib.dmap.withStoringDefault
-import matt.file.MFile
-import matt.file.toMFile
 import matt.klib.lang.NEVER
 import matt.klib.sys.WINDOWS
 import matt.stream.recurse.chain
 import java.awt.image.BufferedImage
 import java.lang.ref.WeakReference
 import java.util.WeakHashMap
-import javax.imageio.ImageIO
 import javax.swing.JFileChooser
 import javax.swing.filechooser.FileSystemView
 
@@ -430,6 +429,13 @@ fun BooleanProperty.checkbox() = CheckBox(name).also {
 fun Pane.addAll(vararg nodes: Node) = children.addAll(nodes)
 fun Pane.addAll(nodes: Iterable<Node>) = children.addAll(nodes)
 
+fun NodeWrapper<Pane>.addAll(vararg nodes: Node) = node.addAll(*nodes)
+fun NodeWrapper<Pane>.addAll(nodes: Iterable<Node>) = node.addAll(nodes)
+
+/*fun Stage.setOnClosed(op: () -> Unit) {
+  showingProperty()
+}*/
+
 
 fun Node.onDoubleClickConsume(action: ()->Unit) {
   setOnMouseClicked {
@@ -451,4 +457,12 @@ class TreeTableTreeView<T>(val table: Boolean): TreeTableView<T>() {
 	  header.isVisible = false
 	}
   }
+}
+
+fun Button.disable() {
+  isDisable = true
+}
+
+fun Button.enable() {
+  isDisable = false
 }

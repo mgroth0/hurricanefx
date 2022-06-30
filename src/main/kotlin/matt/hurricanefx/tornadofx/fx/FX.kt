@@ -4,6 +4,7 @@
 
 package matt.hurricanefx.tornadofx.fx
 
+import matt.hurricanefx.wrapper.NodeWrapper
 import javafx.beans.property.ListProperty
 import javafx.collections.ObservableList
 import javafx.collections.ObservableMap
@@ -32,7 +33,6 @@ import matt.hurricanefx.eye.collect.ListConversionListener
 import matt.hurricanefx.eye.collect.MapConversionListener
 import matt.hurricanefx.eye.collect.SetConversionListener
 import matt.hurricanefx.eye.collect.bind
-import matt.hurricanefx.tsprogressbar.NodeWrapper
 import matt.klib.lang.err
 import kotlin.contracts.InvocationKind.EXACTLY_ONCE
 import kotlin.contracts.contract
@@ -78,7 +78,7 @@ inline fun <T: Node> T.attachTo(
   return this.also(before).attachTo(parent, after)
 }
 
-fun EventTarget.addChildIfPossible(nw: NodeWrapper, index: Int? = null) = addChildIfPossible(nw.node, index)
+fun EventTarget.addChildIfPossible(nw: NodeWrapper<*>, index: Int? = null) = addChildIfPossible(nw.node, index)
 
 @Suppress("UNNECESSARY_SAFE_CALL")
 fun EventTarget.addChildIfPossible(node: Node, index: Int? = null) {
@@ -93,7 +93,11 @@ fun EventTarget.addChildIfPossible(node: Node, index: Int? = null) {
 	  root = node as Parent
 	}
 
-	is ScrollPane     -> content = node
+	is ScrollPane     -> {
+	  /*content = node*/ /*TORNADOFX DEFAULT*/
+	  content.addChildIfPossible(node) /*MATT'S WAY*/
+	}
+
 	is Tab            -> {
 	  // Map the tab to the UIComponent for later retrieval. Used to close tab with UIComponent.close()
 	  // and to connect the onTabSelected callback

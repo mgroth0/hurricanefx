@@ -1,18 +1,14 @@
 package matt.hurricanefx.tsprogressbar
 
+import matt.hurricanefx.wrapper.NodeWrapper
 import javafx.application.Platform.runLater
 import javafx.scene.Node
 import javafx.scene.control.ProgressBar
 
 
-/*easier to write in functions than ThreadSafeNodeWrapper<*>*/
-sealed interface NodeWrapper {
-  val node: Node
-}
-
 sealed class ThreadSafeNodeWrapper<N: Node>(
   override val node: N
-): NodeWrapper
+): NodeWrapper<N>
 
 class TSProgressBar: ThreadSafeNodeWrapper<ProgressBar>(ProgressBar()) {
   var progress: Double

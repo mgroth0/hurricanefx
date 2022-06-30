@@ -4,6 +4,7 @@
 
 package matt.hurricanefx.tornadofx.nodes
 
+import matt.hurricanefx.wrapper.NodeWrapper
 import javafx.application.Platform
 import javafx.beans.binding.BooleanBinding
 import javafx.beans.property.DoubleProperty
@@ -67,7 +68,6 @@ import matt.hurricanefx.eye.bind.toBinding
 import matt.hurricanefx.tornadofx.control.properties
 import matt.hurricanefx.tornadofx.fx.addChildIfPossible
 import matt.hurricanefx.tornadofx.fx.getChildList
-import matt.hurricanefx.tsprogressbar.NodeWrapper
 
 fun EventTarget.getToggleGroup(): ToggleGroup? = properties["tornadofx.togglegroup"] as ToggleGroup?
 
@@ -118,7 +118,7 @@ fun EventTarget.replaceChildren(vararg node: Node) {
 operator fun EventTarget.plusAssign(node: Node) {
     addChildIfPossible(node)
 }
-operator fun EventTarget.plusAssign(node: NodeWrapper) {
+operator fun EventTarget.plusAssign(node: NodeWrapper<*>) {
     addChildIfPossible(node)
 }
 
@@ -132,7 +132,7 @@ fun <T : EventTarget> T.replaceChildren(op: T.() -> Unit) {
 }
 
 fun EventTarget.add(node: Node) = plusAssign(node)
-fun EventTarget.add(nw: NodeWrapper) = plusAssign(nw)
+fun EventTarget.add(nw: NodeWrapper<*>) = plusAssign(nw)
 
 var Region.useMaxWidth: Boolean
     get() = maxWidth == Double.MAX_VALUE

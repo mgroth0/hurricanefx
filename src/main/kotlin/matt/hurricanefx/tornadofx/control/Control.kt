@@ -29,6 +29,7 @@ import matt.hurricanefx.tornadofx.fx.attachTo
 import matt.hurricanefx.tornadofx.fx.opcr
 import matt.hurricanefx.tornadofx.nodes.getToggleGroup
 import matt.hurricanefx.eye.sflist.SortedFilteredList
+import matt.hurricanefx.wrapper.NodeWrapper
 import matt.klib.lang.err
 import java.text.Format
 import java.time.LocalDate
@@ -52,6 +53,7 @@ fun EventTarget.colorpicker(
 fun EventTarget.textflow(op: TextFlow.()->Unit = {}) = TextFlow().attachTo(this, op)
 
 fun EventTarget.text(op: Text.()->Unit = {}) = Text().attachTo(this, op)
+fun NodeWrapper<*>.text(op: Text.()->Unit = {}) = node.text(op)
 
 internal val EventTarget.properties: ObservableMap<Any, Any>
   get() = when (this) {
@@ -89,15 +91,23 @@ fun EventTarget.text(initialValue: String? = null, op: Text.()->Unit = {}) = Tex
   if (initialValue != null) it.text = initialValue
 }
 
+fun NodeWrapper<*>.text(initialValue: String? = null, op: Text.()->Unit = {}) = node.text(initialValue, op)
+
 fun EventTarget.text(property: Property<String>, op: Text.()->Unit = {}) = text().apply {
   bind(property)
   op(this)
 }
 
+fun NodeWrapper<*>.text(property: Property<String>, op: Text.()->Unit = {}) = node.text(property, op)
+
 fun EventTarget.text(observable: ObservableValue<String>, op: Text.()->Unit = {}) = text().apply {
   bind(observable)
   op(this)
 }
+
+
+fun NodeWrapper<*>.text(observable: ObservableValue<String>, op: Text.()->Unit = {}) = node.text(observable, op)
+
 
 fun EventTarget.textfield(value: String? = null, op: TextField.()->Unit = {}) = TextField().attachTo(this, op) {
   if (value != null) it.text = value
@@ -147,16 +157,24 @@ fun EventTarget.textarea(value: String? = null, op: TextArea.()->Unit = {}) = Te
   if (value != null) it.text = value
 }
 
+fun NodeWrapper<*>.textarea(value: String? = null, op: TextArea.()->Unit = {}) = node.textarea(value, op)
+
 fun EventTarget.textarea(property: ObservableValue<String>, op: TextArea.()->Unit = {}) = textarea().apply {
   bind(property)
   op(this)
 }
+
+fun NodeWrapper<*>.textarea(property: ObservableValue<String>, op: TextArea.()->Unit = {}) = node.textarea(property, op)
 
 fun <T> EventTarget.textarea(property: Property<T>, converter: StringConverter<T>, op: TextArea.()->Unit = {}) =
   textarea().apply {
 	textProperty().bindBidirectional(property, converter)
 	op(this)
   }
+
+fun <T> NodeWrapper<*>.textarea(property: Property<T>, converter: StringConverter<T>, op: TextArea.()->Unit = {}) =
+  node.textarea(property, converter, op)
+
 
 fun EventTarget.buttonbar(buttonOrder: String? = null, op: (ButtonBar.()->Unit)) = ButtonBar().attachTo(this, op) {
   if (buttonOrder != null) it.buttonOrder = buttonOrder
@@ -167,6 +185,9 @@ fun EventTarget.checkbox(text: String? = null, property: Property<Boolean>? = nu
   CheckBox(text).attachTo(this, op) {
 	if (property != null) it.bind(property)
   }
+
+fun NodeWrapper<*>.checkbox(text: String? = null, property: Property<Boolean>? = null, op: CheckBox.()->Unit = {}) =
+  node.checkbox(text, property, op)
 
 fun EventTarget.progressindicator(op: ProgressIndicator.()->Unit = {}) = ProgressIndicator().attachTo(this, op)
 fun EventTarget.progressindicator(property: Property<Number>, op: ProgressIndicator.()->Unit = {}) =
@@ -213,12 +234,13 @@ fun <T> EventTarget.slider(
 // Buttons
 inline fun EventTarget.button(text: String = "", graphic: Node? = null, op: Button.()->Unit = {}): Button {
   contract {
-	callsInPlace(op,EXACTLY_ONCE)
+	callsInPlace(op, EXACTLY_ONCE)
   }
   return Button(text).attachTo(this, op) {
 	if (graphic != null) it.graphic = graphic
   }
 }
+
 fun EventTarget.menubutton(text: String = "", graphic: Node? = null, op: MenuButton.()->Unit = {}) =
   MenuButton(text).attachTo(this, op) {
 	if (graphic != null) it.graphic = graphic
@@ -387,6 +409,9 @@ fun EventTarget.label(text: String = "", graphic: Node? = null, op: Label.()->Un
 	if (graphic != null) it.graphic = graphic
   }
 
+fun NodeWrapper<*>.label(text: String = "", graphic: Node? = null, op: Label.()->Unit = {}) =
+  node.label(text, graphic, op)
+
 inline fun <reified T> EventTarget.label(
   observable: ObservableValue<T>,
   graphicProperty: ObservableValue<Node>? = null,
@@ -406,6 +431,13 @@ inline fun <reified T> EventTarget.label(
   if (graphic != null) graphicProperty().bind(graphicProperty)
   op(this)
 }
+
+inline fun <reified T> NodeWrapper<*>.label(
+  observable: ObservableValue<T>,
+  graphicProperty: ObservableValue<Node>? = null,
+  converter: StringConverter<in T>? = null,
+  noinline op: Label.()->Unit = {}
+) = node.label(observable, graphicProperty, converter, op)
 
 fun EventTarget.hyperlink(text: String = "", graphic: Node? = null, op: Hyperlink.()->Unit = {}) =
   Hyperlink(text, graphic).attachTo(this, op)
