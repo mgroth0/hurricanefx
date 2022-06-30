@@ -416,7 +416,7 @@ fun <N: Node> Parent.addr(child: N, op: (N.()->Unit)? = null): N {
   add(child)
   return child
 }
-fun <N: Node> NodeWrapper<Parent>.addr(child: N, op: (N.()->Unit)? = null): N {
+fun <N: Node> NodeWrapper<out Parent>.addr(child: N, op: (N.()->Unit)? = null): N {
   op?.invoke(child)
   node.add(child)
   return child
