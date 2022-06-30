@@ -416,6 +416,11 @@ fun <N: Node> Parent.addr(child: N, op: (N.()->Unit)? = null): N {
   add(child)
   return child
 }
+fun <N: Node> NodeWrapper<Parent>.addr(child: N, op: (N.()->Unit)? = null): N {
+  op?.invoke(child)
+  node.add(child)
+  return child
+}
 
 typealias FXDuration = javafx.util.Duration
 
