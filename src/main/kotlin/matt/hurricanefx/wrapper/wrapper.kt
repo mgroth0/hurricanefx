@@ -1,12 +1,12 @@
 package matt.hurricanefx.wrapper
 
+import javafx.collections.ObservableList
 import javafx.geometry.Pos
 import javafx.scene.Node
 import javafx.scene.Scene
 import javafx.scene.control.ScrollPane
 import javafx.scene.layout.Pane
 import javafx.scene.layout.VBox
-import kotlinx.serialization.json.JsonNull.content
 import matt.hurricanefx.addAll
 import matt.hurricanefx.stage
 import matt.hurricanefx.tornadofx.nodes.add
@@ -46,7 +46,10 @@ interface PaneWrapper<N: Pane>: NodeWrapper<N> {
   operator fun Collection<Node>.unaryPlus() {
 	node.addAll(this)
   }
+  val children: ObservableList<Node> get() = node.children
 }
+
+
 
 @FXNodeWrapperDSL
 class VBoxWrapper(override val node: VBox = VBox(), op: VBoxWrapper.()->Unit = {}): PaneWrapper<VBox> {
