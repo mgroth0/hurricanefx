@@ -6,6 +6,7 @@ import javafx.scene.Scene
 import javafx.scene.control.ScrollPane
 import javafx.scene.layout.Pane
 import javafx.scene.layout.VBox
+import kotlinx.serialization.json.JsonNull.content
 import matt.hurricanefx.addAll
 import matt.hurricanefx.stage
 import matt.hurricanefx.tornadofx.nodes.add
@@ -64,9 +65,12 @@ class VBoxWrapper(override val node: VBox = VBox(), op: VBoxWrapper.()->Unit = {
 class ScrollingVBoxWrapper(vbox: VBox = VBox(), op: ScrollingVBoxWrapper.()->Unit = {}): NodeWrapper<ScrollPane> {
   constructor(vbox: VBoxWrapper, op: ScrollingVBoxWrapper.()->Unit = {}): this(vbox.node, op)
 
+  override val node = ScrollPane(VBox())
+
   init {
 	op()
+	node.content = vbox
   }
 
-  override val node = ScrollPane(VBox())
+
 }
