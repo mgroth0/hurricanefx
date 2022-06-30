@@ -1,5 +1,6 @@
 package matt.hurricanefx.wrapper
 
+import javafx.geometry.Pos
 import javafx.scene.Node
 import javafx.scene.Scene
 import javafx.scene.control.ScrollPane
@@ -40,6 +41,12 @@ interface PaneWrapper<N: Pane>: NodeWrapper<N> {
 
 @FXNodeWrapperDSL
 class VBoxWrapper(override val node: VBox = VBox(), op: VBoxWrapper.()->Unit = {}): PaneWrapper<VBox> {
+  var alignment: Pos
+	get() = node.alignment
+	set(value) {
+	  node.alignment = value
+	}
+
   init {
 	op()
   }
