@@ -5,6 +5,9 @@ import javafx.geometry.Pos
 import javafx.scene.Node
 import javafx.scene.Scene
 import javafx.scene.control.ScrollPane
+import javafx.scene.control.TreeItem
+import javafx.scene.control.TreeTableView
+import javafx.scene.control.TreeView
 import javafx.scene.layout.Pane
 import javafx.scene.layout.VBox
 import matt.hurricanefx.addAll
@@ -46,9 +49,9 @@ interface PaneWrapper<N: Pane>: NodeWrapper<N> {
   operator fun Collection<Node>.unaryPlus() {
 	node.addAll(this)
   }
+
   val children: ObservableList<Node> get() = node.children
 }
-
 
 
 @FXNodeWrapperDSL
@@ -74,6 +77,38 @@ class ScrollingVBoxWrapper(vbox: VBox = VBox(), op: ScrollingVBoxWrapper.()->Uni
 	op()
 	node.content = vbox
   }
+}
 
+sealed interface TreeLikeWrapper<N: Node, T>: NodeWrapper<N> {
+  var root: TreeItem<T>
+}
 
+@FXNodeWrapperDSL
+class TreeViewWrapper<T>(override val node: TreeView<T> = TreeView(), op: TreeViewWrapper<T>.()->Unit = {}):
+  TreeLikeWrapper<TreeView<T>, T> {
+  init {
+	op()
+  }
+
+  override var root: TreeItem<T>
+	get() = node.root
+	set(value) {
+	  node.root = value
+	}
+}
+
+@FXNodeWrapperDSL
+class TreeTableViewWrapper<T>(
+  override val node: TreeTableView<T> = TreeTableView(),
+  op: TreeTableViewWrapper<T>.()->Unit = {}
+): TreeLikeWrapper<TreeTableView<T>, T> {
+  init {
+	op()
+  }
+
+  override var root: TreeItem<T>
+	get() = node.root
+	set(value) {
+	  node.root = value
+	}
 }
