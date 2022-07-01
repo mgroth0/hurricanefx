@@ -11,6 +11,7 @@ import javafx.scene.control.TreeView
 import javafx.scene.layout.Pane
 import javafx.scene.layout.VBox
 import matt.hurricanefx.addAll
+import matt.hurricanefx.eye.lib.onChange
 import matt.hurricanefx.stage
 import matt.hurricanefx.tornadofx.nodes.add
 import matt.hurricanefx.tornadofx.nodes.plusAssign
@@ -81,6 +82,8 @@ class ScrollingVBoxWrapper(vbox: VBox = VBox(), op: ScrollingVBoxWrapper.()->Uni
 
 sealed interface TreeLikeWrapper<N: Node, T>: NodeWrapper<N> {
   var root: TreeItem<T>
+  var isShowRoot: Boolean
+  fun setOnSelectionChange(listener: (TreeItem<T>?)->Unit)
 }
 
 @FXNodeWrapperDSL
@@ -95,6 +98,16 @@ class TreeViewWrapper<T>(override val node: TreeView<T> = TreeView(), op: TreeVi
 	set(value) {
 	  node.root = value
 	}
+  override var isShowRoot: Boolean
+	get() = node.isShowRoot
+	set(value) {
+	  node.isShowRoot = value
+	}
+
+
+  override fun setOnSelectionChange(listener: (TreeItem<T>?)->Unit) {
+	node.selectionModel.selectedItemProperty().onChange(listener)
+  }
 }
 
 @FXNodeWrapperDSL
@@ -111,4 +124,13 @@ class TreeTableViewWrapper<T>(
 	set(value) {
 	  node.root = value
 	}
+  override var isShowRoot: Boolean
+	get() = node.isShowRoot
+	set(value) {
+	  node.isShowRoot = value
+	}
+
+  override fun setOnSelectionChange(listener: (TreeItem<T>?)->Unit) {
+	node.selectionModel.selectedItemProperty().onChange(listener)
+  }
 }
