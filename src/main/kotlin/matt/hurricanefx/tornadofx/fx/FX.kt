@@ -95,6 +95,7 @@ fun EventTarget.addChildIfPossible(node: Node, index: Int? = null) {
 
 	is ScrollPane     -> {
 	  /*content = node*/ /*TORNADOFX DEFAULT*/
+
 	  content.addChildIfPossible(node) /*MATT'S WAY*/
 	}
 
