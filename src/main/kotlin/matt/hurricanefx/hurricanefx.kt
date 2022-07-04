@@ -213,12 +213,20 @@ fun Node.visibleAndManagedProp(): BooleanProperty {
   managedProperty().bind(r)
   return r
 }
+fun NodeWrapper<*>.visibleAndManagedProp() = node.visibleAndManagedProp()
 
 var Node.visibleAndManaged: Boolean
   get() = isVisible && isManaged
   set(value) {
 	isVisible = value
 	isManaged = value
+  }
+
+var NodeWrapper<*>.visibleAndManaged: Boolean
+  get() = node.isVisible && node.isManaged
+  set(value) {
+	node.isVisible = value
+	node.isManaged = value
   }
 
 fun ThreadSafeNodeWrapper<*>.visibleAndManagedProp(): BooleanProperty {
@@ -267,12 +275,13 @@ fun intColorToFXColor(i: Int): Color {
 }
 
 
+@Deprecated("looks bad, slow, and buggy. Use my own icons.")
 val fileIcons = LRUCache<MFile, BufferedImage>(500).withStoringDefault { f ->
-
+  
   if (thisMachine is WINDOWS) jswingIconToImage(
 	FileSystemView.getFileSystemView().getSystemIcon(f)
   )!!.toBufferedImage() else {
-	val icon = JFileChooser().let { it.ui.getFileView(it) }.getIcon(f)
+	val icon = JFileChooser().let { it.ui.getFileView(it) }.getIcon(f)!!
 	val bi = BufferedImage(
 	  icon.iconWidth, icon.iconHeight, BufferedImage.TYPE_INT_ARGB
 	)

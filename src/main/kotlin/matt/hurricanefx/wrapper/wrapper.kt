@@ -4,17 +4,23 @@ import javafx.collections.ObservableList
 import javafx.geometry.Pos
 import javafx.scene.Node
 import javafx.scene.Scene
+import javafx.scene.control.MultipleSelectionModel
 import javafx.scene.control.ScrollPane
 import javafx.scene.control.TreeItem
 import javafx.scene.control.TreeTableView
+import javafx.scene.control.TreeTableView.ResizeFeatures
 import javafx.scene.control.TreeView
 import javafx.scene.layout.Pane
+import javafx.scene.layout.Priority
 import javafx.scene.layout.VBox
+import javafx.util.Callback
 import matt.hurricanefx.addAll
 import matt.hurricanefx.eye.lib.onChange
 import matt.hurricanefx.stage
+import matt.hurricanefx.tornadofx.item.selectedValue
 import matt.hurricanefx.tornadofx.nodes.add
 import matt.hurricanefx.tornadofx.nodes.plusAssign
+import matt.hurricanefx.tornadofx.tree.selectedValue
 
 private typealias NW = NodeWrapper<*>
 
@@ -44,12 +50,14 @@ interface NodeWrapper<N: Node> {
 	node += n.node
   }
 
+
 }
 
 interface PaneWrapper<N: Pane>: NodeWrapper<N> {
   operator fun Collection<Node>.unaryPlus() {
 	node.addAll(this)
   }
+
 
   val children: ObservableList<Node> get() = node.children
 }
@@ -84,6 +92,11 @@ sealed interface TreeLikeWrapper<N: Node, T>: NodeWrapper<N> {
   var root: TreeItem<T>
   var isShowRoot: Boolean
   fun setOnSelectionChange(listener: (TreeItem<T>?)->Unit)
+  val selectedItem: TreeItem<T>?
+  val selectedValue: T?
+  val selectionModel: MultipleSelectionModel<TreeItem<T>>
+  fun scrollTo(i: Int)
+  fun getRow(ti: TreeItem<T>): Int
 }
 
 @FXNodeWrapperDSL
@@ -108,6 +121,12 @@ class TreeViewWrapper<T>(override val node: TreeView<T> = TreeView(), op: TreeVi
   override fun setOnSelectionChange(listener: (TreeItem<T>?)->Unit) {
 	node.selectionModel.selectedItemProperty().onChange(listener)
   }
+
+  override val selectedItem: TreeItem<T>? get() = node.selectionModel.selectedItem
+  override val selectedValue: T? get() = node.selectedValue
+  override val selectionModel: MultipleSelectionModel<TreeItem<T>> get() = node.selectionModel
+  override fun scrollTo(i: Int) = node.scrollTo(i)
+  override fun getRow(ti: TreeItem<T>) = node.getRow(ti)
 }
 
 @FXNodeWrapperDSL
@@ -130,7 +149,21 @@ class TreeTableViewWrapper<T>(
 	  node.isShowRoot = value
 	}
 
+  var columnResizePolicy: Callback<TreeTableView.ResizeFeatures<*>, Boolean>
+	get() = node.columnResizePolicy
+	set(value) {
+	  node.columnResizePolicy = value
+	}
+  val columns get() = node.columns
+  override fun getRow(ti: TreeItem<T>) = node.getRow(ti)
+
   override fun setOnSelectionChange(listener: (TreeItem<T>?)->Unit) {
 	node.selectionModel.selectedItemProperty().onChange(listener)
   }
+
+  override val selectedItem: TreeItem<T>? get() = node.selectionModel.selectedItem
+  override val selectedValue: T? get() = selectedItem?.value
+  override val selectionModel: MultipleSelectionModel<TreeItem<T>> get() = node.selectionModel
+  override fun scrollTo(i: Int) = node.scrollTo(i)
+
 }
