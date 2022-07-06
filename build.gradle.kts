@@ -1,4 +1,3 @@
-modtype = LIB
 
 dependencies {
   implementation(kotlin("reflect"))
