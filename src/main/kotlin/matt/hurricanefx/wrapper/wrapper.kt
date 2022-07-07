@@ -1,5 +1,6 @@
 package matt.hurricanefx.wrapper
 
+import javafx.beans.property.DoubleProperty
 import javafx.collections.ObservableList
 import javafx.geometry.Pos
 import javafx.scene.Node
@@ -11,6 +12,7 @@ import javafx.scene.control.TreeTableView
 import javafx.scene.control.TreeView
 import javafx.scene.layout.HBox
 import javafx.scene.layout.Pane
+import javafx.scene.layout.Region
 import javafx.scene.layout.VBox
 import javafx.util.Callback
 import matt.hurricanefx.addAll
@@ -51,7 +53,47 @@ interface NodeWrapper<N: Node> {
 
 }
 
-interface PaneWrapper<N: Pane>: NodeWrapper<N> {
+interface RegionWrapper<N: Region>: NodeWrapper<N> {
+  val prefWidthProperty: DoubleProperty get() = node.prefWidthProperty()
+  var prefWidth: Double
+	get() = node.prefWidth
+	set(value) {
+	  node.prefWidth = value
+	}
+  val minWidthProperty: DoubleProperty get() = node.minWidthProperty()
+  var minWidth: Double
+	get() = node.minWidth
+	set(value) {
+	  node.minWidth = value
+	}
+  val maxWidthProperty: DoubleProperty get() = node.maxWidthProperty()
+  var maxWidth: Double
+	get() = node.maxWidth
+	set(value) {
+	  node.maxWidth = value
+	}
+
+  val prefHeightProperty: DoubleProperty get() = node.prefHeightProperty()
+  var prefHeight: Double
+	get() = node.prefHeight
+	set(value) {
+	  node.prefHeight = value
+	}
+  val minHeightProperty: DoubleProperty get() = node.minHeightProperty()
+  var minHeight: Double
+	get() = node.minHeight
+	set(value) {
+	  node.minHeight = value
+	}
+  val maxHeightProperty: DoubleProperty get() = node.maxHeightProperty()
+  var maxHeight: Double
+	get() = node.maxHeight
+	set(value) {
+	  node.maxHeight = value
+	}
+}
+
+interface PaneWrapper<N: Pane>: RegionWrapper<N> {
   operator fun Collection<Node>.unaryPlus() {
 	node.addAll(this)
   }
@@ -62,6 +104,7 @@ interface PaneWrapper<N: Pane>: NodeWrapper<N> {
 
 
 interface BoxWrapper<N: Pane>: PaneWrapper<N> {
+
   var alignment: Pos
 	get() = (node as? HBox)?.alignment ?: (node as VBox).alignment
 	set(value) {
