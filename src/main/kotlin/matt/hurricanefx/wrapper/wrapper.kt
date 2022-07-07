@@ -26,6 +26,7 @@ import matt.hurricanefx.addAll
 import matt.hurricanefx.eye.lib.onChange
 import matt.hurricanefx.stage
 import matt.hurricanefx.tornadofx.nodes.add
+import matt.hurricanefx.tornadofx.nodes.getToggleGroup
 import matt.hurricanefx.tornadofx.nodes.plusAssign
 import matt.hurricanefx.tornadofx.tree.selectedValue
 
@@ -36,6 +37,7 @@ annotation class FXNodeWrapperDSL
 
 interface EventTargetWrapper<N: EventTarget> {
   val node: N
+  fun getToggleGroup() = node.getToggleGroup()
 }
 
 fun EventTarget.wrapped() = object: EventTargetWrapper<EventTarget> {
