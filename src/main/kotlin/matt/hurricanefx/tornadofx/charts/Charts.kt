@@ -3,15 +3,23 @@ package matt.hurricanefx.tornadofx.charts
 /*slightly modified code I stole from tornadofx*/
 
 import javafx.collections.ObservableList
-import javafx.event.EventTarget
-import javafx.scene.chart.*
+import javafx.scene.chart.AreaChart
+import javafx.scene.chart.Axis
+import javafx.scene.chart.BarChart
+import javafx.scene.chart.BubbleChart
+import javafx.scene.chart.LineChart
+import javafx.scene.chart.PieChart
+import javafx.scene.chart.ScatterChart
+import javafx.scene.chart.StackedBarChart
+import javafx.scene.chart.XYChart
 import matt.hurricanefx.tornadofx.fx.attachTo
 import matt.hurricanefx.tornadofx.fx.opcr
+import matt.hurricanefx.wrapper.EventTargetWrapper
 
 /**
  * Create a PieChart with optional title data and add to the parent pane. The optional op will be performed on the new instance.
  */
-fun EventTarget.piechart(title: String? = null, data: ObservableList<PieChart.Data>? = null, op: PieChart.() -> Unit = {}): PieChart {
+fun EventTargetWrapper<*>.piechart(title: String? = null, data: ObservableList<PieChart.Data>? = null, op: PieChart.() -> Unit = {}): PieChart {
   val chart = if (data != null) PieChart(data) else PieChart()
   chart.title = title
   return opcr(this, chart, op)
@@ -37,37 +45,37 @@ fun PieChart.data(value: Map<String, Double>) = value.forEach { data(it.key, it.
 /**
  * Create a LineChart with optional title, axis and add to the parent pane. The optional op will be performed on the new instance.
  */
-fun <X, Y> EventTarget.linechart(title: String? = null, x: Axis<X>, y: Axis<Y>, op: LineChart<X, Y>.() -> Unit = {}) =
+fun <X, Y> EventTargetWrapper<*>.linechart(title: String? = null, x: Axis<X>, y: Axis<Y>, op: LineChart<X, Y>.() -> Unit = {}) =
 	LineChart<X, Y>(x, y).attachTo(this, op) { it.title = title }
 
 /**
  * Create an AreaChart with optional title, axis and add to the parent pane. The optional op will be performed on the new instance.
  */
-fun <X, Y> EventTarget.areachart(title: String? = null, x: Axis<X>, y: Axis<Y>, op: AreaChart<X, Y>.() -> Unit = {}) =
+fun <X, Y> EventTargetWrapper<*>.areachart(title: String? = null, x: Axis<X>, y: Axis<Y>, op: AreaChart<X, Y>.() -> Unit = {}) =
 	AreaChart<X,Y>(x, y).attachTo(this, op){ it.title = title }
 
 /**
  * Create a BubbleChart with optional title, axis and add to the parent pane. The optional op will be performed on the new instance.
  */
-fun <X, Y> EventTarget.bubblechart(title: String? = null, x: Axis<X>, y: Axis<Y>, op: BubbleChart<X, Y>.() -> Unit = {}) =
+fun <X, Y> EventTargetWrapper<*>.bubblechart(title: String? = null, x: Axis<X>, y: Axis<Y>, op: BubbleChart<X, Y>.() -> Unit = {}) =
 	BubbleChart<X, Y>(x, y).attachTo(this,op){ it.title = title }
 
 /**
  * Create a ScatterChart with optional title, axis and add to the parent pane. The optional op will be performed on the new instance.
  */
-fun <X, Y> EventTarget.scatterchart(title: String? = null, x: Axis<X>, y: Axis<Y>, op: ScatterChart<X, Y>.() -> Unit = {}) =
+fun <X, Y> EventTargetWrapper<*>.scatterchart(title: String? = null, x: Axis<X>, y: Axis<Y>, op: ScatterChart<X, Y>.() -> Unit = {}) =
 	ScatterChart(x, y).attachTo(this,op){ it.title = title }
 
 /**
  * Create a BarChart with optional title, axis and add to the parent pane. The optional op will be performed on the new instance.
  */
-fun <X, Y> EventTarget.barchart(title: String? = null, x: Axis<X>, y: Axis<Y>, op: BarChart<X, Y>.() -> Unit = {}) =
+fun <X, Y> EventTargetWrapper<*>.barchart(title: String? = null, x: Axis<X>, y: Axis<Y>, op: BarChart<X, Y>.() -> Unit = {}) =
 	BarChart<X, Y>(x, y).attachTo(this, op){ it.title = title }
 
 /**
  * Create a BarChart with optional title, axis and add to the parent pane. The optional op will be performed on the new instance.
  */
-fun <X, Y> EventTarget.stackedbarchart(title: String? = null, x: Axis<X>, y: Axis<Y>, op: StackedBarChart<X, Y>.() -> Unit = {}) =
+fun <X, Y> EventTargetWrapper<*>.stackedbarchart(title: String? = null, x: Axis<X>, y: Axis<Y>, op: StackedBarChart<X, Y>.() -> Unit = {}) =
 	StackedBarChart<X, Y>(x, y).attachTo(this, op) { it.title = title }
 
 /**

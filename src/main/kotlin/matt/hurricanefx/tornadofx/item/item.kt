@@ -5,19 +5,18 @@
 package matt.hurricanefx.tornadofx.item
 
 import javafx.application.Platform
+import javafx.beans.binding.Bindings
 import javafx.beans.property.DoubleProperty
 import javafx.beans.property.FloatProperty
 import javafx.beans.property.IntegerProperty
 import javafx.beans.property.Property
 import javafx.beans.property.ReadOnlyListProperty
 import javafx.beans.property.ReadOnlyObjectWrapper
-import javafx.beans.binding.Bindings
 import javafx.beans.property.SimpleObjectProperty
 import javafx.beans.value.ObservableValue
 import javafx.beans.value.WritableValue
 import javafx.collections.ListChangeListener
 import javafx.collections.ObservableList
-import javafx.event.EventTarget
 import javafx.scene.control.ChoiceBox
 import javafx.scene.control.ComboBox
 import javafx.scene.control.Control
@@ -47,12 +46,12 @@ import matt.hurricanefx.eye.collect.asObservable
 import matt.hurricanefx.eye.lib.onChange
 import matt.hurricanefx.eye.prop.observable
 import matt.hurricanefx.eye.prop.stringBinding
+import matt.hurricanefx.eye.sflist.SortedFilteredList
 import matt.hurricanefx.tornadofx.control.bind
+import matt.hurricanefx.tornadofx.control.bindTo
 import matt.hurricanefx.tornadofx.fx.attachTo
 import matt.hurricanefx.tornadofx.nodes.selectedItem
-import matt.hurricanefx.eye.sflist.SortedFilteredList
-import matt.hurricanefx.tornadofx.control.bindTo
-import matt.hurricanefx.wrapper.NodeWrapper
+import matt.hurricanefx.wrapper.EventTargetWrapper
 import matt.klib.lang.decap
 import matt.klib.lang.err
 import kotlin.contracts.InvocationKind.EXACTLY_ONCE
@@ -65,7 +64,7 @@ import kotlin.reflect.KProperty1
 /**
  * Create a spinner for an arbitrary type. This spinner requires you to configure a value factory, or it will throw an exception.
  */
-fun <T> EventTarget.spinner(
+fun <T> EventTargetWrapper<*>.spinner(
   editable: Boolean = false,
   property: Property<T>? = null,
   enableScroll: Boolean = false,
@@ -92,7 +91,7 @@ fun <T> EventTarget.spinner(
   }
 }
 
-inline fun <reified T: Number> EventTarget.spinner(
+inline fun <reified T: Number> EventTargetWrapper<*>.spinner(
   min: T? = null,
   max: T? = null,
   initialValue: T? = null,
@@ -141,7 +140,7 @@ inline fun <reified T: Number> EventTarget.spinner(
   return spinner.attachTo(this, op)
 }
 
-fun <T> EventTarget.spinner(
+fun <T> EventTargetWrapper<*>.spinner(
   items: ObservableList<T>,
   editable: Boolean = false,
   property: Property<T>? = null,
@@ -165,7 +164,7 @@ fun <T> EventTarget.spinner(
   }
 }
 
-fun <T> EventTarget.spinner(
+fun <T> EventTargetWrapper<*>.spinner(
   valueFactory: SpinnerValueFactory<T>,
   editable: Boolean = false,
   property: Property<T>? = null,
@@ -189,14 +188,14 @@ fun <T> EventTarget.spinner(
   }
 }
 
-fun <T> EventTarget.combobox(property: Property<T>? = null, values: List<T>? = null, op: ComboBox<T>.()->Unit = {}) =
+fun <T> EventTargetWrapper<*>.combobox(property: Property<T>? = null, values: List<T>? = null, op: ComboBox<T>.()->Unit = {}) =
   ComboBox<T>().attachTo(this, op) {
 	if (values != null) it.items = values as? ObservableList<T> ?: values.asObservable()
 	if (property != null) it.bind(property)
   }
 
 
-inline fun <T> EventTarget.choicebox(property: Property<T>? = null, values: List<T>? = null, op: ChoiceBox<T>.()->Unit = {}): ChoiceBox<T> {
+inline fun <T> EventTargetWrapper<*>.choicebox(property: Property<T>? = null, values: List<T>? = null, op: ChoiceBox<T>.()->Unit = {}): ChoiceBox<T> {
   contract {
 	callsInPlace(op,EXACTLY_ONCE)
   }
@@ -206,7 +205,6 @@ inline fun <T> EventTarget.choicebox(property: Property<T>? = null, values: List
   }
 }
 
-inline fun <T> NodeWrapper<*>.choicebox(property: Property<T>? = null, values: List<T>? = null, op: ChoiceBox<T>.()->Unit = {}) = node.choicebox(property,values,op)
 
 inline fun <T> choicebox(property: Property<T>? = null, values: List<T>? = null, op: ChoiceBox<T>.()->Unit = {}): ChoiceBox<T> {
   contract {
@@ -221,7 +219,7 @@ inline fun <T> choicebox(property: Property<T>? = null, values: List<T>? = null,
 
 
 
-fun <T> EventTarget.listview(values: ObservableList<T>? = null, op: ListView<T>.()->Unit = {}) =
+fun <T> EventTargetWrapper<*>.listview(values: ObservableList<T>? = null, op: ListView<T>.()->Unit = {}) =
   ListView<T>().attachTo(this, op) {
 	if (values != null) {
 	  if (values is SortedFilteredList<T>) values.bindTo(it)
@@ -229,10 +227,10 @@ fun <T> EventTarget.listview(values: ObservableList<T>? = null, op: ListView<T>.
 	}
   }
 
-fun <T> EventTarget.listview(values: ReadOnlyListProperty<T>, op: ListView<T>.()->Unit = {}) =
+fun <T> EventTargetWrapper<*>.listview(values: ReadOnlyListProperty<T>, op: ListView<T>.()->Unit = {}) =
   listview(values as ObservableValue<ObservableList<T>>, op)
 
-fun <T> EventTarget.listview(values: ObservableValue<ObservableList<T>>, op: ListView<T>.()->Unit = {}) =
+fun <T> EventTargetWrapper<*>.listview(values: ObservableValue<ObservableList<T>>, op: ListView<T>.()->Unit = {}) =
   ListView<T>().attachTo(this, op) {
 	fun rebinder() {
 	  (it.items as? SortedFilteredList<T>)?.bindTo(it)
@@ -244,7 +242,7 @@ fun <T> EventTarget.listview(values: ObservableValue<ObservableList<T>>, op: Lis
 	}
   }
 
-fun <T> EventTarget.tableview(items: ObservableList<T>? = null, op: TableView<T>.()->Unit = {}) =
+fun <T> EventTargetWrapper<*>.tableview(items: ObservableList<T>? = null, op: TableView<T>.()->Unit = {}) =
   TableView<T>().attachTo(this, op) {
 	if (items != null) {
 	  if (items is SortedFilteredList<T>) items.bindTo(it)
@@ -252,10 +250,10 @@ fun <T> EventTarget.tableview(items: ObservableList<T>? = null, op: TableView<T>
 	}
   }
 
-fun <T> EventTarget.tableview(items: ReadOnlyListProperty<T>, op: TableView<T>.()->Unit = {}) =
+fun <T> EventTargetWrapper<*>.tableview(items: ReadOnlyListProperty<T>, op: TableView<T>.()->Unit = {}) =
   tableview(items as ObservableValue<ObservableList<T>>, op)
 
-fun <T> EventTarget.tableview(items: ObservableValue<out ObservableList<T>>, op: TableView<T>.()->Unit = {}) =
+fun <T> EventTargetWrapper<*>.tableview(items: ObservableValue<out ObservableList<T>>, op: TableView<T>.()->Unit = {}) =
   TableView<T>().attachTo(this, op) {
 	fun rebinder() {
 	  (it.items as? SortedFilteredList<T>)?.bindTo(it)
@@ -270,12 +268,12 @@ fun <T> EventTarget.tableview(items: ObservableValue<out ObservableList<T>>, op:
 	}
   }
 
-fun <T> EventTarget.treeview(root: TreeItem<T>? = null, op: TreeView<T>.()->Unit = {}) =
+fun <T> EventTargetWrapper<*>.treeview(root: TreeItem<T>? = null, op: TreeView<T>.()->Unit = {}) =
   TreeView<T>().attachTo(this, op) {
 	if (root != null) it.root = root
   }
 
-fun <T> EventTarget.treetableview(root: TreeItem<T>? = null, op: TreeTableView<T>.()->Unit = {}) =
+fun <T> EventTargetWrapper<*>.treetableview(root: TreeItem<T>? = null, op: TreeTableView<T>.()->Unit = {}) =
   TreeTableView<T>().attachTo(this, op) {
 	if (root != null) it.root = root
   }

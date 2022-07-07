@@ -4,20 +4,20 @@ package matt.hurricanefx.tornadofx.tab
 
 import javafx.beans.binding.BooleanBinding
 import javafx.beans.value.ObservableValue
-import javafx.event.EventTarget
 import javafx.scene.Node
 import javafx.scene.control.Tab
 import javafx.scene.control.TabPane
 import javafx.scene.layout.Pane
 import javafx.scene.layout.VBox
+import matt.hurricanefx.eye.bind.toBinding
 import matt.hurricanefx.eye.lib.onChange
 import matt.hurricanefx.eye.prop.cleanBind
-import matt.hurricanefx.eye.bind.toBinding
 import matt.hurricanefx.tornadofx.fx.attachTo
 import matt.hurricanefx.tornadofx.nodes.removeFromParent
+import matt.hurricanefx.wrapper.EventTargetWrapper
 import matt.hurricanefx.wrapper.wrapped
 
-fun EventTarget.tabpane(op: TabPane.()->Unit = {}) = TabPane().attachTo(this, op)
+fun EventTargetWrapper<*>.tabpane(op: TabPane.()->Unit = {}) = TabPane().attachTo(this, op)
 
 fun <T: Node> TabPane.tab(text: String, content: T, op: T.()->Unit = {}): Tab {
   return tab(tabs.size, text, content, op)
