@@ -9,6 +9,7 @@ import javafx.geometry.Pos
 import javafx.scene.Node
 import javafx.scene.Parent
 import javafx.scene.Scene
+import javafx.scene.control.ChoiceBox
 import javafx.scene.control.MultipleSelectionModel
 import javafx.scene.control.ScrollPane
 import javafx.scene.control.TreeItem
@@ -71,6 +72,7 @@ fun Node.wrapped() = object: NodeWrapper<Node> {
 interface ParentWrapper: NodeWrapper<Parent> {
   override val node: Parent
 }
+
 fun Parent.wrapped() = object: ParentWrapper {
   override val node = this@wrapped
 }
@@ -279,5 +281,19 @@ class TreeTableViewWrapper<T>(
 }
 
 
-
+class ChoiceBoxWrapper<T>(
+  override val node: ChoiceBox<T> = ChoiceBox(),
+  op: ChoiceBoxWrapper<T>.()->Unit = {}
+): RegionWrapper {
+  var items
+	get() = node.items
+	set(value) {
+	  node.items = value
+	}
+  var value
+	get() = node.value
+	set(value) {
+	  node.value = value
+	}
+}
 
