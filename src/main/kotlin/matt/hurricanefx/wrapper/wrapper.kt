@@ -7,6 +7,7 @@ import javafx.collections.ObservableList
 import javafx.event.EventTarget
 import javafx.geometry.Pos
 import javafx.scene.Node
+import javafx.scene.Parent
 import javafx.scene.Scene
 import javafx.scene.control.MultipleSelectionModel
 import javafx.scene.control.ScrollPane
@@ -67,7 +68,15 @@ fun Node.wrapped() = object: NodeWrapper<Node> {
   override val node = this@wrapped
 }
 
-interface RegionWrapper: NodeWrapper<Region> {
+interface ParentWrapper: NodeWrapper<Parent> {
+  override val node: Parent
+}
+fun Parent.wrapped() = object: ParentWrapper {
+  override val node = this@wrapped
+}
+
+interface RegionWrapper: ParentWrapper {
+  override val node: Region
 
   var border: Border?
 	get() = node.border
