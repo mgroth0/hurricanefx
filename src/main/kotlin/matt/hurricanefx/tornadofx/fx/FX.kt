@@ -52,6 +52,16 @@ inline fun <T: Node> opcr(parent: EventTarget, node: T, op: T.()->Unit = {}): T 
   }
 }
 
+inline fun <T: NodeWrapper<*>> opcr(parent: EventTarget, node: T, op: T.()->Unit = {}): T {
+  contract {
+	callsInPlace(op, EXACTLY_ONCE)
+  }
+  return node.apply {
+	parent.addChildIfPossible(this)
+	op(this)
+  }
+}
+
 /**
  * Attaches the node to the pane and invokes the node operation.
  */
