@@ -678,14 +678,15 @@ fun <T> populateTree(item: TreeItem<T>, itemFactory: (T)->TreeItem<T>, childFact
 }
 
 
-fun EventTarget.removeFromParent() {
-  when (this) {
-	is Tab         -> tabPane?.tabs?.remove(this)
+fun NodeWrapper<*>.removeFromParent() {
+  val n = node
+  when (n) {
+	is Tab         -> n.tabPane?.tabs?.remove(n)
 	is Node        -> {
-	  (parent?.parent as? ToolBar)?.items?.remove(this) ?: parent?.getChildList()?.remove(this)
+	  (n.parent?.parent as? ToolBar)?.items?.remove(n) ?: n.parent?.getChildList()?.remove(n)
 	}
 
-	is TreeItem<*> -> this.parent.children.remove(this)
+	/*is TreeItem<*> -> n.parent.children.remove(n)*/
   }
 }
 

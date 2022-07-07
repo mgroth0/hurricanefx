@@ -11,6 +11,7 @@ import javafx.scene.control.ScrollPane
 import javafx.scene.control.TreeItem
 import javafx.scene.control.TreeTableView
 import javafx.scene.control.TreeView
+import javafx.scene.input.KeyEvent
 import javafx.scene.layout.Border
 import javafx.scene.layout.HBox
 import javafx.scene.layout.Pane
@@ -52,6 +53,9 @@ interface NodeWrapper<N: Node> {
 	node += n.node
   }
 
+  fun setOnKeyPressed(listener: (KeyEvent) -> Unit) {
+	node.setOnKeyPressed(listener)
+  }
 
 }
 
@@ -244,3 +248,7 @@ class TreeTableViewWrapper<T>(
   override fun scrollTo(i: Int) = node.scrollTo(i)
 
 }
+
+
+
+
