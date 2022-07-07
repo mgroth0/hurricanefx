@@ -33,6 +33,8 @@ import matt.hurricanefx.eye.collect.ListConversionListener
 import matt.hurricanefx.eye.collect.MapConversionListener
 import matt.hurricanefx.eye.collect.SetConversionListener
 import matt.hurricanefx.eye.collect.bind
+import matt.hurricanefx.wrapper.EventTargetWrapper
+import matt.hurricanefx.wrapper.wrapped
 import matt.klib.lang.err
 import kotlin.contracts.InvocationKind.EXACTLY_ONCE
 import kotlin.contracts.contract
@@ -47,7 +49,7 @@ inline fun <T: Node> opcr(parent: EventTarget, node: T, op: T.()->Unit = {}): T 
 	callsInPlace(op, EXACTLY_ONCE)
   }
   return node.apply {
-	parent.addChildIfPossible(this)
+	parent.wrapped().addChildIfPossible(this)
 	op(this)
   }
 }
@@ -57,7 +59,7 @@ inline fun <T: NodeWrapper<*>> opcr(parent: EventTarget, node: T, op: T.()->Unit
 	callsInPlace(op, EXACTLY_ONCE)
   }
   return node.apply {
-	parent.addChildIfPossible(this)
+	parent.wrapped().addChildIfPossible(this)
 	op(this)
   }
 }
@@ -88,79 +90,78 @@ inline fun <T: Node> T.attachTo(
   return this.also(before).attachTo(parent, after)
 }
 
-fun EventTarget.addChildIfPossible(nw: NodeWrapper<*>, index: Int? = null) = addChildIfPossible(nw.node, index)
-
 @Suppress("UNNECESSARY_SAFE_CALL")
-fun EventTarget.addChildIfPossible(node: Node, index: Int? = null) {
-  when (this) {
+fun EventTargetWrapper<*>.addChildIfPossible(node: NodeWrapper<*>, index: Int? = null) {
+  val n = this.node
+  when (n) {
 
 	/*matt was here*/
 	is Scene          -> {
-	  root = node as Parent
+	  n.root = node.node as Parent
 	}
 
 	is SubScene       -> {
-	  root = node as Parent
+	  n.root = node.node as Parent
 	}
 
 	is ScrollPane     -> {
 	  /*content = node*/ /*TORNADOFX DEFAULT*/
 
-	  content.addChildIfPossible(node) /*MATT'S WAY*/
+	  n.content.wrapped().addChildIfPossible(node) /*MATT'S WAY*/
 	}
 
 	is Tab            -> {
 	  // Map the tab to the UIComponent for later retrieval. Used to close tab with UIComponent.close()
 	  // and to connect the onTabSelected callback
-	  content = node
+	  n.content = node.node
 	}
 
 	is ButtonBase     -> {
-	  graphic = node
+	  n.graphic = node.node
 	}
 
 	is BorderPane     -> {
 	} // Either pos = builder { or caught by builderTarget above
 	is TabPane        -> {
-	  val tab = Tab(node.toString(), node)
-	  tabs.add(tab)
+	  val tab = Tab(node.toString(), node.node)
+	  n.tabs.add(tab)
 	}
 
 	is TitledPane     -> {
-	  if (content is Pane) {
-		content.addChildIfPossible(node, index)
-	  } else if (content is Node) {
+	  if (n.content is Pane) {
+		n.content.wrapped().addChildIfPossible(node, index)
+	  } else if (n.content is Node) {
 		val container = VBox()
-		container.children.addAll(content, node)
-		content = container
+		container.children.addAll(n.content, node.node)
+		n.content = container
 	  } else {
-		content = node
+		n.content = node.node
 	  }
 	}
 
 	is CustomMenuItem -> {
-	  content = node
+	  n.content = node.node
 	}
 
 	is MenuItem       -> {
-	  graphic = node
+	  n.graphic = node.node
 	}
 
 	is Label          -> {
 	  /*matt was here*/
-	  graphic = node
+	  n.graphic = node.node
 	}
 
-	else              -> if (this !is Pane) {
+	else              -> if (n !is Pane) {
 	  /*matt was here.. because this was getting really confusing*/
-	  err("$this is a region. It can't add children.")
-	} else getChildList()?.apply {
+	  err("$n is a region. It can't add children.")
+	} else n.getChildList()?.apply {
 
-	  if (!contains(node)) {
+	  if (!n.children.contains(node.node)) {
 		if (index != null && index < size)
-		  add(index, node)
+		  add(index, node.node)
 		else
-		  add(node)
+		  add(node.node)
 	  }
 	}
   }

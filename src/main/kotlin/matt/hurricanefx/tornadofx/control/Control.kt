@@ -29,6 +29,7 @@ import matt.hurricanefx.tornadofx.fx.attachTo
 import matt.hurricanefx.tornadofx.fx.opcr
 import matt.hurricanefx.tornadofx.nodes.getToggleGroup
 import matt.hurricanefx.eye.sflist.SortedFilteredList
+import matt.hurricanefx.wrapper.EventTargetWrapper
 import matt.hurricanefx.wrapper.NodeWrapper
 import matt.klib.lang.err
 import java.text.Format
@@ -451,10 +452,10 @@ fun EventTarget.hyperlink(observable: ObservableValue<String>, graphic: Node? = 
 
 fun EventTarget.menubar(op: MenuBar.()->Unit = {}) = MenuBar().attachTo(this, op)
 
-fun EventTarget.imageview(url: String? = null, lazyload: Boolean = true, op: ImageView.()->Unit = {}) =
+fun EventTargetWrapper<*>.imageview(url: String? = null, lazyload: Boolean = true, op: ImageView.()->Unit = {}) =
   opcr(this, if (url == null) ImageView() else ImageView(Image(url, lazyload)), op)
 
-fun EventTarget.imageview(
+fun EventTargetWrapper<*>.imageview(
   url: ObservableValue<String>,
   lazyload: Boolean = true,
   op: ImageView.()->Unit = {}
@@ -462,12 +463,12 @@ fun EventTarget.imageview(
   imageView.imageProperty().bind(objectBinding(url) { value?.let { Image(it, lazyload) } })
 }
 
-fun EventTarget.imageview(image: ObservableValue<Image?>, op: ImageView.()->Unit = {}) =
+fun EventTargetWrapper<*>.imageview(image: ObservableValue<Image?>, op: ImageView.()->Unit = {}) =
   ImageView().attachTo(this, op) {
 	it.imageProperty().bind(image)
   }
 
-fun EventTarget.imageview(image: Image, op: ImageView.()->Unit = {}) = ImageView(image).attachTo(this, op)
+fun EventTargetWrapper<*>.imageview(image: Image, op: ImageView.()->Unit = {}) = ImageView(image).attachTo(this, op)
 
 /**
  * Listen to changes and update the value of the property if the given mutator results in a different value
