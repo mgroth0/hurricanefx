@@ -68,6 +68,7 @@ import matt.hurricanefx.eye.bind.toBinding
 import matt.hurricanefx.tornadofx.control.properties
 import matt.hurricanefx.tornadofx.fx.addChildIfPossible
 import matt.hurricanefx.tornadofx.fx.getChildList
+import matt.hurricanefx.wrapper.PaneWrapper
 
 fun EventTarget.getToggleGroup(): ToggleGroup? = properties["tornadofx.togglegroup"] as ToggleGroup?
 
@@ -126,6 +127,7 @@ operator fun EventTarget.plusAssign(node: NodeWrapper<*>) {
 fun Pane.clear() {
   children.clear()
 }
+fun PaneWrapper<*>.clear() = node.clear()
 
 fun <T: EventTarget> T.replaceChildren(op: T.()->Unit) {
   getChildList()?.clear()
