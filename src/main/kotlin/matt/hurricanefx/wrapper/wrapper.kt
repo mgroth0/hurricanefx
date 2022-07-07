@@ -8,16 +8,14 @@ import javafx.scene.control.MultipleSelectionModel
 import javafx.scene.control.ScrollPane
 import javafx.scene.control.TreeItem
 import javafx.scene.control.TreeTableView
-import javafx.scene.control.TreeTableView.ResizeFeatures
 import javafx.scene.control.TreeView
+import javafx.scene.layout.HBox
 import javafx.scene.layout.Pane
-import javafx.scene.layout.Priority
 import javafx.scene.layout.VBox
 import javafx.util.Callback
 import matt.hurricanefx.addAll
 import matt.hurricanefx.eye.lib.onChange
 import matt.hurricanefx.stage
-import matt.hurricanefx.tornadofx.item.selectedValue
 import matt.hurricanefx.tornadofx.nodes.add
 import matt.hurricanefx.tornadofx.nodes.plusAssign
 import matt.hurricanefx.tornadofx.tree.selectedValue
@@ -63,18 +61,29 @@ interface PaneWrapper<N: Pane>: NodeWrapper<N> {
 }
 
 
-@FXNodeWrapperDSL
-class VBoxWrapper(override val node: VBox = VBox(), op: VBoxWrapper.()->Unit = {}): PaneWrapper<VBox> {
+interface BoxWrapper<N: Pane>: PaneWrapper<N> {
   var alignment: Pos
-	get() = node.alignment
+	get() = (node as? HBox)?.alignment ?: (node as VBox).alignment
 	set(value) {
-	  node.alignment = value
+	  if (node is HBox) (node as HBox).alignment = value
+	  else (node as VBox).alignment = value
 	}
+}
 
+@FXNodeWrapperDSL
+class VBoxWrapper(override val node: VBox = VBox(), op: VBoxWrapper.()->Unit = {}): BoxWrapper<VBox> {
   init {
 	op()
   }
 }
+
+@FXNodeWrapperDSL
+class HBoxWrapper(override val node: HBox = HBox(), op: HBoxWrapper.()->Unit = {}): BoxWrapper<HBox> {
+  init {
+	op()
+  }
+}
+
 
 @FXNodeWrapperDSL
 class ScrollingVBoxWrapper(vbox: VBox = VBox(), op: ScrollingVBoxWrapper.()->Unit = {}): NodeWrapper<ScrollPane> {
