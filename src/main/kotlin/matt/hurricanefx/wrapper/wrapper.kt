@@ -27,7 +27,6 @@ import matt.hurricanefx.eye.lib.onChange
 import matt.hurricanefx.stage
 import matt.hurricanefx.tornadofx.nodes.add
 import matt.hurricanefx.tornadofx.nodes.getToggleGroup
-import matt.hurricanefx.tornadofx.nodes.plusAssign
 import matt.hurricanefx.tornadofx.tree.selectedValue
 
 private typealias NW = NodeWrapper<*>
@@ -49,25 +48,15 @@ interface NodeWrapper<N: Node>: EventTargetWrapper<N> {
   val scene: Scene? get() = node.scene
   val stage get() = node.stage
 
-  operator fun Node.unaryPlus() {
-	this@NodeWrapper.node.add(this)
-  }
 
   operator fun NW.unaryPlus() {
-	this@NodeWrapper.node.add(this)
-  }
-
-  operator fun plusAssign(n: Node) {
-	node += n
-  }
-
-  operator fun plusAssign(n: NodeWrapper<*>) {
-	node += n.node
+	this@NodeWrapper.add(this)
   }
 
   fun setOnKeyPressed(listener: (KeyEvent)->Unit) {
 	node.setOnKeyPressed(listener)
   }
+
   fun setOnMousePressed(listener: (MouseEvent)->Unit) {
 	node.setOnMousePressed(listener)
   }
