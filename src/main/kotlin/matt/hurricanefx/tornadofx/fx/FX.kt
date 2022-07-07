@@ -67,11 +67,11 @@ inline fun <T: NodeWrapper<*>> opcr(parent: EventTarget, node: T, op: T.()->Unit
 /**
  * Attaches the node to the pane and invokes the node operation.
  */
-inline fun <T: Node> T.attachTo(parent: EventTarget, op: T.()->Unit = {}): T {
+inline fun <T: Node> T.attachTo(parent: EventTargetWrapper<*>, op: T.()->Unit = {}): T {
   contract {
 	callsInPlace(op, EXACTLY_ONCE)
   }
-  return opcr(parent.wrapped(), this, op)
+  return opcr(parent, this, op)
 }
 
 /**
@@ -79,7 +79,7 @@ inline fun <T: Node> T.attachTo(parent: EventTarget, op: T.()->Unit = {}): T {
  * Because the framework sometimes needs to setup the node, another lambda can be provided
  */
 inline fun <T: Node> T.attachTo(
-  parent: EventTarget,
+  parent: EventTargetWrapper<*>,
   after: T.()->Unit,
   before: (T)->Unit
 ): T {
