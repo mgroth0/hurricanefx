@@ -11,6 +11,7 @@ import javafx.scene.control.ScrollPane
 import javafx.scene.control.TreeItem
 import javafx.scene.control.TreeTableView
 import javafx.scene.control.TreeView
+import javafx.scene.layout.Border
 import javafx.scene.layout.HBox
 import javafx.scene.layout.Pane
 import javafx.scene.layout.Region
@@ -55,6 +56,13 @@ interface NodeWrapper<N: Node> {
 }
 
 interface RegionWrapper<N: Region>: NodeWrapper<N> {
+
+  var border: Border?
+	get() = node.border
+	set(value) {
+	  node.border = value
+	}
+
   val widthProperty: ReadOnlyDoubleProperty get() = node.widthProperty()
   val prefWidthProperty: DoubleProperty get() = node.prefWidthProperty()
   var prefWidth: Double
