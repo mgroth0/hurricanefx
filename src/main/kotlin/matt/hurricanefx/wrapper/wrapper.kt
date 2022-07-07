@@ -168,7 +168,7 @@ interface BoxWrapper<N: Pane>: PaneWrapper {
 }
 
 @FXNodeWrapperDSL
-class VBoxWrapper(override val node: VBox = VBox(), op: VBoxWrapper.()->Unit = {}): BoxWrapper<VBox> {
+open class VBoxWrapper(override val node: VBox = VBox(), op: VBoxWrapper.()->Unit = {}): BoxWrapper<VBox> {
   init {
 	op()
   }
