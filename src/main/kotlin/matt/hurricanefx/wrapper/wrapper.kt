@@ -14,6 +14,7 @@ import javafx.scene.control.TreeItem
 import javafx.scene.control.TreeTableView
 import javafx.scene.control.TreeView
 import javafx.scene.input.KeyEvent
+import javafx.scene.input.MouseEvent
 import javafx.scene.layout.Background
 import javafx.scene.layout.Border
 import javafx.scene.layout.HBox
@@ -64,6 +65,9 @@ interface NodeWrapper<N: Node>: EventTargetWrapper<N> {
 
   fun setOnKeyPressed(listener: (KeyEvent)->Unit) {
 	node.setOnKeyPressed(listener)
+  }
+  fun setOnMousePressed(listener: (MouseEvent)->Unit) {
+	node.setOnMousePressed(listener)
   }
 
 }
