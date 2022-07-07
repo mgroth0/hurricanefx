@@ -52,6 +52,7 @@ import matt.hurricanefx.eye.lib.onChangeUntilAfterFirst
 import matt.hurricanefx.tornadofx.nodes.add
 import matt.hurricanefx.tsprogressbar.ThreadSafeNodeWrapper
 import matt.hurricanefx.wrapper.NodeWrapper
+import matt.hurricanefx.wrapper.RegionWrapper
 import matt.klib.commons.thisMachine
 import matt.klib.dmap.withStoringDefault
 import matt.klib.lang.NEVER
@@ -150,14 +151,14 @@ fun Node.isFullyVisibleIn(sp: ScrollPane): Boolean {
 }
 
 
-fun Region.exactWidthProperty() = SimpleDoubleProperty().also {
-  minWidthProperty().bind(it)
-  maxWidthProperty().bind(it)
+fun RegionWrapper.exactWidthProperty() = SimpleDoubleProperty().also {
+  minWidthProperty.bind(it)
+  maxWidthProperty.bind(it)
 }
 
-fun Region.exactHeightProperty() = SimpleDoubleProperty().also {
-  minHeightProperty().bind(it)
-  maxHeightProperty().bind(it)
+fun RegionWrapper.exactHeightProperty() = SimpleDoubleProperty().also {
+  minHeightProperty.bind(it)
+  maxHeightProperty.bind(it)
 }
 
 fun ColumnConstraints.exactWidthProperty() = SimpleDoubleProperty().also {
@@ -171,12 +172,12 @@ fun RowConstraints.exactHeightProperty() = SimpleDoubleProperty().also {
 }
 
 
-var Region.exactWidth: Number
+var RegionWrapper.exactWidth: Number
   set(value) {
 	exactWidthProperty().bind(DProp(value.toDouble()))
   }
   get() = NEVER
-var Region.exactHeight: Number
+var RegionWrapper.exactHeight: Number
   set(value) {
 	exactHeightProperty().bind(DProp(value.toDouble()))
   }

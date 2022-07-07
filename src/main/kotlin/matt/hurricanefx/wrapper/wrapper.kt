@@ -72,7 +72,7 @@ fun Node.wrapped() = object: NodeWrapper<Node> {
   override val node = this@wrapped
 }
 
-interface RegionWrapper<N: Region>: NodeWrapper<N> {
+interface RegionWrapper: NodeWrapper<Region> {
 
   var border: Border?
 	get() = node.border
@@ -132,11 +132,12 @@ interface RegionWrapper<N: Region>: NodeWrapper<N> {
 	}
 }
 
-fun Region.wrapped() = object: RegionWrapper<Region> {
+fun Region.wrapped() = object: RegionWrapper {
   override val node = this@wrapped
 }
 
-interface PaneWrapper<N: Pane>: RegionWrapper<N> {
+interface PaneWrapper: RegionWrapper {
+  override val node: Pane
   operator fun Collection<Node>.unaryPlus() {
 	node.addAll(this)
   }
@@ -145,12 +146,12 @@ interface PaneWrapper<N: Pane>: RegionWrapper<N> {
   val children: ObservableList<Node> get() = node.children
 }
 
-fun Pane.wrapped() = object: PaneWrapper<Pane> {
+fun Pane.wrapped() = object: PaneWrapper {
   override val node = this@wrapped
 }
 
 
-interface BoxWrapper<N: Pane>: PaneWrapper<N> {
+interface BoxWrapper<N: Pane>: PaneWrapper {
 
   var alignment: Pos
 	get() = (node as? HBox)?.alignment ?: (node as VBox).alignment
