@@ -78,6 +78,7 @@ interface RegionWrapper<N: Region>: NodeWrapper<N> {
 	  node.border = value
 	}
 
+  val width get() = widthProperty.value
   val widthProperty: ReadOnlyDoubleProperty get() = node.widthProperty()
   val prefWidthProperty: DoubleProperty get() = node.prefWidthProperty()
   var prefWidth: Double
@@ -98,6 +99,7 @@ interface RegionWrapper<N: Region>: NodeWrapper<N> {
 	  node.maxWidth = value
 	}
 
+  val height get() = heightProperty.value
   val heightProperty: ReadOnlyDoubleProperty get() = node.heightProperty()
   val prefHeightProperty: DoubleProperty get() = node.prefHeightProperty()
   var prefHeight: Double
