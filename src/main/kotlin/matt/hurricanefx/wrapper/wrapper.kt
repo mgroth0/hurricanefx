@@ -104,6 +104,10 @@ interface RegionWrapper<N: Region>: NodeWrapper<N> {
 	}
 }
 
+fun Region.wrapped() = object: RegionWrapper<Region> {
+  override val node = this@wrapped
+}
+
 interface PaneWrapper<N: Pane>: RegionWrapper<N> {
   operator fun Collection<Node>.unaryPlus() {
 	node.addAll(this)
@@ -111,6 +115,10 @@ interface PaneWrapper<N: Pane>: RegionWrapper<N> {
 
 
   val children: ObservableList<Node> get() = node.children
+}
+
+fun Pane.wrapped() = object: PaneWrapper<Pane> {
+  override val node = this@wrapped
 }
 
 

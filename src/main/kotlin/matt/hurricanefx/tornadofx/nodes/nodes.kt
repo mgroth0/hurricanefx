@@ -4,7 +4,6 @@
 
 package matt.hurricanefx.tornadofx.nodes
 
-import matt.hurricanefx.wrapper.NodeWrapper
 import javafx.application.Platform
 import javafx.beans.binding.BooleanBinding
 import javafx.beans.property.DoubleProperty
@@ -60,14 +59,15 @@ import javafx.scene.layout.StackPane
 import javafx.scene.layout.VBox
 import javafx.util.Callback
 import javafx.util.StringConverter
+import matt.hurricanefx.eye.bind.toBinding
 import matt.hurricanefx.eye.lib.onChange
 import matt.hurricanefx.eye.lib.proxypropDouble
 import matt.hurricanefx.eye.prop.booleanBinding
 import matt.hurricanefx.eye.prop.cleanBind
-import matt.hurricanefx.eye.bind.toBinding
 import matt.hurricanefx.tornadofx.control.properties
 import matt.hurricanefx.tornadofx.fx.addChildIfPossible
 import matt.hurricanefx.tornadofx.fx.getChildList
+import matt.hurricanefx.wrapper.NodeWrapper
 import matt.hurricanefx.wrapper.PaneWrapper
 
 fun EventTarget.getToggleGroup(): ToggleGroup? = properties["tornadofx.togglegroup"] as ToggleGroup?
@@ -127,6 +127,7 @@ operator fun EventTarget.plusAssign(node: NodeWrapper<*>) {
 fun Pane.clear() {
   children.clear()
 }
+
 fun PaneWrapper<*>.clear() = node.clear()
 
 fun <T: EventTarget> T.replaceChildren(op: T.()->Unit) {
@@ -136,6 +137,9 @@ fun <T: EventTarget> T.replaceChildren(op: T.()->Unit) {
 
 fun EventTarget.add(node: Node) = plusAssign(node)
 fun EventTarget.add(nw: NodeWrapper<*>) = plusAssign(nw)
+
+fun NodeWrapper<*>.add(node: Node) = this.node.add(node)
+fun NodeWrapper<*>.add(nw: NodeWrapper<*>) = node.add(nw)
 
 var Region.useMaxWidth: Boolean
   get() = maxWidth == Double.MAX_VALUE
