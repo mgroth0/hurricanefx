@@ -1,6 +1,7 @@
 package matt.hurricanefx.wrapper
 
 import javafx.beans.property.DoubleProperty
+import javafx.beans.property.ReadOnlyDoubleProperty
 import javafx.collections.ObservableList
 import javafx.geometry.Pos
 import javafx.scene.Node
@@ -54,6 +55,7 @@ interface NodeWrapper<N: Node> {
 }
 
 interface RegionWrapper<N: Region>: NodeWrapper<N> {
+  val widthProperty: ReadOnlyDoubleProperty get() = node.widthProperty()
   val prefWidthProperty: DoubleProperty get() = node.prefWidthProperty()
   var prefWidth: Double
 	get() = node.prefWidth
@@ -73,6 +75,7 @@ interface RegionWrapper<N: Region>: NodeWrapper<N> {
 	  node.maxWidth = value
 	}
 
+  val heightProperty: ReadOnlyDoubleProperty get() = node.heightProperty()
   val prefHeightProperty: DoubleProperty get() = node.prefHeightProperty()
   var prefHeight: Double
 	get() = node.prefHeight
