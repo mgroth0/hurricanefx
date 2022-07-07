@@ -4,7 +4,6 @@
 
 package matt.hurricanefx.tornadofx.fx
 
-import matt.hurricanefx.wrapper.NodeWrapper
 import javafx.beans.property.ListProperty
 import javafx.collections.ObservableList
 import javafx.collections.ObservableMap
@@ -34,6 +33,7 @@ import matt.hurricanefx.eye.collect.MapConversionListener
 import matt.hurricanefx.eye.collect.SetConversionListener
 import matt.hurricanefx.eye.collect.bind
 import matt.hurricanefx.wrapper.EventTargetWrapper
+import matt.hurricanefx.wrapper.NodeWrapper
 import matt.hurricanefx.wrapper.wrapped
 import matt.klib.lang.err
 import kotlin.contracts.InvocationKind.EXACTLY_ONCE
@@ -44,12 +44,12 @@ import kotlin.contracts.contract
  * Add the given node to the pane, invoke the node operation and return the node. The `opcr` name
  * is an acronym for "op connect & return".
  */
-inline fun <T: Node> opcr(parent: EventTarget, node: T, op: T.()->Unit = {}): T {
+inline fun <T: Node> opcr(parent: EventTargetWrapper<*>, node: T, op: T.()->Unit = {}): T {
   contract {
 	callsInPlace(op, EXACTLY_ONCE)
   }
   return node.apply {
-	parent.wrapped().addChildIfPossible(this)
+	parent.addChildIfPossible(this.wrapped())
 	op(this)
   }
 }
@@ -71,7 +71,7 @@ inline fun <T: Node> T.attachTo(parent: EventTarget, op: T.()->Unit = {}): T {
   contract {
 	callsInPlace(op, EXACTLY_ONCE)
   }
-  return opcr(parent, this, op)
+  return opcr(parent.wrapped(), this, op)
 }
 
 /**
