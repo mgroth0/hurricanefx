@@ -68,6 +68,12 @@ interface BoxWrapper<N: Pane>: PaneWrapper<N> {
 	  if (node is HBox) (node as HBox).alignment = value
 	  else (node as VBox).alignment = value
 	}
+  var spacing: Double
+	get() = (node as? HBox)?.spacing ?: (node as VBox).spacing
+	set(value) {
+	  if (node is HBox) (node as HBox).spacing = value
+	  else (node as VBox).spacing = value
+	}
 }
 
 @FXNodeWrapperDSL
