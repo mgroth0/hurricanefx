@@ -129,7 +129,7 @@ fun Pane.clear() {
   children.clear()
 }
 
-fun PaneWrapper<*>.clear() = node.clear()
+fun PaneWrapper.clear() = node.clear()
 
 fun <T: EventTarget> T.replaceChildren(op: T.()->Unit) {
   getChildList()?.clear()
