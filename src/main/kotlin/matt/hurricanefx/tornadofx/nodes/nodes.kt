@@ -109,7 +109,7 @@ fun Scene.reloadStylesheets() {
 }
 
 
-infix fun Node.addTo(pane: EventTarget) = pane.addChildIfPossible(this)
+infix fun NodeWrapper<*>.addTo(pane: EventTargetWrapper<*>) = pane.addChildIfPossible(this)
 
 fun EventTarget.replaceChildren(vararg node: Node) {
   val children = requireNotNull(getChildList()) { "This node doesn't have a child list" }
@@ -117,11 +117,7 @@ fun EventTarget.replaceChildren(vararg node: Node) {
   children.addAll(node)
 }
 
-operator fun EventTarget.plusAssign(node: Node) {
-  addChildIfPossible(node)
-}
-
-operator fun EventTarget.plusAssign(node: NodeWrapper<*>) {
+operator fun EventTargetWrapper<*>.plusAssign(node: NodeWrapper<*>) {
   addChildIfPossible(node)
 }
 
@@ -136,11 +132,8 @@ fun <T: EventTarget> T.replaceChildren(op: T.()->Unit) {
   op(this)
 }
 
-fun EventTarget.add(node: Node) = plusAssign(node)
-fun EventTarget.add(nw: NodeWrapper<*>) = plusAssign(nw)
+fun EventTargetWrapper<*>.add(nw: NodeWrapper<*>) = plusAssign(nw)
 
-fun NodeWrapper<*>.add(node: Node) = this.node.add(node)
-fun NodeWrapper<*>.add(nw: NodeWrapper<*>) = node.add(nw)
 
 var Region.useMaxWidth: Boolean
   get() = maxWidth == Double.MAX_VALUE
