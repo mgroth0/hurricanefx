@@ -53,6 +53,7 @@ import matt.hurricanefx.tornadofx.nodes.add
 import matt.hurricanefx.tsprogressbar.ThreadSafeNodeWrapper
 import matt.hurricanefx.wrapper.NodeWrapper
 import matt.hurricanefx.wrapper.RegionWrapper
+import matt.hurricanefx.wrapper.wrapped
 import matt.klib.commons.thisMachine
 import matt.klib.dmap.withStoringDefault
 import matt.klib.lang.NEVER
@@ -314,7 +315,7 @@ fun Pane.resizer(corner: Corner) {/*var y = 0.0
   ): Boolean {    /*return event.y > region.height - RESIZE_MARGIN*/
 	return true
   }
-  add(Rectangle(50.0, 50.0, Color.BLUE).apply {
+  wrapped().add(Rectangle(50.0, 50.0, Color.BLUE).apply {
 	setOnMouseReleased {
 	  dragging = false
 	  cursor = Cursor.DEFAULT
@@ -374,7 +375,7 @@ fun Pane.resizer(corner: Corner) {/*var y = 0.0
 		initStageMaxX = initStageWidth + initStageX
 	  }
 	}
-  })
+  }.wrapped())
 
 }
 
@@ -423,12 +424,12 @@ fun minimalNumberAxis() = NumberAxis().apply {
 
 fun <N: Node> Parent.addr(child: N, op: (N.()->Unit)? = null): N {
   op?.invoke(child)
-  add(child)
+  wrapped().add(child.wrapped())
   return child
 }
 fun <N: Node> NodeWrapper<out Parent>.addr(child: N, op: (N.()->Unit)? = null): N {
   op?.invoke(child)
-  node.add(child)
+  add(child.wrapped())
   return child
 }
 
