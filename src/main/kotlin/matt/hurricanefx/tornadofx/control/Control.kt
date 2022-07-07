@@ -240,6 +240,7 @@ inline fun EventTarget.button(text: String = "", graphic: Node? = null, op: Butt
 	if (graphic != null) it.graphic = graphic
   }
 }
+fun NodeWrapper<*>.button(text: String = "", graphic: Node? = null, op: Button.()->Unit = {}) = node.button(text,graphic,op)
 
 fun EventTarget.menubutton(text: String = "", graphic: Node? = null, op: MenuButton.()->Unit = {}) =
   MenuButton(text).attachTo(this, op) {
