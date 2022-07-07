@@ -67,6 +67,7 @@ import matt.hurricanefx.eye.prop.cleanBind
 import matt.hurricanefx.tornadofx.control.properties
 import matt.hurricanefx.tornadofx.fx.addChildIfPossible
 import matt.hurricanefx.tornadofx.fx.getChildList
+import matt.hurricanefx.wrapper.EventTargetWrapper
 import matt.hurricanefx.wrapper.NodeWrapper
 import matt.hurricanefx.wrapper.PaneWrapper
 
@@ -678,15 +679,14 @@ fun <T> populateTree(item: TreeItem<T>, itemFactory: (T)->TreeItem<T>, childFact
 }
 
 
-fun NodeWrapper<*>.removeFromParent() {
+fun EventTargetWrapper<*>.removeFromParent() {
   val n = node
   when (n) {
 	is Tab         -> n.tabPane?.tabs?.remove(n)
 	is Node        -> {
 	  (n.parent?.parent as? ToolBar)?.items?.remove(n) ?: n.parent?.getChildList()?.remove(n)
 	}
-
-	/*is TreeItem<*> -> n.parent.children.remove(n)*/
+	is TreeItem<*> -> n.parent.children.remove(n)
   }
 }
 

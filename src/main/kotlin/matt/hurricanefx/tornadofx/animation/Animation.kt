@@ -27,6 +27,7 @@ import matt.hurricanefx.tornadofx.animation.ViewTransition.Direction.UP
 import matt.hurricanefx.tornadofx.nodes.isTransitioning
 import matt.hurricanefx.tornadofx.nodes.point
 import matt.hurricanefx.tornadofx.nodes.removeFromParent
+import matt.hurricanefx.wrapper.wrapped
 
 operator fun Timeline.plusAssign(keyFrame: KeyFrame) {
   keyFrames.add(keyFrame)
@@ -464,9 +465,9 @@ abstract class ViewTransition {
 	  val oldFinish: EventHandler<ActionEvent>? = onFinished
 	  setOnFinished {
 		stack.children.clear()
-		current.removeFromParent()
-		replacement.removeFromParent()
-		stack.removeFromParent()
+		current.wrapped().removeFromParent()
+		replacement.wrapped().removeFromParent()
+		stack.wrapped().removeFromParent()
 		//		currentUIComponent?.let {
 		//		  it.muteDocking = false
 		//		  it.callOnUndock()

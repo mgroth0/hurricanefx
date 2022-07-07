@@ -15,6 +15,7 @@ import matt.hurricanefx.eye.prop.cleanBind
 import matt.hurricanefx.eye.bind.toBinding
 import matt.hurricanefx.tornadofx.fx.attachTo
 import matt.hurricanefx.tornadofx.nodes.removeFromParent
+import matt.hurricanefx.wrapper.wrapped
 
 fun EventTarget.tabpane(op: TabPane.()->Unit = {}) = TabPane().attachTo(this, op)
 
@@ -64,7 +65,7 @@ fun Tab.visibleWhen(predicate: ObservableValue<Boolean>) {
   predicate.onChange { updateState() }
 }
 
-fun Tab.close() = removeFromParent()
+fun Tab.close() = wrapped().removeFromParent()
 
 
 //fun TabPane.tab(text: String? = null, node: Node? = null, op: Tab.() -> Unit = {}): Tab {
