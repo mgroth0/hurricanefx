@@ -295,5 +295,9 @@ class ChoiceBoxWrapper<T>(
 	set(value) {
 	  node.value = value
 	}
+
+  init {
+	op()
+  }
 }
 
