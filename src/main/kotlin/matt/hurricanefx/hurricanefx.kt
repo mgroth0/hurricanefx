@@ -420,6 +420,8 @@ class DummyAppForFxThreadForScreen: Application() {
 fun minimalNumberAxis() = NumberAxis().apply {
   minorTickCount = 0
   isAutoRanging = false
+  isTickMarkVisible = false
+  isTickLabelsVisible = false
 }
 
 fun <N: Node> Parent.addr(child: N, op: (N.()->Unit)? = null): N {
