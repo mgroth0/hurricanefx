@@ -200,7 +200,7 @@ class ScrollingVBoxWrapper(vbox: VBox = VBox(), op: ScrollingVBoxWrapper.()->Uni
   }
 }
 
-sealed interface TreeLikeWrapper<N: Node, T>: NodeWrapper<N> {
+sealed interface TreeLikeWrapper<N: Region, T>: RegionWrapper {
   var root: TreeItem<T>
   var isShowRoot: Boolean
   fun setOnSelectionChange(listener: (TreeItem<T>?)->Unit)
