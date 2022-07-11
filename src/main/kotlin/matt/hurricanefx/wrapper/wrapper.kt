@@ -3,6 +3,7 @@ package matt.hurricanefx.wrapper
 import javafx.beans.property.DoubleProperty
 import javafx.beans.property.ObjectProperty
 import javafx.beans.property.ReadOnlyDoubleProperty
+import javafx.beans.property.ReadOnlyObjectProperty
 import javafx.collections.ObservableList
 import javafx.event.EventTarget
 import javafx.geometry.Pos
@@ -29,7 +30,6 @@ import matt.hurricanefx.eye.lib.onChange
 import matt.hurricanefx.stage
 import matt.hurricanefx.tornadofx.nodes.add
 import matt.hurricanefx.tornadofx.nodes.getToggleGroup
-import matt.hurricanefx.tornadofx.tree.selectedValue
 
 private typealias NW = NodeWrapper<*>
 
@@ -204,9 +204,10 @@ sealed interface TreeLikeWrapper<N: Region, T>: RegionWrapper {
   var root: TreeItem<T>
   var isShowRoot: Boolean
   fun setOnSelectionChange(listener: (TreeItem<T>?)->Unit)
-  val selectedItem: TreeItem<T>?
-  val selectedValue: T?
   val selectionModel: MultipleSelectionModel<TreeItem<T>>
+  val selectedItem: TreeItem<T>? get() = selectionModel.selectedItem
+  val selectedItemProperty: ReadOnlyObjectProperty<TreeItem<T>> get() = selectionModel.selectedItemProperty()
+  val selectedValue: T? get() = selectedItem?.value
   fun scrollTo(i: Int)
   fun getRow(ti: TreeItem<T>): Int
 }
@@ -234,8 +235,6 @@ class TreeViewWrapper<T>(override val node: TreeView<T> = TreeView(), op: TreeVi
 	node.selectionModel.selectedItemProperty().onChange(listener)
   }
 
-  override val selectedItem: TreeItem<T>? get() = node.selectionModel.selectedItem
-  override val selectedValue: T? get() = node.selectedValue
   override val selectionModel: MultipleSelectionModel<TreeItem<T>> get() = node.selectionModel
   override fun scrollTo(i: Int) = node.scrollTo(i)
   override fun getRow(ti: TreeItem<T>) = node.getRow(ti)
@@ -273,8 +272,6 @@ class TreeTableViewWrapper<T>(
 	node.selectionModel.selectedItemProperty().onChange(listener)
   }
 
-  override val selectedItem: TreeItem<T>? get() = node.selectionModel.selectedItem
-  override val selectedValue: T? get() = selectedItem?.value
   override val selectionModel: MultipleSelectionModel<TreeItem<T>> get() = node.selectionModel
   override fun scrollTo(i: Int) = node.scrollTo(i)
 
