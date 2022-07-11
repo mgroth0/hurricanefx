@@ -145,10 +145,14 @@ interface RegionWrapper: ParentWrapper {
 	node.setOnDragEntered {
 	  it.acceptTransferModes(*ANY)
 	}
+	node.setOnDragOver {
+	  it.acceptTransferModes(*ANY)
+	}
 	node.setOnDragDropped {
 	  if (DataFormat.FILES in it.dragboard.contentTypes) {
 		op(it.dragboard.files.map { it.toMFile() })
 	  }
+	  it.consume()
 	}
   }
 }
