@@ -621,10 +621,16 @@ fun <T> TableView<T>.regainFocusAfterEdit() = apply {
   }
 }
 
-fun <T, S: Any> TableColumn<T, S>.makeEditable(converter: StringConverter<S>): TableColumn<T, S> = apply {
+fun <T, S: Any> TableColumn<S, T>.makeEditable(converter: StringConverter<T>): TableColumn<S, T> = apply {
   tableView?.isEditable = true
-  cellFactory = TextFieldTableCell.forTableColumn<T, S>(converter)
+  cellFactory = TextFieldTableCell.forTableColumn(converter)
 }
+
+fun <S: Any> TableColumn<S, String>.makeEditable(): TableColumn<S, String> = apply {
+  tableView?.isEditable = true
+  cellFactory = TextFieldTableCell.forTableColumn()
+}
+
 
 fun <T> TreeTableView<T>.populate(
   itemFactory: (T)->TreeItem<T> = { TreeItem(it) },
@@ -679,6 +685,7 @@ fun EventTargetWrapper<*>.removeFromParent() {
 	is Node        -> {
 	  (n.parent?.parent as? ToolBar)?.items?.remove(n) ?: n.parent?.getChildList()?.remove(n)
 	}
+
 	is TreeItem<*> -> n.parent.children.remove(n)
   }
 }
