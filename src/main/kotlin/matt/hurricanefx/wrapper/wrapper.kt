@@ -16,8 +16,10 @@ import javafx.scene.control.ScrollPane
 import javafx.scene.control.TreeItem
 import javafx.scene.control.TreeTableView
 import javafx.scene.control.TreeView
+import javafx.scene.input.DataFormat
 import javafx.scene.input.KeyEvent
 import javafx.scene.input.MouseEvent
+import javafx.scene.input.TransferMode.ANY
 import javafx.scene.layout.Background
 import javafx.scene.layout.Border
 import javafx.scene.layout.HBox
@@ -25,6 +27,8 @@ import javafx.scene.layout.Pane
 import javafx.scene.layout.Region
 import javafx.scene.layout.VBox
 import javafx.util.Callback
+import matt.file.MFile
+import matt.file.toMFile
 import matt.hurricanefx.addAll
 import matt.hurricanefx.eye.lib.onChange
 import matt.hurricanefx.stage
@@ -136,6 +140,17 @@ interface RegionWrapper: ParentWrapper {
 	set(value) {
 	  node.maxHeight = value
 	}
+
+  fun setOnFilesDropped(op: (List<MFile>) -> Unit) {
+	node.setOnDragEntered {
+	  it.acceptTransferModes(*ANY)
+	}
+	node.setOnDragDropped {
+	  if (DataFormat.FILES in it.dragboard.contentTypes) {
+		op(it.dragboard.files.map { it.toMFile() })
+	  }
+	}
+  }
 }
 
 fun Region.wrapped() = object: RegionWrapper {
