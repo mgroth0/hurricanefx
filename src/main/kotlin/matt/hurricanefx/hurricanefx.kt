@@ -57,7 +57,7 @@ import matt.hurricanefx.wrapper.wrapped
 import matt.klib.commons.thisMachine
 import matt.klib.dmap.withStoringDefault
 import matt.klib.lang.NEVER
-import matt.klib.sys.WINDOWS
+import matt.klib.sys.GAMING_WINDOWS
 import matt.stream.recurse.chain
 import java.awt.image.BufferedImage
 import java.lang.ref.WeakReference
@@ -280,7 +280,7 @@ fun intColorToFXColor(i: Int): Color {
 @Deprecated("looks bad, slow, and buggy. Use my own icons.")
 val fileIcons = LRUCache<MFile, BufferedImage>(500).withStoringDefault { f ->
   
-  if (thisMachine is WINDOWS) jswingIconToImage(
+  if (thisMachine is GAMING_WINDOWS) jswingIconToImage(
 	FileSystemView.getFileSystemView().getSystemIcon(f)
   )!!.toBufferedImage() else {
 	val icon = JFileChooser().let { it.ui.getFileView(it) }.getIcon(f)!!
