@@ -1315,7 +1315,7 @@ open class PolygonWrapper(
 
   constructor(
 	vararg points: Double
-  ): this(Polygon(points))
+  ): this(Polygon(*points))
 
 
   init {
@@ -1334,7 +1334,7 @@ open class PolylineWrapper(
 
   constructor(
 	vararg points: Double
-  ): this(Polyline(points))
+  ): this(Polyline(*points))
 
 
   init {
