@@ -60,9 +60,15 @@ import matt.hurricanefx.eye.sflist.SortedFilteredList
 import matt.hurricanefx.tornadofx.fx.attachTo
 import matt.hurricanefx.tornadofx.fx.opcr
 import matt.hurricanefx.wrapper.ButtonWrapper
+import matt.hurricanefx.wrapper.CheckBoxWrapper
+import matt.hurricanefx.wrapper.CheckMenuItemWrapper
+import matt.hurricanefx.wrapper.ChoiceBoxWrapper
 import matt.hurricanefx.wrapper.ColorPickerWrapper
+import matt.hurricanefx.wrapper.ComboBoxBaseWrapper
+import matt.hurricanefx.wrapper.DatePickerWrapper
 import matt.hurricanefx.wrapper.EventTargetWrapper
 import matt.hurricanefx.wrapper.LabeledWrapper
+import matt.hurricanefx.wrapper.SliderWrapper
 import matt.hurricanefx.wrapper.SpinnerWrapper
 import matt.hurricanefx.wrapper.TextFieldWrapper
 import matt.hurricanefx.wrapper.TextFlowWrapper
