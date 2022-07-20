@@ -11,9 +11,11 @@ import javafx.event.ActionEvent
 import javafx.event.EventTarget
 import javafx.geometry.Orientation
 import javafx.geometry.Pos
+import javafx.scene.Group
 import javafx.scene.Node
 import javafx.scene.Parent
 import javafx.scene.Scene
+import javafx.scene.canvas.Canvas
 import javafx.scene.chart.AreaChart
 import javafx.scene.chart.Axis
 import javafx.scene.chart.BarChart
@@ -23,6 +25,7 @@ import javafx.scene.chart.LineChart
 import javafx.scene.chart.PieChart
 import javafx.scene.chart.ScatterChart
 import javafx.scene.chart.StackedBarChart
+import javafx.scene.control.Accordion
 import javafx.scene.control.Button
 import javafx.scene.control.ButtonBar
 import javafx.scene.control.ButtonBase
@@ -104,8 +107,6 @@ import matt.file.toMFile
 import matt.hurricanefx.addAll
 import matt.hurricanefx.eye.lib.onChange
 import matt.hurricanefx.stage
-import matt.hurricanefx.tornadofx.control.label
-import matt.hurricanefx.tornadofx.item.spinner
 import matt.hurricanefx.tornadofx.nodes.add
 import matt.hurricanefx.tornadofx.nodes.getToggleGroup
 import java.time.LocalDate
@@ -322,18 +323,13 @@ open class AnchorPaneWrapper(override val node: AnchorPane = AnchorPane()): Pane
 open class BorderPaneWrapper(override val node: BorderPane = BorderPane()): PaneWrapper(node)
 
 
-open class SplitPaneWrapper(override val node: SplitPane = SplitPane()): PaneWrapper(node)
-
-
-val a =  1.apply {
-  VBoxWrapper {
-	spinner<Int>() {
-	  this.increment()
-	  label {
-		increment()
-	  }
+open class SplitPaneWrapper(override val node: SplitPane = SplitPane()): ControlWrapper {
+  var orientation
+	get() = node.orientation
+	set(value) {
+	  node.orientation = value
 	}
-  }
+  val items get() = node.items
 }
 
 
@@ -715,6 +711,11 @@ class TitledPaneWrapper(
   init {
 	op()
   }
+  var isCollapsible
+	get() = node.isCollapsible
+	set(value) {
+	  node.isCollapsible = value
+	}
 }
 
 
@@ -1566,3 +1567,13 @@ open class SeparatorWrapper(
 
 class GroupWrapper(override val node: Group = Group()): ParentWrapper
 
+class CanvasWrapper(override val node: Canvas = Canvas()): NodeWrapper<Canvas> {
+  constructor(
+	width: Double,
+	height: ouble
+  ): this(Canvas(width,height))
+
+}
+class AccordionWrapper(override val node: Accordion = Accordion()): ControlWrapper
+
+class PaginationWrapper(override val node: Pagination = Pagination()): ControlWrapper
