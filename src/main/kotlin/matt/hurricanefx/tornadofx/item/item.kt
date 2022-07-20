@@ -17,11 +17,9 @@ import javafx.beans.value.ObservableValue
 import javafx.beans.value.WritableValue
 import javafx.collections.ListChangeListener
 import javafx.collections.ObservableList
-import javafx.scene.control.ChoiceBox
 import javafx.scene.control.ComboBox
 import javafx.scene.control.Control
 import javafx.scene.control.ListView
-import javafx.scene.control.Spinner
 import javafx.scene.control.SpinnerValueFactory
 import javafx.scene.control.TableCell
 import javafx.scene.control.TableColumn
@@ -31,7 +29,6 @@ import javafx.scene.control.TreeItem
 import javafx.scene.control.TreeTableColumn
 import javafx.scene.control.TreeTablePosition
 import javafx.scene.control.TreeTableView
-import javafx.scene.control.TreeView
 import javafx.scene.control.cell.CheckBoxListCell
 import javafx.scene.control.cell.ChoiceBoxTableCell
 import javafx.scene.control.cell.ComboBoxTableCell

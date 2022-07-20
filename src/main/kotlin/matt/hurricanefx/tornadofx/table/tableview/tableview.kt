@@ -5,6 +5,7 @@ import javafx.scene.control.TableColumn
 import javafx.scene.control.TreeTableColumn
 import matt.hurricanefx.wrapper.TableViewWrapper
 import matt.hurricanefx.wrapper.TreeTableViewWrapper
+import matt.hurricanefx.tornadofx.item.column
 import kotlin.reflect.KFunction
 import kotlin.reflect.KProperty1
 
@@ -13,6 +14,7 @@ import kotlin.reflect.KProperty1
  */
 @JvmName("coolColumn")
 fun <S, T> TableViewWrapper<S>.column(getter: KFunction<T>, op: TableColumn<S, T>.()->Unit = {}): TableColumn<S, T> {
+
   return column(getter.name) {
 	SimpleObjectProperty(getter.call(it.value))
   }.apply(op)
