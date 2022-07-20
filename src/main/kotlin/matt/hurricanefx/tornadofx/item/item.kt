@@ -51,6 +51,7 @@ import matt.hurricanefx.tornadofx.control.bind
 import matt.hurricanefx.tornadofx.control.bindTo
 import matt.hurricanefx.tornadofx.fx.attachTo
 import matt.hurricanefx.tornadofx.nodes.selectedItem
+import matt.hurricanefx.wrapper.ChoiceBoxWrapper
 import matt.hurricanefx.wrapper.EventTargetWrapper
 import matt.hurricanefx.wrapper.SpinnerWrapper
 import matt.klib.lang.decap
@@ -146,8 +147,8 @@ fun <T> EventTargetWrapper<*>.spinner(
   editable: Boolean = false,
   property: Property<T>? = null,
   enableScroll: Boolean = false,
-  op: Spinner<T>.()->Unit = {}
-) = Spinner<T>(items).attachTo(this, op) {
+  op: SpinnerWrapper<T>.()->Unit = {}
+) = SpinnerWrapper<T>(items).attachTo(this, op) {
   if (property != null) it.valueFactory.valueProperty().apply {
 	bindBidirectional(property)
   }
@@ -170,8 +171,8 @@ fun <T> EventTargetWrapper<*>.spinner(
   editable: Boolean = false,
   property: Property<T>? = null,
   enableScroll: Boolean = false,
-  op: Spinner<T>.()->Unit = {}
-) = Spinner<T>(valueFactory).attachTo(this, op) {
+  op: SpinnerWrapper<T>.()->Unit = {}
+) = SpinnerWrapper<T>(valueFactory).attachTo(this, op) {
   if (property != null) it.valueFactory.valueProperty().apply {
 	bindBidirectional(property)
   }
@@ -189,14 +190,14 @@ fun <T> EventTargetWrapper<*>.spinner(
   }
 }
 
-fun <T> EventTargetWrapper<*>.combobox(property: Property<T>? = null, values: List<T>? = null, op: ComboBox<T>.()->Unit = {}) =
+fun <T> EventTargetWrapper<*>.combobox(property: Property<T>? = null, values: List<T>? = null, op: ComboBoxWrapper<T>.()->Unit = {}) =
   ComboBoxWrapper<T>().attachTo(this, op) {
 	if (values != null) it.items = values as? ObservableList<T> ?: values.asObservable()
 	if (property != null) it.bind(property)
   }
 
 
-inline fun <T> EventTargetWrapper<*>.choicebox(property: Property<T>? = null, values: List<T>? = null, op: ChoiceBox<T>.()->Unit = {}): ChoiceBox<T> {
+inline fun <T> EventTargetWrapper<*>.choicebox(property: Property<T>? = null, values: List<T>? = null, op: ChoiceBoxrapper<T>.()->Unit = {}): ChoiceBoxrapper<T> {
   contract {
 	callsInPlace(op,EXACTLY_ONCE)
   }
@@ -207,7 +208,7 @@ inline fun <T> EventTargetWrapper<*>.choicebox(property: Property<T>? = null, va
 }
 
 
-inline fun <T> choicebox(property: Property<T>? = null, values: List<T>? = null, op: ChoiceBox<T>.()->Unit = {}): ChoiceBox<T> {
+inline fun <T> choicebox(property: Property<T>? = null, values: List<T>? = null, op: ChoiceBoxrapper<T>.()->Unit = {}): ChoiceBoxWrapper<T> {
   contract {
 	callsInPlace(op,EXACTLY_ONCE)
   }

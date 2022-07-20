@@ -29,6 +29,7 @@ import javafx.scene.control.CheckBox
 import javafx.scene.control.CheckMenuItem
 import javafx.scene.control.ChoiceBox
 import javafx.scene.control.ColorPicker
+import javafx.scene.control.ComboBox
 import javafx.scene.control.ComboBoxBase
 import javafx.scene.control.Control
 import javafx.scene.control.DatePicker
@@ -437,6 +438,20 @@ interface ComboBoxBaseWrapper<T>: ControlWrapper {
 	}
 
   fun valueProperty() = node.valueProperty()
+}
+
+@FXNodeWrapperDSL
+class ComboBoxWrapper<T>(
+  override val node: ComboBox<T> = ComboBox<T>(),
+  op: ComboBoxWrapper<T>.()->Unit = {}
+): ComboBoxBaseWrapper<T> {
+  companion object {
+	fun ComboBox<T>.wrapped() = ComboBoxWrapper(this)
+  }
+
+  init {
+	op()
+  }
 }
 
 
