@@ -114,11 +114,10 @@ inline fun <reified T: Number> EventTargetWrapper<*>.spinner(
 		T::class == Int::class || T::class == Integer::class || T::class.javaPrimitiveType == Integer::class.java
   if (isInt) {
 	spinner = SpinnerWrapper(
-	  min?.toInt() ?: 0
-	  max ?. toInt () ?: 100
-	  initialValue ?. toInt () ?: 0
-	  amountToStepBy ?. toInt ()
-	  ?: 1
+	  min?.toInt() ?: 0,
+	  max?.toInt() ?: 100,
+	  initialValue?.toInt() ?: 0,
+	  amountToStepBy?.toInt() ?: 1
 	)
   } else {
 	spinner = SpinnerWrapper(
