@@ -354,6 +354,16 @@ class ButtonWrapper(
 	op()
   }
   fun fire() = node.fire()
+  var text
+	get() = node.text
+	set(value) {
+	  node.text = value
+	}
+  var graphic
+	get() = node.graphic
+	set(value) {
+	  node.graphic = value
+	}
 }
 
 fun Button.wrapped() = ButtonWrapper(this)

@@ -253,13 +253,15 @@ fun <T> EventTargetWrapper<*>.slider(
 
 
 // Buttons
-inline fun EventTargetWrapper<*>.button(text: String = "", graphic: Node? = null, op: Button.()->Unit = {}): ButtonWrapper {
+inline fun EventTargetWrapper<*>.button(text: String = "", graphic: Node? = null, crossinline op: ButtonWrapper.()->Unit = {}): ButtonWrapper {
   contract {
 	callsInPlace(op, EXACTLY_ONCE)
   }
-  return Button(text).attachTo(this, op) {
-	if (graphic != null) it.graphic = graphic
-  }.wrapped()
+  return ButtonWrapper{
+	this.text = text
+	if (graphic != null) this.graphic = graphic
+	op()
+  }.node.attachTo(this, op)
 }
 
 fun EventTargetWrapper<*>.menubutton(text: String = "", graphic: Node? = null, op: MenuButton.()->Unit = {}) =

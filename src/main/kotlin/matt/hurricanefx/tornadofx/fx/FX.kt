@@ -44,30 +44,30 @@ import kotlin.contracts.contract
  * Add the given node to the pane, invoke the node operation and return the node. The `opcr` name
  * is an acronym for "op connect & return".
  */
-inline fun <T: Node> opcr(parent: EventTargetWrapper<*>, node: T, op: T.()->Unit = {}): T {
+inline fun <T: NodeWrapper<*>> opcr(parent: EventTargetWrapper<*>, node: T, op: T.()->Unit = {}): T {
   contract {
 	callsInPlace(op, EXACTLY_ONCE)
   }
   return node.apply {
-	parent.addChildIfPossible(this.wrapped())
+	parent.addChildIfPossible(this)
 	op(this)
   }
 }
 
-inline fun <T: NodeWrapper<*>> opcr(parent: EventTarget, node: T, op: T.()->Unit = {}): T {
-  contract {
-	callsInPlace(op, EXACTLY_ONCE)
-  }
-  return node.apply {
-	parent.wrapped().addChildIfPossible(this)
-	op(this)
-  }
-}
+//inline fun <T: NodeWrapper<*>> opcr(parent: EventTarget, node: T, op: T.()->Unit = {}): T {
+//  contract {
+//	callsInPlace(op, EXACTLY_ONCE)
+//  }
+//  return node.apply {
+//	parent.wrapped().addChildIfPossible(this)
+//	op(this)
+//  }
+//}
 
 /**
  * Attaches the node to the pane and invokes the node operation.
  */
-inline fun <T: Node> T.attachTo(parent: EventTargetWrapper<*>, op: T.()->Unit = {}): T {
+inline fun <T: NodeWrapper<*>> T.attachTo(parent: EventTargetWrapper<*>, op: T.()->Unit = {}): T {
   contract {
 	callsInPlace(op, EXACTLY_ONCE)
   }
@@ -78,7 +78,7 @@ inline fun <T: Node> T.attachTo(parent: EventTargetWrapper<*>, op: T.()->Unit = 
  * Attaches the node to the pane and invokes the node operation.
  * Because the framework sometimes needs to setup the node, another lambda can be provided
  */
-inline fun <T: Node> T.attachTo(
+inline fun <T: NodeWrapper<*>> T.attachTo(
   parent: EventTargetWrapper<*>,
   after: T.()->Unit,
   before: (T)->Unit
