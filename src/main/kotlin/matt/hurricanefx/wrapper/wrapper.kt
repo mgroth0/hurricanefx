@@ -125,10 +125,17 @@ interface EventTargetWrapper<N: EventTarget> {
 
 fun EventTarget.wrapped() = object: EventTargetWrapper<EventTarget> {
   override val node = this@wrapped
+
 }
 
 
 interface NodeWrapper<N: Node>: EventTargetWrapper<N> {
+  companion object {
+
+	fun Node.wrapped() = object: NodeWrapper<Node> {
+	  override val node = this@wrapped
+	}
+  }
   val scene: Scene? get() = node.scene
   val stage get() = node.stage
 
@@ -154,20 +161,22 @@ interface NodeWrapper<N: Node>: EventTargetWrapper<N> {
   fun disableProperty() = node.disableProperty()
   fun focusedProperty() = node.focusedProperty()
 
+  val styleClass get() = node.styleClass
+
 }
 
-fun Node.wrapped() = object: NodeWrapper<Node> {
-  override val node = this@wrapped
-}
 
 
 interface ParentWrapper: NodeWrapper<Parent> {
+  companion object {
+	fun Parent.wrapped() = object: ParentWrapper {
+	  override val node = this@wrapped
+	}
+  }
   override val node: Parent
 }
 
-fun Parent.wrapped() = object: ParentWrapper {
-  override val node = this@wrapped
-}
+
 
 
 open class RegionWrapper(override val node: Region = Region()): ParentWrapper {
@@ -247,6 +256,8 @@ open class RegionWrapper(override val node: Region = Region()): ParentWrapper {
 	  it.consume()
 	}
   }
+
+
 }
 
 
@@ -605,6 +616,16 @@ class TextFlowWrapper(
 
 interface ShapeWrapper: NodeWrapper<Shape> {
   override val node: Shape
+  var stroke
+	get() = node.stroke
+	set(value) {
+	  node.stroke = value
+	}
+  var fill
+	get() = node.fill
+	set(value) {
+	  node.fill = value
+	}
 }
 
 
@@ -1333,6 +1354,7 @@ open class LineWrapper(
   init {
 	op()
   }
+
 
 
   var startX
