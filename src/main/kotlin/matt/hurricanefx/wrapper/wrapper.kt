@@ -170,8 +170,11 @@ fun Parent.wrapped() = object: ParentWrapper {
 }
 
 
-interface RegionWrapper: ParentWrapper {
-  override val node: Region
+open class RegionWrapper(override val node: Region = Region()): ParentWrapper {
+
+  companion object {
+	fun Region.wrapped() = RegionWrapper(this)
+  }
 
   var border: Border?
 	get() = node.border
@@ -247,14 +250,9 @@ interface RegionWrapper: ParentWrapper {
 }
 
 
-fun Region.wrapped() = object: RegionWrapper {
-  override val node = this@wrapped
-}
-
-
 open class PaneWrapper(
   override val node: Pane = Pane()
-): RegionWrapper {
+): RegionWrapper(node) {
 
   companion object {
 	fun Pane.wrapped() = PaneWrapper(this)
@@ -267,7 +265,6 @@ open class PaneWrapper(
 
   val children: ObservableList<Node> get() = node.children
 }
-
 
 
 abstract class BoxWrapper<N: Pane>(override val node: N): PaneWrapper(node) {
@@ -301,7 +298,6 @@ class HBoxWrapper(node: HBox = HBox(), op: HBoxWrapper.()->Unit = {}): BoxWrappe
 }
 
 
-
 class ScrollingVBoxWrapper(vbox: VBox = VBox(), op: ScrollingVBoxWrapper.()->Unit = {}): NodeWrapper<ScrollPane> {
   constructor(vbox: VBoxWrapper, op: ScrollingVBoxWrapper.()->Unit = {}): this(vbox.node, op)
 
@@ -314,17 +310,37 @@ class ScrollingVBoxWrapper(vbox: VBox = VBox(), op: ScrollingVBoxWrapper.()->Uni
 }
 
 
-
 open class StackPaneWrapper(override val node: StackPane = StackPane()): PaneWrapper(node)
 
 
 open class AnchorPaneWrapper(override val node: AnchorPane = AnchorPane()): PaneWrapper(node)
 
 
-open class BorderPaneWrapper(override val node: BorderPane = BorderPane()): PaneWrapper(node)
+open class BorderPaneWrapper(override val node: BorderPane = BorderPane()): PaneWrapper(node) {
+  var center
+	get() = node.center
+	set(value) {
+	  node.center = value
+	}
+  var top
+	get() = node.top
+	set(value) {
+	  node.top = value
+	}
+  var left
+	get() = node.left
+	set(value) {
+	  node.left = value
+	}
+  var right
+	get() = node.right
+	set(value) {
+	  node.right = value
+	}
+}
 
 
-open class SplitPaneWrapper(override val node: SplitPane = SplitPane()): ControlWrapper {
+open class SplitPaneWrapper(override val node: SplitPane = SplitPane()): ControlWrapper(node) {
   var orientation
 	get() = node.orientation
 	set(value) {
@@ -343,25 +359,35 @@ open class TilePaneWrapper(override val node: TilePane = TilePane()): PaneWrappe
 open class FlowPaneWrapper(override val node: FlowPane = FlowPane()): PaneWrapper(node)
 
 
+open class ScrollPaneWrapper(override val node: ScrollPane = ScrollPane()): ControlWrapper(node) {
+  var isFitToWidth
+	get() = node.isFitToWidth
+	set(value) {
+	  node.isFitToWidth = value
+	}
+  var isFitToHeight
+	get() = node.isFitToHeight
+	set(value) {
+	  node.isFitToHeight = value
+	}
+}
 
-open class ScrollPaneWrapper(override val node: ScrollPane = ScrollPane()): ControlWrapper
 
-
-sealed interface TreeLikeWrapper<N: Region, T>: RegionWrapper {
-  var root: TreeItem<T>
-  var isShowRoot: Boolean
-  fun setOnSelectionChange(listener: (TreeItem<T>?)->Unit)
-  val selectionModel: MultipleSelectionModel<TreeItem<T>>
+sealed class TreeLikeWrapper<N: Region, T>(node: N): RegionWrapper(node) {
+  abstract var root: TreeItem<T>
+  abstract var isShowRoot: Boolean
+  abstract fun setOnSelectionChange(listener: (TreeItem<T>?)->Unit)
+  abstract val selectionModel: MultipleSelectionModel<TreeItem<T>>
   val selectedItem: TreeItem<T>? get() = selectionModel.selectedItem
   val selectedItemProperty: ReadOnlyObjectProperty<TreeItem<T>> get() = selectionModel.selectedItemProperty()
   val selectedValue: T? get() = selectedItem?.value
-  fun scrollTo(i: Int)
-  fun getRow(ti: TreeItem<T>): Int
+  abstract fun scrollTo(i: Int)
+  abstract fun getRow(ti: TreeItem<T>): Int
 }
 
 
 class TreeViewWrapper<T>(override val node: TreeView<T> = TreeView(), op: TreeViewWrapper<T>.()->Unit = {}):
-  TreeLikeWrapper<TreeView<T>, T> {
+  TreeLikeWrapper<TreeView<T>, T>(node) {
   init {
 	op()
   }
@@ -393,7 +419,7 @@ class TreeViewWrapper<T>(override val node: TreeView<T> = TreeView(), op: TreeVi
 class TreeTableViewWrapper<T>(
   override val node: TreeTableView<T> = TreeTableView(),
   op: TreeTableViewWrapper<T>.()->Unit = {}
-): TreeLikeWrapper<TreeTableView<T>, T> {
+): TreeLikeWrapper<TreeTableView<T>, T>(node) {
   init {
 	op()
   }
@@ -428,11 +454,10 @@ class TreeTableViewWrapper<T>(
 }
 
 
-
 class ChoiceBoxWrapper<T>(
   override val node: ChoiceBox<T> = ChoiceBox(),
   op: ChoiceBoxWrapper<T>.()->Unit = {}
-): ControlWrapper {
+): ControlWrapper(node) {
   var items
 	get() = node.items
 	set(value) {
@@ -456,11 +481,10 @@ class ChoiceBoxWrapper<T>(
 }
 
 
-
 class TabPaneWrapper(
   override val node: TabPane = TabPane(),
   op: TabPaneWrapper.()->Unit = {}
-): ControlWrapper {
+): ControlWrapper(node) {
   init {
 	op()
   }
@@ -469,9 +493,8 @@ class TabPaneWrapper(
 }
 
 
+class ButtonBaseWrapper(override val node: ButtonBase): LabeledWrapper(node) {
 
-interface ButtonBaseWrapper: LabeledWrapper {
-  override val node: ButtonBase
   fun fire() = node.fire()
   fun setOnAction(op: (ActionEvent)->Unit) {
 	node.setOnAction(op)
@@ -479,10 +502,7 @@ interface ButtonBaseWrapper: LabeledWrapper {
 }
 
 
-
-interface ControlWrapper: RegionWrapper {
-  override val node: Control
-}
+abstract class ControlWrapper(override val node: Control): RegionWrapper(node)
 
 
 class ButtonWrapper(
@@ -499,9 +519,8 @@ class ButtonWrapper(
 }
 
 
+class ComboBoxBaseWrapper<T>(override val node: ComboBoxBase<T>): ControlWrapper(node) {
 
-interface ComboBoxBaseWrapper<T>: ControlWrapper {
-  override val node: ComboBoxBase<T>
   var value
 	get() = node.value
 	set(theVal) {
@@ -517,7 +536,7 @@ interface ComboBoxBaseWrapper<T>: ControlWrapper {
 class ComboBoxWrapper<T>(
   override val node: ComboBox<T> = ComboBox<T>(),
   op: ComboBoxWrapper<T>.()->Unit = {}
-): ComboBoxBaseWrapper<T> {
+): ComboBoxBaseWrapper<T>(node) {
   companion object {
 	fun <T> ComboBox<T>.wrapped() = ComboBoxWrapper(this)
   }
@@ -538,11 +557,10 @@ class ComboBoxWrapper<T>(
 }
 
 
-
 class ColorPickerWrapper(
   override val node: ColorPicker = ColorPicker(),
   op: ColorPickerWrapper.()->Unit = {}
-): ComboBoxBaseWrapper<Color> {
+): ComboBoxBaseWrapper<Color>(node) {
   companion object {
 	fun ColorPicker.wrapped() = ColorPickerWrapper(this)
   }
@@ -553,11 +571,10 @@ class ColorPickerWrapper(
 }
 
 
-
 class DatePickerWrapper(
   override val node: DatePicker = DatePicker(),
   op: DatePickerWrapper.()->Unit = {}
-): ComboBoxBaseWrapper<LocalDate> {
+): ComboBoxBaseWrapper<LocalDate>(node) {
 
   companion object {
 	fun DatePicker.wrapped() = DatePickerWrapper(this)
@@ -571,11 +588,10 @@ class DatePickerWrapper(
 }
 
 
-
 class TextFlowWrapper(
   override val node: TextFlow = TextFlow(),
   op: TextFlowWrapper.()->Unit = {}
-): RegionWrapper {
+): RegionWrapper(node) {
   companion object {
 	fun TextFlow.wrapped() = TextFlowWrapper(this)
   }
@@ -587,11 +603,9 @@ class TextFlowWrapper(
 }
 
 
-
 interface ShapeWrapper: NodeWrapper<Shape> {
   override val node: Shape
 }
-
 
 
 class TextWrapper(
@@ -616,10 +630,7 @@ class TextWrapper(
 }
 
 
-
-interface TextInputControlWrapper: ControlWrapper {
-  override val node: TextInputControl
-
+class TextInputControlWrapper(override val node: TextInputControl): ControlWrapper(node) {
   var text
 	get() = node.text
 	set(value) {
@@ -630,11 +641,10 @@ interface TextInputControlWrapper: ControlWrapper {
 }
 
 
-
 open class TextFieldWrapper(
   override val node: TextField = TextField(),
   op: TextFieldWrapper.()->Unit = {}
-): TextInputControlWrapper {
+): TextInputControlWrapper(node) {
   companion object {
 	fun TextField.wrapped() = TextFieldWrapper(this)
   }
@@ -650,7 +660,6 @@ open class TextFieldWrapper(
 }
 
 
-
 class PasswordFieldWrapper(
   override val node: PasswordField = PasswordField(),
   op: PasswordFieldWrapper.()->Unit = {}
@@ -663,11 +672,10 @@ class PasswordFieldWrapper(
 fun PasswordField.wrapped() = PasswordFieldWrapper(this)
 
 
-
 class TextAreaWrapper(
   override val node: TextArea = TextArea(),
   op: TextAreaWrapper.()->Unit = {}
-): TextInputControlWrapper {
+): TextInputControlWrapper(node) {
   companion object {
 	fun TextArea.wrapped() = TextAreaWrapper(this)
   }
@@ -679,9 +687,7 @@ class TextAreaWrapper(
 }
 
 
-
-interface LabeledWrapper: ControlWrapper {
-  override val node: Labeled
+class LabeledWrapper(override val node: Labeled): ControlWrapper(node) {
 
   var text
 	get() = node.text
@@ -700,11 +706,10 @@ interface LabeledWrapper: ControlWrapper {
 }
 
 
-
 class TitledPaneWrapper(
   override val node: TitledPane = TitledPane(),
   op: TitledPaneWrapper.()->Unit = {}
-): LabeledWrapper {
+): LabeledWrapper(node) {
   companion object {
 	fun TitledPane.wrapped() = TitledPaneWrapper(this)
   }
@@ -712,19 +717,24 @@ class TitledPaneWrapper(
   init {
 	op()
   }
+
   var isCollapsible
 	get() = node.isCollapsible
 	set(value) {
 	  node.isCollapsible = value
 	}
+  var isExpanded
+	get() = node.isExpanded
+	set(value) {
+	  node.isExpanded = value
+	}
 }
-
 
 
 class SpinnerWrapper<T>(
   override val node: Spinner<T> = Spinner<T>(),
   op: SpinnerWrapper<T>.()->Unit = {}
-): ControlWrapper {
+): ControlWrapper(node) {
   companion object {
 	fun <T> Spinner<T>.wrapped() = SpinnerWrapper<T>(this)
   }
@@ -801,7 +811,6 @@ class SliderWrapper(
 }
 
 
-
 open class MenuItemWrapper(
   override val node: MenuItem = MenuItem(),
   op: MenuItemWrapper.()->Unit = {}
@@ -857,7 +866,6 @@ class CheckMenuItemWrapper(
 }
 
 
-
 open class MenuButtonWrapper(
   override val node: MenuButton = MenuButton(),
   op: MenuButtonWrapper.()->Unit = {}
@@ -886,7 +894,6 @@ class SplitMenuButtonWrapper(
 }
 
 
-
 class CheckBoxWrapper(
   override val node: CheckBox = CheckBox(),
   op: CheckBoxWrapper.()->Unit = {}
@@ -909,11 +916,10 @@ class CheckBoxWrapper(
 }
 
 
-
 class ProgressIndicatorWrapper(
   override val node: ProgressIndicator = ProgressIndicator(),
   op: ProgressIndicatorWrapper.()->Unit = {}
-): ControlWrapper {
+): ControlWrapper(node) {
   companion object {
 	fun ProgressIndicator.wrapped() = ProgressIndicatorWrapper(this)
   }
@@ -932,11 +938,10 @@ class ProgressIndicatorWrapper(
 }
 
 
-
 class ButtonBarWrapper(
   override val node: ButtonBar = ButtonBar(),
   op: ButtonBarWrapper.()->Unit = {}
-): ControlWrapper {
+): ControlWrapper(node) {
   companion object {
 	fun ButtonBar.wrapped() = ButtonBarWrapper(this)
   }
@@ -952,7 +957,6 @@ class ButtonBarWrapper(
 	  node.buttonOrder = value
 	}
 }
-
 
 
 class ProgressBarWrapper(
@@ -977,11 +981,10 @@ class ProgressBarWrapper(
 }
 
 
-
 class ToolBarWrapper(
   override val node: ToolBar = ToolBar(),
   op: ToolBarWrapper.()->Unit = {}
-): ControlWrapper {
+): ControlWrapper(node) {
   companion object {
 	fun ToolBar.wrapped() = ToolBarWrapper(this)
   }
@@ -1023,7 +1026,6 @@ open class ToggleButtonWrapper(
 }
 
 
-
 class RadioButtonWrapper(
   override val node: RadioButton = RadioButton(),
   op: RadioButtonWrapper.()->Unit = {}
@@ -1038,7 +1040,6 @@ class RadioButtonWrapper(
 }
 
 
-
 class HyperlinkWrapper(
   override val node: Hyperlink = Hyperlink(),
   op: HyperlinkWrapper.()->Unit = {}
@@ -1051,7 +1052,6 @@ class HyperlinkWrapper(
 	op()
   }
 }
-
 
 
 class ImageViewWrapper(
@@ -1077,11 +1077,10 @@ class ImageViewWrapper(
 }
 
 
-
 class LabelWrapper(
   override val node: Label = Label(),
   op: LabelWrapper.()->Unit = {}
-): LabeledWrapper {
+): LabeledWrapper(node) {
   companion object {
 	fun Label.wrapped() = LabelWrapper(this)
   }
@@ -1092,11 +1091,10 @@ class LabelWrapper(
 }
 
 
-
 open class MenuBarWrapper(
   override val node: MenuBar = MenuBar(),
   op: MenuBarWrapper.()->Unit = {}
-): ControlWrapper {
+): ControlWrapper(node) {
   companion object {
 	fun MenuBar.wrapped() = MenuBarWrapper(this)
   }
@@ -1107,9 +1105,7 @@ open class MenuBarWrapper(
 }
 
 
-
-interface ChartWrapper: RegionWrapper {
-  override val node: Chart
+class ChartWrapper(override val node: Chart): RegionWrapper(node) {
 
 
   var title
@@ -1189,7 +1185,6 @@ open class BubbleChartWrapper<X, Y>(
 }
 
 
-
 open class ScatterChartWrapper<X, Y>(
   override val node: ScatterChart<X, Y>,
   op: ScatterChartWrapper<X, Y>.()->Unit = {}
@@ -1238,7 +1233,6 @@ open class StackedBarChartWrapper<X, Y>(
 }
 
 
-
 open class RectangleWrapper(
   override val node: Rectangle = Rectangle(),
   op: RectangleWrapper.()->Unit = {}
@@ -1253,7 +1247,6 @@ open class RectangleWrapper(
 	op()
   }
 }
-
 
 
 open class ArcWrapper(
@@ -1302,7 +1295,6 @@ open class CubicCurveWrapper(
 	op()
   }
 }
-
 
 
 open class EllipseWrapper(
@@ -1389,7 +1381,6 @@ open class PathWrapper(
 }
 
 
-
 open class PolygonWrapper(
   override val node: Polygon = Polygon(),
   op: PolygonWrapper.()->Unit = {}
@@ -1447,7 +1438,6 @@ open class QuadCurveWrapper(
 }
 
 
-
 open class CircleWrapper(
   override val node: Circle = Circle(),
   op: CircleWrapper.()->Unit = {}
@@ -1466,7 +1456,6 @@ open class CircleWrapper(
 	op()
   }
 }
-
 
 
 open class SVGPathWrapper(
@@ -1499,7 +1488,7 @@ open class SVGPathWrapper(
 open class ListViewWrapper<E>(
   override val node: ListView<E> = ListView<E>(),
   op: ListViewWrapper<E>.()->Unit = {}
-): ControlWrapper {
+): ControlWrapper(node) {
   companion object {
 	fun <E> ListView<E>.wrapped() = ListViewWrapper<E>(this)
   }
@@ -1521,7 +1510,7 @@ open class ListViewWrapper<E>(
 open class TableViewWrapper<E>(
   override val node: TableView<E> = TableView<E>(),
   op: TableViewWrapper<E>.()->Unit = {}
-): ControlWrapper {
+): ControlWrapper(node) {
   companion object {
 	fun <E> TableView<E>.wrapped() = TableViewWrapper<E>(this)
   }
@@ -1545,11 +1534,10 @@ open class TableViewWrapper<E>(
 }
 
 
-
 open class SeparatorWrapper(
   override val node: Separator = Separator(),
   op: SeparatorWrapper.()->Unit = {}
-): ControlWrapper {
+): ControlWrapper(node) {
   companion object {
 	fun Separator.wrapped() = SeparatorWrapper(this)
   }
@@ -1572,9 +1560,12 @@ class CanvasWrapper(override val node: Canvas = Canvas()): NodeWrapper<Canvas> {
   constructor(
 	width: Double,
 	height: Double
-  ): this(Canvas(width,height))
+  ): this(Canvas(width, height))
 
 }
-class AccordionWrapper(override val node: Accordion = Accordion()): ControlWrapper
 
-class PaginationWrapper(override val node: Pagination = Pagination()): ControlWrapper
+class AccordionWrapper(override val node: Accordion = Accordion()): ControlWrapper(node) {
+  val panes get() = node.panes
+}
+
+class PaginationWrapper(override val node: Pagination = Pagination()): ControlWrapper(node)
