@@ -9,6 +9,7 @@ import javafx.beans.property.ReadOnlyObjectProperty
 import javafx.collections.ObservableList
 import javafx.event.ActionEvent
 import javafx.event.EventTarget
+import javafx.geometry.Orientation
 import javafx.geometry.Pos
 import javafx.scene.Node
 import javafx.scene.Parent
@@ -46,10 +47,12 @@ import javafx.scene.control.ProgressBar
 import javafx.scene.control.ProgressIndicator
 import javafx.scene.control.RadioButton
 import javafx.scene.control.ScrollPane
+import javafx.scene.control.Separator
 import javafx.scene.control.Slider
 import javafx.scene.control.Spinner
 import javafx.scene.control.SpinnerValueFactory
 import javafx.scene.control.SplitMenuButton
+import javafx.scene.control.SplitPane
 import javafx.scene.control.TabPane
 import javafx.scene.control.TableView
 import javafx.scene.control.TextArea
@@ -67,11 +70,17 @@ import javafx.scene.input.KeyEvent
 import javafx.scene.input.MouseEvent
 import javafx.scene.input.ScrollEvent
 import javafx.scene.input.TransferMode.ANY
+import javafx.scene.layout.AnchorPane
 import javafx.scene.layout.Background
 import javafx.scene.layout.Border
+import javafx.scene.layout.BorderPane
+import javafx.scene.layout.FlowPane
+import javafx.scene.layout.GridPane
 import javafx.scene.layout.HBox
 import javafx.scene.layout.Pane
 import javafx.scene.layout.Region
+import javafx.scene.layout.StackPane
+import javafx.scene.layout.TilePane
 import javafx.scene.layout.VBox
 import javafx.scene.paint.Color
 import javafx.scene.shape.Arc
@@ -95,6 +104,8 @@ import matt.file.toMFile
 import matt.hurricanefx.addAll
 import matt.hurricanefx.eye.lib.onChange
 import matt.hurricanefx.stage
+import matt.hurricanefx.tornadofx.control.label
+import matt.hurricanefx.tornadofx.item.spinner
 import matt.hurricanefx.tornadofx.nodes.add
 import matt.hurricanefx.tornadofx.nodes.getToggleGroup
 import java.time.LocalDate
@@ -114,7 +125,7 @@ fun EventTarget.wrapped() = object: EventTargetWrapper<EventTarget> {
   override val node = this@wrapped
 }
 
-@FXNodeWrapperDSL
+
 interface NodeWrapper<N: Node>: EventTargetWrapper<N> {
   val scene: Scene? get() = node.scene
   val stage get() = node.stage
@@ -147,7 +158,7 @@ fun Node.wrapped() = object: NodeWrapper<Node> {
   override val node = this@wrapped
 }
 
-@FXNodeWrapperDSL
+
 interface ParentWrapper: NodeWrapper<Parent> {
   override val node: Parent
 }
@@ -156,7 +167,7 @@ fun Parent.wrapped() = object: ParentWrapper {
   override val node = this@wrapped
 }
 
-@FXNodeWrapperDSL
+
 interface RegionWrapper: ParentWrapper {
   override val node: Region
 
@@ -238,9 +249,15 @@ fun Region.wrapped() = object: RegionWrapper {
   override val node = this@wrapped
 }
 
-@FXNodeWrapperDSL
-interface PaneWrapper: RegionWrapper {
-  override val node: Pane
+
+open class PaneWrapper(
+  override val node: Pane = Pane()
+): RegionWrapper {
+
+  companion object {
+	fun Pane.wrapped() = PaneWrapper(this)
+  }
+
   operator fun Collection<Node>.unaryPlus() {
 	node.addAll(this)
   }
@@ -249,12 +266,9 @@ interface PaneWrapper: RegionWrapper {
   val children: ObservableList<Node> get() = node.children
 }
 
-fun Pane.wrapped() = object: PaneWrapper {
-  override val node = this@wrapped
-}
 
-@FXNodeWrapperDSL
-interface BoxWrapper<N: Pane>: PaneWrapper {
+
+abstract class BoxWrapper<N: Pane>(override val node: N): PaneWrapper(node) {
 
   var alignment: Pos
 	get() = (node as? HBox)?.alignment ?: (node as VBox).alignment
@@ -270,22 +284,22 @@ interface BoxWrapper<N: Pane>: PaneWrapper {
 	}
 }
 
-@FXNodeWrapperDSL
-open class VBoxWrapper(override val node: VBox = VBox(), op: VBoxWrapper.()->Unit = {}): BoxWrapper<VBox> {
-  init {
-	op()
-  }
-}
 
-@FXNodeWrapperDSL
-class HBoxWrapper(override val node: HBox = HBox(), op: HBoxWrapper.()->Unit = {}): BoxWrapper<HBox> {
+open class VBoxWrapper(node: VBox = VBox(), op: VBoxWrapper.()->Unit = {}): BoxWrapper<VBox>(node) {
   init {
 	op()
   }
 }
 
 
-@FXNodeWrapperDSL
+class HBoxWrapper(node: HBox = HBox(), op: HBoxWrapper.()->Unit = {}): BoxWrapper<HBox>(node) {
+  init {
+	op()
+  }
+}
+
+
+
 class ScrollingVBoxWrapper(vbox: VBox = VBox(), op: ScrollingVBoxWrapper.()->Unit = {}): NodeWrapper<ScrollPane> {
   constructor(vbox: VBoxWrapper, op: ScrollingVBoxWrapper.()->Unit = {}): this(vbox.node, op)
 
@@ -297,7 +311,45 @@ class ScrollingVBoxWrapper(vbox: VBox = VBox(), op: ScrollingVBoxWrapper.()->Uni
   }
 }
 
-@FXNodeWrapperDSL
+
+
+open class StackPaneWrapper(override val node: StackPane = StackPane()): PaneWrapper(node)
+
+
+open class AnchorPaneWrapper(override val node: AnchorPane = AnchorPane()): PaneWrapper(node)
+
+
+open class BorderPaneWrapper(override val node: BorderPane = BorderPane()): PaneWrapper(node)
+
+
+open class SplitPaneWrapper(override val node: SplitPane = SplitPane()): PaneWrapper(node)
+
+
+val a =  1.apply {
+  VBoxWrapper {
+	spinner<Int>() {
+	  this.increment()
+	  label {
+		increment()
+	  }
+	}
+  }
+}
+
+
+open class GridPaneWrapper(override val node: GridPane = GridPane()): PaneWrapper(node)
+
+
+open class TilePaneWrapper(override val node: TilePane = TilePane()): PaneWrapper(node)
+
+
+open class FlowPaneWrapper(override val node: FlowPane = FlowPane()): PaneWrapper(node)
+
+
+
+open class ScrollPaneWrapper(override val node: ScrollPane = ScrollPane()): ControlWrapper
+
+
 sealed interface TreeLikeWrapper<N: Region, T>: RegionWrapper {
   var root: TreeItem<T>
   var isShowRoot: Boolean
@@ -310,7 +362,7 @@ sealed interface TreeLikeWrapper<N: Region, T>: RegionWrapper {
   fun getRow(ti: TreeItem<T>): Int
 }
 
-@FXNodeWrapperDSL
+
 class TreeViewWrapper<T>(override val node: TreeView<T> = TreeView(), op: TreeViewWrapper<T>.()->Unit = {}):
   TreeLikeWrapper<TreeView<T>, T> {
   init {
@@ -340,7 +392,7 @@ class TreeViewWrapper<T>(override val node: TreeView<T> = TreeView(), op: TreeVi
 
 }
 
-@FXNodeWrapperDSL
+
 class TreeTableViewWrapper<T>(
   override val node: TreeTableView<T> = TreeTableView(),
   op: TreeTableViewWrapper<T>.()->Unit = {}
@@ -379,7 +431,7 @@ class TreeTableViewWrapper<T>(
 }
 
 
-@FXNodeWrapperDSL
+
 class ChoiceBoxWrapper<T>(
   override val node: ChoiceBox<T> = ChoiceBox(),
   op: ChoiceBoxWrapper<T>.()->Unit = {}
@@ -407,11 +459,11 @@ class ChoiceBoxWrapper<T>(
 }
 
 
-@FXNodeWrapperDSL
+
 class TabPaneWrapper(
   override val node: TabPane = TabPane(),
   op: TabPaneWrapper.()->Unit = {}
-): RegionWrapper {
+): ControlWrapper {
   init {
 	op()
   }
@@ -420,7 +472,7 @@ class TabPaneWrapper(
 }
 
 
-@FXNodeWrapperDSL
+
 interface ButtonBaseWrapper: LabeledWrapper {
   override val node: ButtonBase
   fun fire() = node.fire()
@@ -430,12 +482,12 @@ interface ButtonBaseWrapper: LabeledWrapper {
 }
 
 
-@FXNodeWrapperDSL
+
 interface ControlWrapper: RegionWrapper {
   override val node: Control
 }
 
-@FXNodeWrapperDSL
+
 class ButtonWrapper(
   override val node: Button = Button(),
   op: ButtonWrapper.()->Unit = {}
@@ -450,7 +502,7 @@ class ButtonWrapper(
 }
 
 
-@FXNodeWrapperDSL
+
 interface ComboBoxBaseWrapper<T>: ControlWrapper {
   override val node: ComboBoxBase<T>
   var value
@@ -464,7 +516,7 @@ interface ComboBoxBaseWrapper<T>: ControlWrapper {
 
 }
 
-@FXNodeWrapperDSL
+
 class ComboBoxWrapper<T>(
   override val node: ComboBox<T> = ComboBox<T>(),
   op: ComboBoxWrapper<T>.()->Unit = {}
@@ -489,7 +541,7 @@ class ComboBoxWrapper<T>(
 }
 
 
-@FXNodeWrapperDSL
+
 class ColorPickerWrapper(
   override val node: ColorPicker = ColorPicker(),
   op: ColorPickerWrapper.()->Unit = {}
@@ -504,7 +556,7 @@ class ColorPickerWrapper(
 }
 
 
-@FXNodeWrapperDSL
+
 class DatePickerWrapper(
   override val node: DatePicker = DatePicker(),
   op: DatePickerWrapper.()->Unit = {}
@@ -522,7 +574,7 @@ class DatePickerWrapper(
 }
 
 
-@FXNodeWrapperDSL
+
 class TextFlowWrapper(
   override val node: TextFlow = TextFlow(),
   op: TextFlowWrapper.()->Unit = {}
@@ -538,13 +590,13 @@ class TextFlowWrapper(
 }
 
 
-@FXNodeWrapperDSL
+
 interface ShapeWrapper: NodeWrapper<Shape> {
   override val node: Shape
 }
 
 
-@FXNodeWrapperDSL
+
 class TextWrapper(
   override val node: Text = Text(),
   op: TextWrapper.()->Unit = {}
@@ -567,7 +619,7 @@ class TextWrapper(
 }
 
 
-@FXNodeWrapperDSL
+
 interface TextInputControlWrapper: ControlWrapper {
   override val node: TextInputControl
 
@@ -581,7 +633,7 @@ interface TextInputControlWrapper: ControlWrapper {
 }
 
 
-@FXNodeWrapperDSL
+
 open class TextFieldWrapper(
   override val node: TextField = TextField(),
   op: TextFieldWrapper.()->Unit = {}
@@ -601,7 +653,7 @@ open class TextFieldWrapper(
 }
 
 
-@FXNodeWrapperDSL
+
 class PasswordFieldWrapper(
   override val node: PasswordField = PasswordField(),
   op: PasswordFieldWrapper.()->Unit = {}
@@ -614,7 +666,7 @@ class PasswordFieldWrapper(
 fun PasswordField.wrapped() = PasswordFieldWrapper(this)
 
 
-@FXNodeWrapperDSL
+
 class TextAreaWrapper(
   override val node: TextArea = TextArea(),
   op: TextAreaWrapper.()->Unit = {}
@@ -630,7 +682,7 @@ class TextAreaWrapper(
 }
 
 
-@FXNodeWrapperDSL
+
 interface LabeledWrapper: ControlWrapper {
   override val node: Labeled
 
@@ -651,7 +703,7 @@ interface LabeledWrapper: ControlWrapper {
 }
 
 
-@FXNodeWrapperDSL
+
 class TitledPaneWrapper(
   override val node: TitledPane = TitledPane(),
   op: TitledPaneWrapper.()->Unit = {}
@@ -666,7 +718,7 @@ class TitledPaneWrapper(
 }
 
 
-@FXNodeWrapperDSL
+
 class SpinnerWrapper<T>(
   override val node: Spinner<T> = Spinner<T>(),
   op: SpinnerWrapper<T>.()->Unit = {}
@@ -706,7 +758,7 @@ class SpinnerWrapper<T>(
   fun decrement(steps: Int) = node.decrement(steps)
 }
 
-@FXNodeWrapperDSL
+
 class SliderWrapper(
   override val node: Slider = Slider(),
   op: SliderWrapper.()->Unit = {}
@@ -747,7 +799,7 @@ class SliderWrapper(
 }
 
 
-@FXNodeWrapperDSL
+
 open class MenuItemWrapper(
   override val node: MenuItem = MenuItem(),
   op: MenuItemWrapper.()->Unit = {}
@@ -780,7 +832,7 @@ open class MenuItemWrapper(
 	}
 }
 
-@FXNodeWrapperDSL
+
 class CheckMenuItemWrapper(
   override val node: CheckMenuItem = CheckMenuItem(),
   op: CheckMenuItemWrapper.()->Unit = {}
@@ -803,7 +855,7 @@ class CheckMenuItemWrapper(
 }
 
 
-@FXNodeWrapperDSL
+
 open class MenuButtonWrapper(
   override val node: MenuButton = MenuButton(),
   op: MenuButtonWrapper.()->Unit = {}
@@ -817,7 +869,7 @@ open class MenuButtonWrapper(
   }
 }
 
-@FXNodeWrapperDSL
+
 class SplitMenuButtonWrapper(
   override val node: SplitMenuButton = SplitMenuButton(),
   op: SplitMenuButtonWrapper.()->Unit = {}
@@ -832,7 +884,7 @@ class SplitMenuButtonWrapper(
 }
 
 
-@FXNodeWrapperDSL
+
 class CheckBoxWrapper(
   override val node: CheckBox = CheckBox(),
   op: CheckBoxWrapper.()->Unit = {}
@@ -855,7 +907,7 @@ class CheckBoxWrapper(
 }
 
 
-@FXNodeWrapperDSL
+
 class ProgressIndicatorWrapper(
   override val node: ProgressIndicator = ProgressIndicator(),
   op: ProgressIndicatorWrapper.()->Unit = {}
@@ -878,7 +930,7 @@ class ProgressIndicatorWrapper(
 }
 
 
-@FXNodeWrapperDSL
+
 class ButtonBarWrapper(
   override val node: ButtonBar = ButtonBar(),
   op: ButtonBarWrapper.()->Unit = {}
@@ -900,7 +952,7 @@ class ButtonBarWrapper(
 }
 
 
-@FXNodeWrapperDSL
+
 class ProgressBarWrapper(
   override val node: ProgressBar = ProgressBar(),
   op: ProgressBarWrapper.()->Unit = {}
@@ -923,7 +975,7 @@ class ProgressBarWrapper(
 }
 
 
-@FXNodeWrapperDSL
+
 class ToolBarWrapper(
   override val node: ToolBar = ToolBar(),
   op: ToolBarWrapper.()->Unit = {}
@@ -940,7 +992,7 @@ class ToolBarWrapper(
 
 }
 
-@FXNodeWrapperDSL
+
 open class ToggleButtonWrapper(
   override val node: ToggleButton = ToggleButton(),
   op: ToggleButtonWrapper.()->Unit = {}
@@ -969,7 +1021,7 @@ open class ToggleButtonWrapper(
 }
 
 
-@FXNodeWrapperDSL
+
 class RadioButtonWrapper(
   override val node: RadioButton = RadioButton(),
   op: RadioButtonWrapper.()->Unit = {}
@@ -984,7 +1036,7 @@ class RadioButtonWrapper(
 }
 
 
-@FXNodeWrapperDSL
+
 class HyperlinkWrapper(
   override val node: Hyperlink = Hyperlink(),
   op: HyperlinkWrapper.()->Unit = {}
@@ -999,7 +1051,7 @@ class HyperlinkWrapper(
 }
 
 
-@FXNodeWrapperDSL
+
 class ImageViewWrapper(
   override val node: ImageView = ImageView(),
   op: ImageViewWrapper.()->Unit = {}
@@ -1023,7 +1075,7 @@ class ImageViewWrapper(
 }
 
 
-@FXNodeWrapperDSL
+
 class LabelWrapper(
   override val node: Label = Label(),
   op: LabelWrapper.()->Unit = {}
@@ -1038,7 +1090,7 @@ class LabelWrapper(
 }
 
 
-@FXNodeWrapperDSL
+
 open class MenuBarWrapper(
   override val node: MenuBar = MenuBar(),
   op: MenuBarWrapper.()->Unit = {}
@@ -1053,7 +1105,7 @@ open class MenuBarWrapper(
 }
 
 
-@FXNodeWrapperDSL
+
 interface ChartWrapper: RegionWrapper {
   override val node: Chart
 
@@ -1068,7 +1120,7 @@ interface ChartWrapper: RegionWrapper {
 
 }
 
-@FXNodeWrapperDSL
+
 open class PieChartWrapper(
   override val node: PieChart = PieChart(),
   op: PieChartWrapper.()->Unit = {}
@@ -1086,7 +1138,7 @@ open class PieChartWrapper(
   val data = node.data
 }
 
-@FXNodeWrapperDSL
+
 open class LineChartWrapper<X, Y>(
   override val node: LineChart<X, Y>,
   op: LineChartWrapper<X, Y>.()->Unit = {}
@@ -1102,7 +1154,7 @@ open class LineChartWrapper<X, Y>(
   }
 }
 
-@FXNodeWrapperDSL
+
 open class AreaChartWrapper<X, Y>(
   override val node: AreaChart<X, Y>,
   op: AreaChartWrapper<X, Y>.()->Unit = {}
@@ -1118,7 +1170,7 @@ open class AreaChartWrapper<X, Y>(
   }
 }
 
-@FXNodeWrapperDSL
+
 open class BubbleChartWrapper<X, Y>(
   override val node: BubbleChart<X, Y>,
   op: BubbleChartWrapper<X, Y>.()->Unit = {}
@@ -1135,7 +1187,7 @@ open class BubbleChartWrapper<X, Y>(
 }
 
 
-@FXNodeWrapperDSL
+
 open class ScatterChartWrapper<X, Y>(
   override val node: ScatterChart<X, Y>,
   op: ScatterChartWrapper<X, Y>.()->Unit = {}
@@ -1151,7 +1203,7 @@ open class ScatterChartWrapper<X, Y>(
   }
 }
 
-@FXNodeWrapperDSL
+
 open class BarChartWrapper<X, Y>(
   override val node: BarChart<X, Y>,
   op: BarChartWrapper<X, Y>.()->Unit = {}
@@ -1167,7 +1219,7 @@ open class BarChartWrapper<X, Y>(
   }
 }
 
-@FXNodeWrapperDSL
+
 open class StackedBarChartWrapper<X, Y>(
   override val node: StackedBarChart<X, Y>,
   op: StackedBarChartWrapper<X, Y>.()->Unit = {}
@@ -1184,7 +1236,7 @@ open class StackedBarChartWrapper<X, Y>(
 }
 
 
-@FXNodeWrapperDSL
+
 open class RectangleWrapper(
   override val node: Rectangle = Rectangle(),
   op: RectangleWrapper.()->Unit = {}
@@ -1201,7 +1253,7 @@ open class RectangleWrapper(
 }
 
 
-@FXNodeWrapperDSL
+
 open class ArcWrapper(
   override val node: Arc = Arc(),
   op: ArcWrapper.()->Unit = {}
@@ -1224,7 +1276,7 @@ open class ArcWrapper(
   }
 }
 
-@FXNodeWrapperDSL
+
 open class CubicCurveWrapper(
   override val node: CubicCurve = CubicCurve(),
   op: CubicCurveWrapper.()->Unit = {}
@@ -1250,7 +1302,7 @@ open class CubicCurveWrapper(
 }
 
 
-@FXNodeWrapperDSL
+
 open class EllipseWrapper(
   override val node: Ellipse = Ellipse(),
   op: EllipseWrapper.()->Unit = {}
@@ -1269,7 +1321,7 @@ open class EllipseWrapper(
   }
 }
 
-@FXNodeWrapperDSL
+
 open class LineWrapper(
   override val node: Line = Line(),
   op: LineWrapper.()->Unit = {}
@@ -1287,9 +1339,33 @@ open class LineWrapper(
   init {
 	op()
   }
+
+
+  var startX
+	get() = node.startX
+	set(value) {
+	  node.startX = value
+	}
+  var startY
+	get() = node.startY
+	set(value) {
+	  node.startY = value
+	}
+  var endX
+	get() = node.endX
+	set(value) {
+	  node.endX = value
+	}
+  var endY
+	get() = node.endY
+	set(value) {
+	  node.endY = value
+	}
+
+
 }
 
-@FXNodeWrapperDSL
+
 open class PathWrapper(
   override val node: Path = Path(),
   op: PathWrapper.()->Unit = {}
@@ -1311,7 +1387,7 @@ open class PathWrapper(
 }
 
 
-@FXNodeWrapperDSL
+
 open class PolygonWrapper(
   override val node: Polygon = Polygon(),
   op: PolygonWrapper.()->Unit = {}
@@ -1330,7 +1406,7 @@ open class PolygonWrapper(
   }
 }
 
-@FXNodeWrapperDSL
+
 open class PolylineWrapper(
   override val node: Polyline = Polyline(),
   op: PolylineWrapper.()->Unit = {}
@@ -1349,7 +1425,7 @@ open class PolylineWrapper(
   }
 }
 
-@FXNodeWrapperDSL
+
 open class QuadCurveWrapper(
   override val node: QuadCurve = QuadCurve(),
   op: QuadCurveWrapper.()->Unit = {}
@@ -1369,7 +1445,7 @@ open class QuadCurveWrapper(
 }
 
 
-@FXNodeWrapperDSL
+
 open class CircleWrapper(
   override val node: Circle = Circle(),
   op: CircleWrapper.()->Unit = {}
@@ -1390,7 +1466,7 @@ open class CircleWrapper(
 }
 
 
-@FXNodeWrapperDSL
+
 open class SVGPathWrapper(
   override val node: SVGPath = SVGPath(),
   op: SVGPathWrapper.()->Unit = {}
@@ -1417,7 +1493,7 @@ open class SVGPathWrapper(
   }
 }
 
-@FXNodeWrapperDSL
+
 open class ListViewWrapper<E>(
   override val node: ListView<E> = ListView<E>(),
   op: ListViewWrapper<E>.()->Unit = {}
@@ -1439,7 +1515,7 @@ open class ListViewWrapper<E>(
   fun itemsProperty() = node.itemsProperty()
 }
 
-@FXNodeWrapperDSL
+
 open class TableViewWrapper<E>(
   override val node: TableView<E> = TableView<E>(),
   op: TableViewWrapper<E>.()->Unit = {}
@@ -1465,4 +1541,28 @@ open class TableViewWrapper<E>(
 
   val columns get() = node.columns
 }
+
+
+
+open class SeparatorWrapper(
+  override val node: Separator = Separator(),
+  op: SeparatorWrapper.()->Unit = {}
+): ControlWrapper {
+  companion object {
+	fun Separator.wrapped() = SeparatorWrapper(this)
+  }
+
+  constructor(
+	o: Orientation
+  ): this(Separator(o))
+
+
+  init {
+	op()
+  }
+
+
+}
+
+class GroupWrapper(override val node: Group = Group()): ParentWrapper
 
