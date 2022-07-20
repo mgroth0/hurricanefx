@@ -12,6 +12,8 @@ import javafx.scene.Parent
 import javafx.scene.Scene
 import javafx.scene.control.Button
 import javafx.scene.control.ChoiceBox
+import javafx.scene.control.ColorPicker
+import javafx.scene.control.Control
 import javafx.scene.control.MultipleSelectionModel
 import javafx.scene.control.ScrollPane
 import javafx.scene.control.TabPane
@@ -28,6 +30,9 @@ import javafx.scene.layout.HBox
 import javafx.scene.layout.Pane
 import javafx.scene.layout.Region
 import javafx.scene.layout.VBox
+import javafx.scene.shape.Shape
+import javafx.scene.text.Text
+import javafx.scene.text.TextFlow
 import javafx.util.Callback
 import matt.file.MFile
 import matt.file.toMFile
@@ -343,7 +348,9 @@ class TabPaneWrapper(
 
 
 @FXNodeWrapperDSL
-interface ControlWrapper: RegionWrapper
+interface ControlWrapper: RegionWrapper {
+  override val node: Control
+}
 
 @FXNodeWrapperDSL
 class ButtonWrapper(
@@ -353,6 +360,7 @@ class ButtonWrapper(
   init {
 	op()
   }
+
   fun fire() = node.fire()
   var text
 	get() = node.text
@@ -367,3 +375,58 @@ class ButtonWrapper(
 }
 
 fun Button.wrapped() = ButtonWrapper(this)
+
+
+@FXNodeWrapperDSL
+class ColorPickerWrapper(
+  override val node: ColorPicker = ColorPicker(),
+  op: ColorPickerWrapper.()->Unit = {}
+): ControlWrapper {
+  init {
+	op()
+  }
+
+  var value
+	get() = node.value
+	set(theVal) {
+	  node.value = theVal
+	}
+
+  fun valueProperty() = node.valueProperty()
+}
+
+fun ColorPicker.wrapped() = ColorPickerWrapper(this)
+
+
+@FXNodeWrapperDSL
+class TextFlowWrapper(
+  override val node: TextFlow = TextFlow(),
+  op: TextFlowWrapper.()->Unit = {}
+): RegionWrapper {
+  init {
+	op()
+  }
+
+}
+
+fun TextFlow.wrapped() = TextFlowWrapper(this)
+
+
+@FXNodeWrapperDSL
+interface ShapeWrapper: NodeWrapper<out Shape> {
+  override val node: Shape
+}
+
+
+@FXNodeWrapperDSL
+class TextWrapper(
+  override val node: Text = Text(),
+  op: TextWrapper.()->Unit = {}
+): ShapeWrapper {
+  init {
+	op()
+  }
+
+}
+
+fun Text.wrapped() = TextWrapper(this)

@@ -60,7 +60,9 @@ import matt.hurricanefx.eye.sflist.SortedFilteredList
 import matt.hurricanefx.tornadofx.fx.attachTo
 import matt.hurricanefx.tornadofx.fx.opcr
 import matt.hurricanefx.wrapper.ButtonWrapper
+import matt.hurricanefx.wrapper.ColorPickerWrapper
 import matt.hurricanefx.wrapper.EventTargetWrapper
+import matt.hurricanefx.wrapper.TextFlowWrapper
 import matt.hurricanefx.wrapper.wrapped
 import matt.klib.lang.err
 import java.text.Format
@@ -71,18 +73,18 @@ import kotlin.contracts.contract
 
 fun EventTargetWrapper<*>.colorpicker(
   color: Color? = null,
-  op: ColorPicker.()->Unit = {}
-) = ColorPicker().wrapped().attachTo(this, op) {
+  op: ColorPickerWrapper.()->Unit = {}
+) = ColorPickerWrapper().attachTo(this, op) {
   if (color != null) it.value = color
 }
 
 fun EventTargetWrapper<*>.colorpicker(
   colorProperty: ObjectProperty<Color>,
-  op: ColorPicker.()->Unit = {}
-) = ColorPicker().apply { bind(colorProperty) }.attachTo(this, op) {
+  op: ColorPickerWrapper.()->Unit = {}
+) = ColorPickerWrapper().apply { node.bind(colorProperty) }.attachTo(this, op) {
 }
 
-fun EventTargetWrapper<*>.textflow(op: TextFlow.()->Unit = {}) = TextFlow().attachTo(this, op)
+fun EventTargetWrapper<*>.textflow(op: TextFlowWrapper.()->Unit = {}) = TextFlowWrapper().attachTo(this, op)
 
 fun EventTargetWrapper<*>.text(op: Text.()->Unit = {}) = Text().attachTo(this, op)
 
@@ -524,7 +526,7 @@ fun MenuItem.action(op: ()->Unit) = setOnAction { op() }
 fun <T> ComboBoxBase<T>.bind(property: ObservableValue<T>, readonly: Boolean = false) =
   valueProperty().internalBind(property, readonly)
 
-fun ColorPicker.bind(property: ObservableValue<Color>, readonly: Boolean = false) =
+fun ColorPickerWrapper.bind(property: ObservableValue<Color>, readonly: Boolean = false) =
   valueProperty().internalBind(property, readonly)
 
 fun DatePicker.bind(property: ObservableValue<LocalDate>, readonly: Boolean = false) =
