@@ -415,6 +415,8 @@ class TabPaneWrapper(
   init {
 	op()
   }
+
+  val tabs get() = node.tabs
 }
 
 
@@ -750,6 +752,11 @@ open class MenuItemWrapper(
   override val node: MenuItem = MenuItem(),
   op: MenuItemWrapper.()->Unit = {}
 ): EventTargetWrapper<MenuItem> {
+
+  init {
+	op()
+  }
+
   fun setOnAction(op: (ActionEvent)->Unit) {
 	node.setOnAction(op)
   }

@@ -15,15 +15,16 @@ import matt.hurricanefx.eye.prop.cleanBind
 import matt.hurricanefx.tornadofx.fx.attachTo
 import matt.hurricanefx.tornadofx.nodes.removeFromParent
 import matt.hurricanefx.wrapper.EventTargetWrapper
+import matt.hurricanefx.wrapper.TabPaneWrapper
 import matt.hurricanefx.wrapper.wrapped
 
-fun EventTargetWrapper<*>.tabpane(op: TabPane.()->Unit = {}) = TabPane().attachTo(this, op)
+fun EventTargetWrapper<*>.tabpane(op: TabPaneWrapper.()->Unit = {}) = TabPaneWrapper().attachTo(this, op)
 
-fun <T: Node> TabPane.tab(text: String, content: T, op: T.()->Unit = {}): Tab {
+fun <T: Node> TabPaneWrapper.tab(text: String, content: T, op: T.()->Unit = {}): Tab {
   return tab(tabs.size, text, content, op)
 }
 
-fun <T: Node> TabPane.tab(index: Int, text: String, content: T, op: T.()->Unit = {}): Tab {
+fun <T: Node> TabPaneWrapper.tab(index: Int, text: String, content: T, op: T.()->Unit = {}): Tab {
   val tab = Tab(text, content)
   tabs.add(index, tab)
   op(content)
@@ -31,12 +32,12 @@ fun <T: Node> TabPane.tab(index: Int, text: String, content: T, op: T.()->Unit =
 }
 
 /*matt was here*/
-fun <T: Node> TabPane.staticTab(text: String, content: T, op: T.()->Unit = {}): Tab {
+fun <T: Node> TabPaneWrapper.staticTab(text: String, content: T, op: T.()->Unit = {}): Tab {
   return staticTab(tabs.size, text, content, op)
 }
 
 /*matt was here*/
-fun <T: Node> TabPane.staticTab(index: Int, text: String, content: T, op: T.()->Unit = {}): Tab {
+fun <T: Node> TabPaneWrapper.staticTab(index: Int, text: String, content: T, op: T.()->Unit = {}): Tab {
   val tab = Tab(text, content).apply {
 	isClosable = false
   }

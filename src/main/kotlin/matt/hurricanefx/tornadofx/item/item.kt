@@ -113,15 +113,16 @@ inline fun <reified T: Number> EventTargetWrapper<*>.spinner(
 	(property is IntegerProperty && property !is DoubleProperty && property !is FloatProperty) || min is Int || max is Int || initialValue is Int ||
 		T::class == Int::class || T::class == Integer::class || T::class.javaPrimitiveType == Integer::class.java
   if (isInt) {
-	spinner = SpinnerWrapper {
+	spinner = SpinnerWrapper(
 	  min?.toInt() ?: 0
-	  max?.toInt() ?: 100
-	  initialValue?.toInt() ?: 0
-	  amountToStepBy?.toInt()
+	  max ?. toInt () ?: 100
+	  initialValue ?. toInt () ?: 0
+	  amountToStepBy ?. toInt ()
 	  ?: 1
-	}
+	)
   } else {
-	spinner = SpinnerWrapper(min?.toDouble() ?: 0.0, max?.toDouble() ?: 100.0, initialValue?.toDouble()
+	spinner = SpinnerWrapper(
+	  min?.toDouble() ?: 0.0, max?.toDouble() ?: 100.0, initialValue?.toDouble()
 		?: 0.0, amountToStepBy?.toDouble() ?: 1.0
 	)
   }
@@ -197,16 +198,24 @@ fun <T> EventTargetWrapper<*>.spinner(
   }
 }
 
-fun <T> EventTargetWrapper<*>.combobox(property: Property<T>? = null, values: List<T>? = null, op: ComboBoxWrapper<T>.()->Unit = {}) =
+fun <T> EventTargetWrapper<*>.combobox(
+  property: Property<T>? = null,
+  values: List<T>? = null,
+  op: ComboBoxWrapper<T>.()->Unit = {}
+) =
   ComboBoxWrapper<T>().attachTo(this, op) {
 	if (values != null) it.items = values as? ObservableList<T> ?: values.asObservable()
 	if (property != null) it.bind(property)
   }
 
 
-inline fun <T> EventTargetWrapper<*>.choicebox(property: Property<T>? = null, values: List<T>? = null, op: ChoiceBoxWrapper<T>.()->Unit = {}): ChoiceBoxWrapper<T> {
+inline fun <T> EventTargetWrapper<*>.choicebox(
+  property: Property<T>? = null,
+  values: List<T>? = null,
+  op: ChoiceBoxWrapper<T>.()->Unit = {}
+): ChoiceBoxWrapper<T> {
   contract {
-	callsInPlace(op,EXACTLY_ONCE)
+	callsInPlace(op, EXACTLY_ONCE)
   }
   return ChoiceBoxWrapper<T>().attachTo(this, op) {
 	if (values != null) it.items = (values as? ObservableList<T>) ?: values.asObservable()
@@ -215,9 +224,13 @@ inline fun <T> EventTargetWrapper<*>.choicebox(property: Property<T>? = null, va
 }
 
 
-inline fun <T> choicebox(property: Property<T>? = null, values: List<T>? = null, op: ChoiceBoxWrapper<T>.()->Unit = {}): ChoiceBoxWrapper<T> {
+inline fun <T> choicebox(
+  property: Property<T>? = null,
+  values: List<T>? = null,
+  op: ChoiceBoxWrapper<T>.()->Unit = {}
+): ChoiceBoxWrapper<T> {
   contract {
-	callsInPlace(op,EXACTLY_ONCE)
+	callsInPlace(op, EXACTLY_ONCE)
   }
   return ChoiceBoxWrapper<T>().also {
 	it.op()
@@ -225,7 +238,6 @@ inline fun <T> choicebox(property: Property<T>? = null, values: List<T>? = null,
 	if (property != null) it.bind(property)
   }
 }
-
 
 
 fun <T> EventTargetWrapper<*>.listview(values: ObservableList<T>? = null, op: ListViewWrapper<T>.()->Unit = {}) =
@@ -239,7 +251,10 @@ fun <T> EventTargetWrapper<*>.listview(values: ObservableList<T>? = null, op: Li
 fun <T> EventTargetWrapper<*>.listview(values: ReadOnlyListProperty<T>, op: ListViewWrapper<T>.()->Unit = {}) =
   listview(values as ObservableValue<ObservableList<T>>, op)
 
-fun <T> EventTargetWrapper<*>.listview(values: ObservableValue<ObservableList<T>>, op: ListViewWrapper<T>.()->Unit = {}) =
+fun <T> EventTargetWrapper<*>.listview(
+  values: ObservableValue<ObservableList<T>>,
+  op: ListViewWrapper<T>.()->Unit = {}
+) =
   ListViewWrapper<T>().attachTo(this, op) {
 	fun rebinder() {
 	  (it.items as? SortedFilteredList<T>)?.bindTo(it)
@@ -262,7 +277,10 @@ fun <T> EventTargetWrapper<*>.tableview(items: ObservableList<T>? = null, op: Ta
 fun <T> EventTargetWrapper<*>.tableview(items: ReadOnlyListProperty<T>, op: TableViewWrapper<T>.()->Unit = {}) =
   tableview(items as ObservableValue<ObservableList<T>>, op)
 
-fun <T> EventTargetWrapper<*>.tableview(items: ObservableValue<out ObservableList<T>>, op: TableViewWrapper<T>.()->Unit = {}) =
+fun <T> EventTargetWrapper<*>.tableview(
+  items: ObservableValue<out ObservableList<T>>,
+  op: TableViewWrapper<T>.()->Unit = {}
+) =
   TableViewWrapper<T>().attachTo(this, op) {
 	fun rebinder() {
 	  (it.items as? SortedFilteredList<T>)?.bindTo(it)
@@ -353,13 +371,16 @@ fun <S> TableViewWrapper<S>.nestedColumn(
  * Create a matt.hurricanefx.tableview.coolColumn holding children columns
  */
 @Suppress("UNCHECKED_CAST")
-fun <S> TreeTableViewWrapper<S>.nestedColumn(title: String, op: TreeTableViewWrapper<S>.()->Unit = {}): TreeTableColumn<S, Any?> {
+fun <S> TreeTableViewWrapper<S>.nestedColumn(
+  title: String,
+  op: TreeTableViewWrapper<S>.()->Unit = {}
+): TreeTableColumn<S, Any?> {
   val column = TreeTableColumn<S, Any?>(title)
   addColumnInternal(column)
   val previousColumnTarget = node.properties["tornadofx.columnTarget"] as? ObservableList<TableColumn<S, *>>
   node.properties["tornadofx.columnTarget"] = column.columns
   op(this)
-  node.  properties["tornadofx.columnTarget"] = previousColumnTarget
+  node.properties["tornadofx.columnTarget"] = previousColumnTarget
   return column
 }
 
@@ -433,6 +454,7 @@ inline fun <S, reified T> TableColumn<S, T?>.useTextField(
 	  val stringColumn = this as TableColumn<S, String?>
 	  stringColumn.cellFactory = TextFieldTableCell.forTableColumn()
 	}
+
 	else          -> {
 	  requireNotNull(converter) { "You must supply a converter for non String columns" }
 	  cellFactory = TextFieldTableCell.forTableColumn(converter)
