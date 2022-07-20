@@ -58,6 +58,7 @@ import javafx.scene.control.Spinner
 import javafx.scene.control.SpinnerValueFactory
 import javafx.scene.control.SplitMenuButton
 import javafx.scene.control.SplitPane
+import javafx.scene.control.Tab
 import javafx.scene.control.TabPane
 import javafx.scene.control.TableView
 import javafx.scene.control.TextArea
@@ -348,13 +349,24 @@ class ScrollingVBoxWrapper(vbox: VBox = VBox(), op: ScrollingVBoxWrapper.()->Uni
 }
 
 
-open class StackPaneWrapper(override val node: StackPane = StackPane()): PaneWrapper(node)
+open class StackPaneWrapper(override val node: StackPane = StackPane()): PaneWrapper(node) {
+  companion object {
+	fun StackPane.wrapped() = StackPaneWrapper(this)
+  }
+}
 
 
-open class AnchorPaneWrapper(override val node: AnchorPane = AnchorPane()): PaneWrapper(node)
+open class AnchorPaneWrapper(override val node: AnchorPane = AnchorPane()): PaneWrapper(node) {
+  companion object {
+	fun AnchorPane.wrapped() = AnchorPaneWrapper(this)
+  }
+}
 
 
 open class BorderPaneWrapper(override val node: BorderPane = BorderPane()): PaneWrapper(node) {
+  companion object {
+	fun BorderPane.wrapped() = BorderPaneWrapper(this)
+  }
   var center
 	get() = node.center
 	set(value) {
@@ -384,6 +396,9 @@ open class BorderPaneWrapper(override val node: BorderPane = BorderPane()): Pane
 
 
 open class SplitPaneWrapper(override val node: SplitPane = SplitPane()): ControlWrapper(node) {
+  companion object {
+	fun SplitPane.wrapped() = SplitPaneWrapper(this)
+  }
   var orientation
 	get() = node.orientation
 	set(value) {
@@ -393,16 +408,33 @@ open class SplitPaneWrapper(override val node: SplitPane = SplitPane()): Control
 }
 
 
-open class GridPaneWrapper(override val node: GridPane = GridPane()): PaneWrapper(node)
+open class GridPaneWrapper(override val node: GridPane = GridPane()): PaneWrapper(node) {
+  companion object {
+	fun GridPane.wrapped() = GridPaneWrapper(this)
+  }
+}
 
 
-open class TilePaneWrapper(override val node: TilePane = TilePane()): PaneWrapper(node)
+open class TilePaneWrapper(override val node: TilePane = TilePane()): PaneWrapper(node) {
+  companion object {
+	fun TilePane.wrapped() = TilePaneWrapper(this)
+  }
+}
 
 
-open class FlowPaneWrapper(override val node: FlowPane = FlowPane()): PaneWrapper(node)
+open class FlowPaneWrapper(override val node: FlowPane = FlowPane()): PaneWrapper(node) {
+  companion object {
+	fun FlowPane.wrapped() = FlowPaneWrapper(this)
+  }
+}
 
 
 open class ScrollPaneWrapper(override val node: ScrollPane = ScrollPane()): ControlWrapper(node) {
+
+  companion object {
+	fun ScrollPane.wrapped() = ScrollPaneWrapper(this)
+  }
+
   var isFitToWidth
 	get() = node.isFitToWidth
 	set(value) {
@@ -1005,6 +1037,7 @@ class ButtonBarWrapper(
 	op()
   }
 
+  val buttons get() = node.buttons
 
   var buttonOrder
 	get() = node.buttonOrder
@@ -1636,4 +1669,8 @@ class PaginationWrapper(override val node: Pagination = Pagination()): ControlWr
 	set(value) {
 	  node.currentPageIndex = value
 	}
+}
+
+class TabWrapper(override val node: Tab = Tab()): EventTargetWrapper<Tab> {
+
 }

@@ -34,7 +34,7 @@ import matt.hurricanefx.eye.collect.SetConversionListener
 import matt.hurricanefx.eye.collect.bind
 import matt.hurricanefx.wrapper.EventTargetWrapper
 import matt.hurricanefx.wrapper.NodeWrapper
-import matt.hurricanefx.wrapper.wrapped
+import matt.hurricanefx.wrapper.NodeWrapper.Companion.wrapped
 import matt.klib.lang.err
 import kotlin.contracts.InvocationKind.EXACTLY_ONCE
 import kotlin.contracts.contract

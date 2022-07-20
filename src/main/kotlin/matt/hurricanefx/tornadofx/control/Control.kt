@@ -364,24 +364,24 @@ fun ToolBarWrapper.button(text: ObservableValue<String>, graphic: Node? = null, 
 	op(it)
   }
 
-fun ButtonBar.button(
+fun ButtonBarWrapper.button(
   text: String = "",
   type: ButtonBar.ButtonData? = null,
   graphic: Node? = null,
   op: Button.()->Unit = {}
-) = Button(text).also {
+) = ButtonWrapper { this.text = text }.also {
   if (type != null) ButtonBar.setButtonData(it, type)
   if (graphic != null) it.graphic = graphic
   buttons += it
   op(it)
 }.wrapped()
 
-fun ButtonBar.button(
+fun ButtonBarWrapper.button(
   text: ObservableValue<String>,
   type: ButtonBar.ButtonData? = null,
   graphic: Node? = null,
   op: Button.()->Unit = {}
-) = Button().also {
+) = ButtonWrapper().also {
   it.textProperty().bind(text)
   if (type != null) ButtonBar.setButtonData(it, type)
   if (graphic != null) it.graphic = graphic
@@ -676,7 +676,8 @@ fun <T> SortedFilteredList<T>.bindTo(tableView: TableViewWrapper<T>): SortedFilt
  * The `listView.items` is set to the underlying sortedItems.
  *
  */
-fun <T> SortedFilteredList<T>.bindTo(listView: ListViewWrapper<T>): SortedFilteredList<T> = apply { listView.items = this }
+fun <T> SortedFilteredList<T>.bindTo(listView: ListViewWrapper<T>): SortedFilteredList<T> =
+  apply { listView.items = this }
 
 
 

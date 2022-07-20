@@ -16,6 +16,7 @@ import matt.hurricanefx.tornadofx.fx.attachTo
 import matt.hurricanefx.tornadofx.nodes.removeFromParent
 import matt.hurricanefx.wrapper.EventTargetWrapper
 import matt.hurricanefx.wrapper.TabPaneWrapper
+import matt.hurricanefx.wrapper.TabWrapper
 import matt.hurricanefx.wrapper.wrapped
 
 fun EventTargetWrapper<*>.tabpane(op: TabPaneWrapper.()->Unit = {}) = TabPaneWrapper().attachTo(this, op)
@@ -66,7 +67,7 @@ fun Tab.visibleWhen(predicate: ObservableValue<Boolean>) {
   predicate.onChange { updateState() }
 }
 
-fun Tab.close() = wrapped().removeFromParent()
+fun TabWrapper.close() = removeFromParent()
 
 
 //fun TabPane.tab(text: String? = null, node: Node? = null, op: Tab.() -> Unit = {}): Tab {
