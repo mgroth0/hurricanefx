@@ -508,7 +508,7 @@ abstract class ControlWrapper(override val node: Control): RegionWrapper(node)
 class ButtonWrapper(
   override val node: Button = Button(),
   op: ButtonWrapper.()->Unit = {}
-): ButtonBaseWrapper {
+): ButtonBaseWrapper(node) {
   companion object {
 	fun Button.wrapped() = ButtonWrapper(this)
   }
@@ -519,7 +519,7 @@ class ButtonWrapper(
 }
 
 
-class ComboBoxBaseWrapper<T>(override val node: ComboBoxBase<T>): ControlWrapper(node) {
+open class ComboBoxBaseWrapper<T>(override val node: ComboBoxBase<T>): ControlWrapper(node) {
 
   var value
 	get() = node.value
@@ -687,7 +687,7 @@ class TextAreaWrapper(
 }
 
 
-class LabeledWrapper(override val node: Labeled): ControlWrapper(node) {
+open class LabeledWrapper(override val node: Labeled): ControlWrapper(node) {
 
   var text
 	get() = node.text
