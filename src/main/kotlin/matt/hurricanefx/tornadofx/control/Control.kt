@@ -368,26 +368,26 @@ fun ButtonBarWrapper.button(
   text: String = "",
   type: ButtonBar.ButtonData? = null,
   graphic: Node? = null,
-  op: Button.()->Unit = {}
+  op: ButtonWrapper.()->Unit = {}
 ) = ButtonWrapper { this.text = text }.also {
-  if (type != null) ButtonBar.setButtonData(it, type)
+  if (type != null) ButtonBar.setButtonData(it.node, type)
   if (graphic != null) it.graphic = graphic
-  buttons += it
+  buttons += it.node
   op(it)
-}.wrapped()
+}
 
 fun ButtonBarWrapper.button(
   text: ObservableValue<String>,
   type: ButtonBar.ButtonData? = null,
   graphic: Node? = null,
-  op: Button.()->Unit = {}
+  op: ButtonWrapper.()->Unit = {}
 ) = ButtonWrapper().also {
   it.textProperty().bind(text)
-  if (type != null) ButtonBar.setButtonData(it, type)
+  if (type != null) ButtonBar.setButtonData(it.node, type)
   if (graphic != null) it.graphic = graphic
-  buttons += it
+  buttons += it.node
   op(it)
-}.wrapped()
+}
 
 fun Node.togglegroup(property: ObservableValue<Any>? = null, op: ToggleGroup.()->Unit = {}) =
   ToggleGroup().also { tg ->
