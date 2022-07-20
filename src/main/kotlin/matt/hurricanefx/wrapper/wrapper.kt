@@ -588,7 +588,7 @@ class ButtonWrapper(
 	fun Button.wrapped() = ButtonWrapper(this)
   }
 
-  constructor(text: String, graphic: Node): this(Button(text, graphic))
+  constructor(text: String, graphic: Node?): this(Button(text, graphic))
 
   init {
 	op()
