@@ -69,11 +69,13 @@ import matt.hurricanefx.wrapper.ComboBoxBaseWrapper
 import matt.hurricanefx.wrapper.DatePickerWrapper
 import matt.hurricanefx.wrapper.EventTargetWrapper
 import matt.hurricanefx.wrapper.LabeledWrapper
+import matt.hurricanefx.wrapper.MenuButtonWrapper
 import matt.hurricanefx.wrapper.PasswordFieldWrapper
 import matt.hurricanefx.wrapper.ProgressBarWrapper
 import matt.hurricanefx.wrapper.ProgressIndicatorWrapper
 import matt.hurricanefx.wrapper.SliderWrapper
 import matt.hurricanefx.wrapper.SpinnerWrapper
+import matt.hurricanefx.wrapper.SplitMenuButtonWrapper
 import matt.hurricanefx.wrapper.TextAreaWrapper
 import matt.hurricanefx.wrapper.TextFieldWrapper
 import matt.hurricanefx.wrapper.TextFlowWrapper
@@ -195,7 +197,7 @@ fun <T> EventTargetWrapper<*>.textfield(property: Property<T>, converter: String
 	op(this)
   }
 
-fun EventTargetWrapper<*>.datepicker(op: DatePicker.()->Unit = {}) = DatePickerWrapper().attachTo(this, op)
+fun EventTargetWrapper<*>.datepicker(op: DatePickerWrapper.()->Unit = {}) = DatePickerWrapper().attachTo(this, op)
 fun EventTargetWrapper<*>.datepicker(property: Property<LocalDate>, op: DatePickerWrapper.()->Unit = {}) = datepicker().apply {
   bind(property)
   op(this)
