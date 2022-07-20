@@ -508,6 +508,14 @@ class TextWrapper(
 @FXNodeWrapperDSL
 interface TextInputControlWrapper: ControlWrapper {
   override val node: TextInputControl
+
+  var text
+	get() = node.text
+	set(value) {
+	  node.text = value
+	}
+
+  fun textProperty() = node.textProperty()
 }
 
 
@@ -524,13 +532,6 @@ open class TextFieldWrapper(
 	op()
   }
 
-  var text
-	get() = node.text
-	set(value) {
-	  node.text = value
-	}
-
-  fun textProperty() = node.textProperty()
 }
 
 
@@ -764,6 +765,9 @@ class ToolBarWrapper(
   init {
 	op()
   }
+
+  val items get() = node.items
+
 }
 
 @FXNodeWrapperDSL

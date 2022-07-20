@@ -82,6 +82,7 @@ import matt.hurricanefx.wrapper.TextFlowWrapper
 import matt.hurricanefx.wrapper.TextInputControlWrapper
 import matt.hurricanefx.wrapper.TextWrapper
 import matt.hurricanefx.wrapper.TitledPaneWrapper
+import matt.hurricanefx.wrapper.ToggleButtonWrapper
 import matt.hurricanefx.wrapper.ToolBarWrapper
 import matt.hurricanefx.wrapper.wrapped
 import matt.klib.lang.err
@@ -110,10 +111,10 @@ fun EventTargetWrapper<*>.text(op: TextWrapper.()->Unit = {}) = TextWrapper().at
 
 internal val EventTarget.properties: ObservableMap<Any, Any>
   get() = when (this) {
-	is Node     -> properties
-	is Tab      -> properties
+	is Node -> properties
+	is Tab -> properties
 	is MenuItem -> properties
-	else        -> throw IllegalArgumentException("Don't know how to extract properties object from $this")
+	else -> throw IllegalArgumentException("Don't know how to extract properties object from $this")
   }
 
 //var EventTarget.tagProperty: Property<Any?>
@@ -140,9 +141,10 @@ fun children(addTo: MutableList<Node>, op: Pane.()->Unit) {
 }
 
 
-fun EventTargetWrapper<*>.text(initialValue: String? = null, op: TextWrapper.()->Unit = {}) = TextWrapper().attachTo(this, op) {
-  if (initialValue != null) it.text = initialValue
-}
+fun EventTargetWrapper<*>.text(initialValue: String? = null, op: TextWrapper.()->Unit = {}) =
+  TextWrapper().attachTo(this, op) {
+	if (initialValue != null) it.text = initialValue
+  }
 
 
 fun EventTargetWrapper<*>.text(property: Property<String>, op: TextWrapper.()->Unit = {}) = text().apply {
@@ -157,28 +159,30 @@ fun EventTargetWrapper<*>.text(observable: ObservableValue<String>, op: TextWrap
 }
 
 
+fun EventTargetWrapper<*>.textfield(value: String? = null, op: TextFieldWrapper.()->Unit = {}) =
+  TextFieldWrapper().attachTo(this, op) {
+	if (value != null) it.text = value
+  }
 
-
-fun EventTargetWrapper<*>.textfield(value: String? = null, op: TextFieldWrapper.()->Unit = {}) = TextFieldWrapper().attachTo(this, op) {
-  if (value != null) it.text = value
-}
-
-fun EventTargetWrapper<*>.textfield(property: ObservableValue<String>, op: TextFieldWrapper.()->Unit = {}) = textfield().apply {
-  bind(property)
-  op(this)
-}
+fun EventTargetWrapper<*>.textfield(property: ObservableValue<String>, op: TextFieldWrapper.()->Unit = {}) =
+  textfield().apply {
+	bind(property)
+	op(this)
+  }
 
 @JvmName("textfieldNumber")
-fun EventTargetWrapper<*>.textfield(property: ObservableValue<Number>, op: TextFieldWrapper.()->Unit = {}) = textfield().apply {
-  bind(property)
-  op(this)
-}
+fun EventTargetWrapper<*>.textfield(property: ObservableValue<Number>, op: TextFieldWrapper.()->Unit = {}) =
+  textfield().apply {
+	bind(property)
+	op(this)
+  }
 
 @JvmName("textfieldInt")
-fun EventTargetWrapper<*>.textfield(property: ObservableValue<Int>, op: TextFieldWrapper.()->Unit = {}) = textfield().apply {
-  bind(property)
-  op(this)
-}
+fun EventTargetWrapper<*>.textfield(property: ObservableValue<Int>, op: TextFieldWrapper.()->Unit = {}) =
+  textfield().apply {
+	bind(property)
+	op(this)
+  }
 
 fun EventTargetWrapper<*>.passwordfield(value: String? = null, op: PasswordFieldWrapper.()->Unit = {}) =
   PasswordFieldWrapper().attachTo(this, op) {
@@ -191,63 +195,82 @@ fun EventTargetWrapper<*>.passwordfield(property: ObservableValue<String>, op: P
 	op(this)
   }
 
-fun <T> EventTargetWrapper<*>.textfield(property: Property<T>, converter: StringConverter<T>, op: TextFieldWrapper.()->Unit = {}) =
+fun <T> EventTargetWrapper<*>.textfield(
+  property: Property<T>,
+  converter: StringConverter<T>,
+  op: TextFieldWrapper.()->Unit = {}
+) =
   textfield().apply {
 	textProperty().bindBidirectional(property, converter)
 	op(this)
   }
 
 fun EventTargetWrapper<*>.datepicker(op: DatePickerWrapper.()->Unit = {}) = DatePickerWrapper().attachTo(this, op)
-fun EventTargetWrapper<*>.datepicker(property: Property<LocalDate>, op: DatePickerWrapper.()->Unit = {}) = datepicker().apply {
-  bind(property)
-  op(this)
-}
+fun EventTargetWrapper<*>.datepicker(property: Property<LocalDate>, op: DatePickerWrapper.()->Unit = {}) =
+  datepicker().apply {
+	bind(property)
+	op(this)
+  }
 
-fun EventTargetWrapper<*>.textarea(value: String? = null, op: TextAreaWrapper.()->Unit = {}) = TextAreaWrapper().attachTo(this, op) {
-  if (value != null) it.text = value
-}
-
-
-fun EventTargetWrapper<*>.textarea(property: ObservableValue<String>, op: TextAreaWrapper.()->Unit = {}) = textarea().apply {
-  bind(property)
-  op(this)
-}
+fun EventTargetWrapper<*>.textarea(value: String? = null, op: TextAreaWrapper.()->Unit = {}) =
+  TextAreaWrapper().attachTo(this, op) {
+	if (value != null) it.text = value
+  }
 
 
-fun <T> EventTargetWrapper<*>.textarea(property: Property<T>, converter: StringConverter<T>, op: TextAreaWrapper.()->Unit = {}) =
+fun EventTargetWrapper<*>.textarea(property: ObservableValue<String>, op: TextAreaWrapper.()->Unit = {}) =
+  textarea().apply {
+	bind(property)
+	op(this)
+  }
+
+
+fun <T> EventTargetWrapper<*>.textarea(
+  property: Property<T>,
+  converter: StringConverter<T>,
+  op: TextAreaWrapper.()->Unit = {}
+) =
   textarea().apply {
 	textProperty().bindBidirectional(property, converter)
 	op(this)
   }
 
 
-fun EventTargetWrapper<*>.buttonbar(buttonOrder: String? = null, op: (ButtonBar.()->Unit)) = ButtonBarWrapper().attachTo(this, op) {
-  if (buttonOrder != null) it.buttonOrder = buttonOrder
-}
+fun EventTargetWrapper<*>.buttonbar(buttonOrder: String? = null, op: (ButtonBar.()->Unit)) =
+  ButtonBarWrapper().attachTo(this, op) {
+	if (buttonOrder != null) it.buttonOrder = buttonOrder
+  }
 
 
-fun EventTargetWrapper<*>.checkbox(text: String? = null, property: Property<Boolean>? = null, op: CheckBoxWrapper.()->Unit = {}) =
-  CheckBox(text).attachTo(this, op) {
+fun EventTargetWrapper<*>.checkbox(
+  text: String? = null,
+  property: Property<Boolean>? = null,
+  op: CheckBoxWrapper.()->Unit = {}
+) =
+  CheckBoxWrapper(text).attachTo(this, op) {
 	if (property != null) it.bind(property)
   }
 
 
-fun EventTargetWrapper<*>.progressindicator(op: ProgressIndicator.()->Unit = {}) = ProgressIndicatorWrapper().attachTo(this, op)
-fun EventTargetWrapper<*>.progressindicator(property: Property<Number>, op: ProgressIndicator.()->Unit = {}) =
+fun EventTargetWrapper<*>.progressindicator(op: ProgressIndicatorWrapper.()->Unit = {}) =
+  ProgressIndicatorWrapper().attachTo(this, op)
+
+fun EventTargetWrapper<*>.progressindicator(property: Property<Number>, op: ProgressIndicatorWrapper.()->Unit = {}) =
   progressindicator().apply {
 	bind(property)
 	op(this)
   }
 
 fun EventTargetWrapper<*>.progressbar(initialValue: Double? = null, op: ProgressBarWrapper.()->Unit = {}) =
-  ProgressBar().attachTo(this, op) {
+  ProgressBarWrapper().attachTo(this, op) {
 	if (initialValue != null) it.progress = initialValue
   }
 
-fun EventTargetWrapper<*>.progressbar(property: ObservableValue<Number>, op: ProgressBarWrapper.()->Unit = {}) = progressbar().apply {
-  bind(property)
-  op(this)
-}
+fun EventTargetWrapper<*>.progressbar(property: ObservableValue<Number>, op: ProgressBarWrapper.()->Unit = {}) =
+  progressbar().apply {
+	bind(property)
+	op(this)
+  }
 
 fun EventTargetWrapper<*>.slider(
   min: Number? = null,
@@ -266,8 +289,8 @@ fun <T> EventTargetWrapper<*>.slider(
   range: ClosedRange<T>,
   value: Number? = null,
   orientation: Orientation? = null,
-  op: Slider.()->Unit = {}
-): Slider
+  op: SliderWrapper.()->Unit = {}
+): SliderWrapper
 	where T: Comparable<T>,
 		  T: Number {
   return slider(range.start, range.endInclusive, value, orientation, op)
@@ -275,11 +298,15 @@ fun <T> EventTargetWrapper<*>.slider(
 
 
 // Buttons
-inline fun EventTargetWrapper<*>.button(text: String = "", graphic: Node? = null, crossinline op: ButtonWrapper.()->Unit = {}): ButtonWrapper {
+inline fun EventTargetWrapper<*>.button(
+  text: String = "",
+  graphic: Node? = null,
+  crossinline op: ButtonWrapper.()->Unit = {}
+): ButtonWrapper {
   contract {
 	callsInPlace(op, EXACTLY_ONCE)
   }
-  return ButtonWrapper{
+  return ButtonWrapper {
 	this.text = text
 	if (graphic != null) this.graphic = graphic
 	op()
@@ -287,34 +314,46 @@ inline fun EventTargetWrapper<*>.button(text: String = "", graphic: Node? = null
 }
 
 fun EventTargetWrapper<*>.menubutton(text: String = "", graphic: Node? = null, op: MenuButtonWrapper.()->Unit = {}) =
-  MenuButtonWrapper(text).attachTo(this, op) {
+  MenuButtonWrapper {
+	text = text
+  }.attachTo(this, op) {
 	if (graphic != null) it.graphic = graphic
   }
 
-fun EventTargetWrapper<*>.splitmenubutton(text: String? = null, graphic: Node? = null, op: SplitMenuButtonWrapper.()->Unit = {}) =
+fun EventTargetWrapper<*>.splitmenubutton(
+  text: String? = null,
+  graphic: Node? = null,
+  op: SplitMenuButtonWrapper.()->Unit = {}
+) =
   SplitMenuButtonWrapper().attachTo(this, op) {
 	if (text != null) it.text = text
 	if (graphic != null) it.graphic = graphic
   }
 
-fun EventTargetWrapper<*>.button(text: ObservableValue<String>, graphic: Node? = null, op: ButtonWrapper.()->Unit = {}) =
+fun EventTargetWrapper<*>.button(
+  text: ObservableValue<String>,
+  graphic: Node? = null,
+  op: ButtonWrapper.()->Unit = {}
+) =
   ButtonWrapper().attachTo(this, op) {
 	it.textProperty().bind(text)
 	if (graphic != null) it.graphic = graphic
-  }.wrapped()
+  }
 
-fun ToolBarWrapper.button(text: String = "", graphic: Node? = null, op: Button.()->Unit = {}) = ButtonWrapper(text).also {
-  if (graphic != null) it.graphic = graphic
-  items += it
-  op(it)
-}.wrapped()
+fun ToolBarWrapper.button(text: String = "", graphic: Node? = null, op: Button.()->Unit = {}) =
+  ButtonWrapper { text = text }.also {
+	if (graphic != null) it.graphic = graphic
+	this@button.items += it
+	op(it)
+  }
 
-fun ToolBarWrapper.button(text: ObservableValue<String>, graphic: Node? = null, op: ButtonWrapper.()->Unit = {}) = ButtonWrapper().also {
-  it.textProperty().bind(text)
-  if (graphic != null) it.graphic = graphic
-  items += it
-  op(it)
-}.wrapped()
+fun ToolBarWrapper.button(text: ObservableValue<String>, graphic: Node? = null, op: ButtonWrapper.()->Unit = {}) =
+  ButtonWrapper().also {
+	it.textProperty().bind(text)
+	if (graphic != null) it.graphic = graphic
+	this@button.items += it
+	op(it)
+  }
 
 fun ButtonBar.button(
   text: String = "",
@@ -479,7 +518,11 @@ inline fun <reified T> EventTargetWrapper<*>.label(
 fun EventTargetWrapper<*>.hyperlink(text: String = "", graphic: Node? = null, op: HyperlinkWrapper.()->Unit = {}) =
   HyperlinkWrapper(text, graphic).attachTo(this, op)
 
-fun EventTargetWrapper<*>.hyperlink(observable: ObservableValue<String>, graphic: Node? = null, op: Hyperlink.()->Unit = {}) =
+fun EventTargetWrapper<*>.hyperlink(
+  observable: ObservableValue<String>,
+  graphic: Node? = null,
+  op: Hyperlink.()->Unit = {}
+) =
   hyperlink(graphic = graphic).apply {
 	bind(observable)
 	op(this)
@@ -503,7 +546,8 @@ fun EventTargetWrapper<*>.imageview(image: ObservableValue<Image?>, op: ImageVie
 	it.imageProperty().bind(image)
   }
 
-fun EventTargetWrapper<*>.imageview(image: Image, op: ImageViewWrapper.()->Unit = {}) = ImageViewWrapper(image).attachTo(this, op)
+fun EventTargetWrapper<*>.imageview(image: Image, op: ImageViewWrapper.()->Unit = {}) =
+  ImageViewWrapper(image).attachTo(this, op)
 
 /**
  * Listen to changes and update the value of the property if the given mutator results in a different value
