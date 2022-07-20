@@ -336,6 +336,11 @@ interface ControlWrapper: RegionWrapper
 class ButtonWrapper(
   override val node: Button = Button(),
   op: ButtonWrapper.()->Unit = {}
-): ControlWrapper
+): ControlWrapper {
+  init {
+	op()
+  }
+  fun fire() = node.fire()
+}
 
 fun Button.wrapped() = ButtonWrapper(this)
