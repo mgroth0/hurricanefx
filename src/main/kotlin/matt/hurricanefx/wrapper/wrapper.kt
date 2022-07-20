@@ -1,3 +1,5 @@
+@file:Suppress("UNUSED_EXPRESSION")
+
 package matt.hurricanefx.wrapper
 
 import javafx.beans.property.DoubleProperty
@@ -11,6 +13,15 @@ import javafx.geometry.Pos
 import javafx.scene.Node
 import javafx.scene.Parent
 import javafx.scene.Scene
+import javafx.scene.chart.AreaChart
+import javafx.scene.chart.Axis
+import javafx.scene.chart.BarChart
+import javafx.scene.chart.BubbleChart
+import javafx.scene.chart.Chart
+import javafx.scene.chart.LineChart
+import javafx.scene.chart.PieChart
+import javafx.scene.chart.ScatterChart
+import javafx.scene.chart.StackedBarChart
 import javafx.scene.control.Button
 import javafx.scene.control.ButtonBar
 import javafx.scene.control.ButtonBase
@@ -24,6 +35,7 @@ import javafx.scene.control.DatePicker
 import javafx.scene.control.Hyperlink
 import javafx.scene.control.Label
 import javafx.scene.control.Labeled
+import javafx.scene.control.ListView
 import javafx.scene.control.MenuBar
 import javafx.scene.control.MenuButton
 import javafx.scene.control.MenuItem
@@ -58,6 +70,8 @@ import javafx.scene.layout.Pane
 import javafx.scene.layout.Region
 import javafx.scene.layout.VBox
 import javafx.scene.paint.Color
+import javafx.scene.shape.Circle
+import javafx.scene.shape.Rectangle
 import javafx.scene.shape.Shape
 import javafx.scene.text.Text
 import javafx.scene.text.TextFlow
@@ -852,11 +866,11 @@ open class ToggleButtonWrapper(
 	}
 
 
-//    var toggleGroup: ToggleGroup
-//  	get() = node.toggleGroup
-//  	set(value) {
-//  	  node.toggleGroup = value
-//  	}
+  //    var toggleGroup: ToggleGroup
+  //  	get() = node.toggleGroup
+  //  	set(value) {
+  //  	  node.toggleGroup = value
+  //  	}
 }
 
 
@@ -936,6 +950,168 @@ open class MenuBarWrapper(
 ): ControlWrapper {
   companion object {
 	fun MenuBar.wrapped() = MenuBarWrapper(this)
+  }
+
+  init {
+	op()
+  }
+}
+
+
+@FXNodeWrapperDSL
+interface ChartWrapper: RegionWrapper {
+  override val node: Chart
+}
+
+@FXNodeWrapperDSL
+open class PieChartWrapper(
+  override val node: PieChart = PieChart(),
+  op: PieChartWrapper.()->Unit = {}
+): ChartWrapper {
+  companion object {
+	fun PieChart.wrapped() = PieChartWrapper(this)
+  }
+
+  init {
+	op()
+  }
+}
+
+@FXNodeWrapperDSL
+open class LineChartWrapper<X, Y>(
+  override val node: LineChart<X, Y>,
+  op: LineChartWrapper<X, Y>.()->Unit = {}
+): ChartWrapper {
+  companion object {
+	fun <X, Y> LineChart<X, Y>.wrapped() = LineChartWrapper(this)
+  }
+
+  constructor(x: Axis<X>, y: Axis<Y>): this(LineChart(x, y))
+
+  init {
+	op()
+  }
+}
+
+@FXNodeWrapperDSL
+open class AreaChartWrapper<X, Y>(
+  override val node: AreaChart<X, Y>,
+  op: AreaChartWrapper<X, Y>.()->Unit = {}
+): ChartWrapper {
+  companion object {
+	fun <X, Y> AreaChart<X, Y>.wrapped() = AreaChartWrapper(this)
+  }
+
+  constructor(x: Axis<X>, y: Axis<Y>): this(AreaChart(x, y))
+
+  init {
+	op()
+  }
+}
+
+@FXNodeWrapperDSL
+open class BubbleChartWrapper<X, Y>(
+  override val node: BubbleChart<X, Y>,
+  op: BubbleChartWrapper<X, Y>.()->Unit = {}
+): ChartWrapper {
+  companion object {
+	fun <X, Y> BubbleChart<X, Y>.wrapped() = BubbleChartWrapper(this)
+  }
+
+  constructor(x: Axis<X>, y: Axis<Y>): this(BubbleChart(x, y))
+
+  init {
+	op()
+  }
+}
+
+
+@FXNodeWrapperDSL
+open class ScatterChartWrapper<X, Y>(
+  override val node: ScatterChart<X, Y>,
+  op: ScatterChartWrapper<X, Y>.()->Unit = {}
+): ChartWrapper {
+  companion object {
+	fun <X, Y> ScatterChart<X, Y>.wrapped() = ScatterChartWrapper(this)
+  }
+
+  constructor(x: Axis<X>, y: Axis<Y>): this(ScatterChart(x, y))
+
+  init {
+	op()
+  }
+}
+
+@FXNodeWrapperDSL
+open class BarChartWrapper<X, Y>(
+  override val node: BarChart<X, Y>,
+  op: BarChartWrapper<X, Y>.()->Unit = {}
+): ChartWrapper {
+  companion object {
+	fun <X, Y> BarChart<X, Y>.wrapped() = BarChartWrapper(this)
+  }
+
+  constructor(x: Axis<X>, y: Axis<Y>): this(BarChart(x, y))
+
+  init {
+	op()
+  }
+}
+
+@FXNodeWrapperDSL
+open class StackedBarChartWrapper<X, Y>(
+  override val node: StackedBarChart<X, Y>,
+  op: StackedBarChartWrapper<X, Y>.()->Unit = {}
+): ChartWrapper {
+  companion object {
+	fun <X, Y> StackedBarChart<X, Y>.wrapped() = StackedBarChartWrapper(this)
+  }
+
+  constructor(x: Axis<X>, y: Axis<Y>): this(StackedBarChart(x, y))
+
+  init {
+	op()
+  }
+}
+
+
+@FXNodeWrapperDSL
+open class RectangleWrapper(
+  override val node: Rectangle = Rectangle(),
+  op: RectangleWrapper.()->Unit = {}
+): ShapeWrapper {
+  companion object {
+	fun Rectangle.wrapped() = RectangleWrapper(this)
+  }
+
+  init {
+	op()
+  }
+}
+
+
+@FXNodeWrapperDSL
+open class CircleWrapper(
+  override val node: Circle = Circle(),
+  op: CircleWrapper.()->Unit = {}
+): ShapeWrapper {
+  companion object {
+	fun Circle.wrapped() = CircleWrapper(this)
+  }
+
+  init {
+	op()
+  }
+}
+
+
+@FXNodeWrapperDSL
+open class ListViewWrapper<E>(
+  override val node: ListView<E> = ListView<E>(),
+  op: ListViewWrapper<E>.()->Unit = {}
+): ControlWrapper {
+  companion object {
+	fun <E> ListView<E>.wrapped() = ListViewWrapper<E>(this)
   }
 
   init {

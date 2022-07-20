@@ -15,6 +15,8 @@ import javafx.scene.chart.XYChart
 import matt.hurricanefx.tornadofx.fx.attachTo
 import matt.hurricanefx.tornadofx.fx.opcr
 import matt.hurricanefx.wrapper.EventTargetWrapper
+import matt.hurricanefx.wrapper.LineChartWrapper
+import matt.hurricanefx.wrapper.PieChartWrapper
 
 /**
  * Create a PieChart with optional title data and add to the parent pane. The optional op will be performed on the new instance.
@@ -31,7 +33,7 @@ fun EventTargetWrapper<*>.piechart(title: String? = null, data: ObservableList<P
  *
  * @return The new Data entry
  */
-fun PieChart.data(name: String, value: Double, op: PieChart.Data.() -> Unit = {}) = PieChart.Data(name, value).apply {
+fun PieChartWrapper.data(name: String, value: Double, op: PieChart.Data.() -> Unit = {}) = PieChart.Data(name, value).apply {
   data.add(this)
   op(this)
 }
@@ -39,44 +41,44 @@ fun PieChart.data(name: String, value: Double, op: PieChart.Data.() -> Unit = {}
 /**
  * Add and create multiple PieChart.Data entries from the given map.
  */
-fun PieChart.data(value: Map<String, Double>) = value.forEach { data(it.key, it.value) }
+fun PieChartWrapper.data(value: Map<String, Double>) = value.forEach { data(it.key, it.value) }
 
 
 /**
  * Create a LineChart with optional title, axis and add to the parent pane. The optional op will be performed on the new instance.
  */
 fun <X, Y> EventTargetWrapper<*>.linechart(title: String? = null, x: Axis<X>, y: Axis<Y>, op: LineChart<X, Y>.() -> Unit = {}) =
-	LineChart<X, Y>(x, y).attachTo(this, op) { it.title = title }
+	LineChartWrapper<X, Y>(x, y).attachTo(this, op) { it.title = title }
 
 /**
  * Create an AreaChart with optional title, axis and add to the parent pane. The optional op will be performed on the new instance.
  */
 fun <X, Y> EventTargetWrapper<*>.areachart(title: String? = null, x: Axis<X>, y: Axis<Y>, op: AreaChart<X, Y>.() -> Unit = {}) =
-	AreaChart<X,Y>(x, y).attachTo(this, op){ it.title = title }
+	AreaChartWrapper<X,Y>(x, y).attachTo(this, op){ it.title = title }
 
 /**
  * Create a BubbleChart with optional title, axis and add to the parent pane. The optional op will be performed on the new instance.
  */
 fun <X, Y> EventTargetWrapper<*>.bubblechart(title: String? = null, x: Axis<X>, y: Axis<Y>, op: BubbleChart<X, Y>.() -> Unit = {}) =
-	BubbleChart<X, Y>(x, y).attachTo(this,op){ it.title = title }
+	BubbleChartWrapper<X, Y>(x, y).attachTo(this,op){ it.title = title }
 
 /**
  * Create a ScatterChart with optional title, axis and add to the parent pane. The optional op will be performed on the new instance.
  */
 fun <X, Y> EventTargetWrapper<*>.scatterchart(title: String? = null, x: Axis<X>, y: Axis<Y>, op: ScatterChart<X, Y>.() -> Unit = {}) =
-	ScatterChart(x, y).attachTo(this,op){ it.title = title }
+	ScatterChartWrapper(x, y).attachTo(this,op){ it.title = title }
 
 /**
  * Create a BarChart with optional title, axis and add to the parent pane. The optional op will be performed on the new instance.
  */
 fun <X, Y> EventTargetWrapper<*>.barchart(title: String? = null, x: Axis<X>, y: Axis<Y>, op: BarChart<X, Y>.() -> Unit = {}) =
-	BarChart<X, Y>(x, y).attachTo(this, op){ it.title = title }
+	BarChartWrapper<X, Y>(x, y).attachTo(this, op){ it.title = title }
 
 /**
  * Create a BarChart with optional title, axis and add to the parent pane. The optional op will be performed on the new instance.
  */
 fun <X, Y> EventTargetWrapper<*>.stackedbarchart(title: String? = null, x: Axis<X>, y: Axis<Y>, op: StackedBarChart<X, Y>.() -> Unit = {}) =
-	StackedBarChart<X, Y>(x, y).attachTo(this, op) { it.title = title }
+	StackedBarChartWrapper<X, Y>(x, y).attachTo(this, op) { it.title = title }
 
 /**
  * Add a new XYChart.Series with the given name to the given Chart. Optionally specify a list data for the new series or

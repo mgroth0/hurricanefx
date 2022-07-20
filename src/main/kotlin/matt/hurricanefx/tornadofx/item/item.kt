@@ -68,8 +68,8 @@ fun <T> EventTargetWrapper<*>.spinner(
   editable: Boolean = false,
   property: Property<T>? = null,
   enableScroll: Boolean = false,
-  op: Spinner<T>.()->Unit = {}
-) = Spinner<T>().also {
+  op: SpinnerWrapper<T>.()->Unit = {}
+) = SpinnerWrapper<T>().also {
   it.isEditable = editable
   it.attachTo(this, op)
 
@@ -99,19 +99,19 @@ inline fun <reified T: Number> EventTargetWrapper<*>.spinner(
   editable: Boolean = false,
   property: Property<T>? = null,
   enableScroll: Boolean = false,
-  noinline op: Spinner<T>.()->Unit = {}
-): Spinner<T> {
-  val spinner: Spinner<T>
+  noinline op: SpinnerWrapper<T>.()->Unit = {}
+): SpinnerWrapper<T> {
+  val spinner: SpinnerWrapper<T>
   val isInt =
 	(property is IntegerProperty && property !is DoubleProperty && property !is FloatProperty) || min is Int || max is Int || initialValue is Int ||
 		T::class == Int::class || T::class == Integer::class || T::class.javaPrimitiveType == Integer::class.java
   if (isInt) {
-	spinner = Spinner(
+	spinner = SpinnerWrapper(
 	  min?.toInt() ?: 0, max?.toInt() ?: 100, initialValue?.toInt() ?: 0, amountToStepBy?.toInt()
 		?: 1
 	)
   } else {
-	spinner = Spinner(
+	spinner = SpinnerWrapper(
 	  min?.toDouble() ?: 0.0, max?.toDouble() ?: 100.0, initialValue?.toDouble()
 		?: 0.0, amountToStepBy?.toDouble() ?: 1.0
 	)
@@ -189,7 +189,7 @@ fun <T> EventTargetWrapper<*>.spinner(
 }
 
 fun <T> EventTargetWrapper<*>.combobox(property: Property<T>? = null, values: List<T>? = null, op: ComboBox<T>.()->Unit = {}) =
-  ComboBox<T>().attachTo(this, op) {
+  ComboBoxWrapper<T>().attachTo(this, op) {
 	if (values != null) it.items = values as? ObservableList<T> ?: values.asObservable()
 	if (property != null) it.bind(property)
   }
@@ -199,7 +199,7 @@ inline fun <T> EventTargetWrapper<*>.choicebox(property: Property<T>? = null, va
   contract {
 	callsInPlace(op,EXACTLY_ONCE)
   }
-  return ChoiceBox<T>().attachTo(this, op) {
+  return ChoiceBoxWrapper<T>().attachTo(this, op) {
 	if (values != null) it.items = (values as? ObservableList<T>) ?: values.asObservable()
 	if (property != null) it.bind(property)
   }
@@ -219,19 +219,19 @@ inline fun <T> choicebox(property: Property<T>? = null, values: List<T>? = null,
 
 
 
-fun <T> EventTargetWrapper<*>.listview(values: ObservableList<T>? = null, op: ListView<T>.()->Unit = {}) =
-  ListView<T>().attachTo(this, op) {
+fun <T> EventTargetWrapper<*>.listview(values: ObservableList<T>? = null, op: ListViewWrapper<T>.()->Unit = {}) =
+  ListViewWrapper<T>().attachTo(this, op) {
 	if (values != null) {
 	  if (values is SortedFilteredList<T>) values.bindTo(it)
 	  else it.items = values
 	}
   }
 
-fun <T> EventTargetWrapper<*>.listview(values: ReadOnlyListProperty<T>, op: ListView<T>.()->Unit = {}) =
+fun <T> EventTargetWrapper<*>.listview(values: ReadOnlyListProperty<T>, op: ListViewWrapper<T>.()->Unit = {}) =
   listview(values as ObservableValue<ObservableList<T>>, op)
 
-fun <T> EventTargetWrapper<*>.listview(values: ObservableValue<ObservableList<T>>, op: ListView<T>.()->Unit = {}) =
-  ListView<T>().attachTo(this, op) {
+fun <T> EventTargetWrapper<*>.listview(values: ObservableValue<ObservableList<T>>, op: ListViewWrapper<T>.()->Unit = {}) =
+  ListViewWrapper<T>().attachTo(this, op) {
 	fun rebinder() {
 	  (it.items as? SortedFilteredList<T>)?.bindTo(it)
 	}
@@ -242,7 +242,7 @@ fun <T> EventTargetWrapper<*>.listview(values: ObservableValue<ObservableList<T>
 	}
   }
 
-fun <T> EventTargetWrapper<*>.tableview(items: ObservableList<T>? = null, op: TableView<T>.()->Unit = {}) =
+fun <T> EventTargetWrapper<*>.tableview(items: ObservableList<T>? = null, op: TableViewWrapper<T>.()->Unit = {}) =
   TableView<T>().attachTo(this, op) {
 	if (items != null) {
 	  if (items is SortedFilteredList<T>) items.bindTo(it)
@@ -250,10 +250,10 @@ fun <T> EventTargetWrapper<*>.tableview(items: ObservableList<T>? = null, op: Ta
 	}
   }
 
-fun <T> EventTargetWrapper<*>.tableview(items: ReadOnlyListProperty<T>, op: TableView<T>.()->Unit = {}) =
+fun <T> EventTargetWrapper<*>.tableview(items: ReadOnlyListProperty<T>, op: TableViewWrapper<T>.()->Unit = {}) =
   tableview(items as ObservableValue<ObservableList<T>>, op)
 
-fun <T> EventTargetWrapper<*>.tableview(items: ObservableValue<out ObservableList<T>>, op: TableView<T>.()->Unit = {}) =
+fun <T> EventTargetWrapper<*>.tableview(items: ObservableValue<out ObservableList<T>>, op: TableViewWrapper<T>.()->Unit = {}) =
   TableView<T>().attachTo(this, op) {
 	fun rebinder() {
 	  (it.items as? SortedFilteredList<T>)?.bindTo(it)
@@ -268,17 +268,17 @@ fun <T> EventTargetWrapper<*>.tableview(items: ObservableValue<out ObservableLis
 	}
   }
 
-fun <T> EventTargetWrapper<*>.treeview(root: TreeItem<T>? = null, op: TreeView<T>.()->Unit = {}) =
-  TreeView<T>().attachTo(this, op) {
+fun <T> EventTargetWrapper<*>.treeview(root: TreeItem<T>? = null, op: TreeViewWrapper<T>.()->Unit = {}) =
+  TreeViewWrapper<T>().attachTo(this, op) {
 	if (root != null) it.root = root
   }
 
-fun <T> EventTargetWrapper<*>.treetableview(root: TreeItem<T>? = null, op: TreeTableView<T>.()->Unit = {}) =
-  TreeTableView<T>().attachTo(this, op) {
+fun <T> EventTargetWrapper<*>.treetableview(root: TreeItem<T>? = null, op: TreeTableViewWrapper<T>.()->Unit = {}) =
+  TreeTableViewWrapper<T>().attachTo(this, op) {
 	if (root != null) it.root = root
   }
 
-fun <T> TreeItem<T>.treeitem(value: T? = null, op: TreeItem<T>.()->Unit = {}): TreeItem<T> {
+fun <T> TreeItem<T>.treeitem(value: T? = null, op: TreeItem<T>.()->Unit = {}): TreeItemWrapper<T> {
   val treeItem = value?.let { TreeItem<T>(it) } ?: TreeItem<T>()
   treeItem.op()
   this += treeItem
@@ -312,13 +312,13 @@ fun <S, T> TableColumn<S, T>.enableTextWrap() = apply {
 }
 
 @Suppress("UNCHECKED_CAST")
-fun <S> TableView<S>.addColumnInternal(column: TableColumn<S, *>, index: Int? = null) {
+fun <S> TableViewWrapper<S>.addColumnInternal(column: TableColumn<S, *>, index: Int? = null) {
   val columnTarget = properties["tornadofx.columnTarget"] as? ObservableList<TableColumn<S, *>> ?: columns
   if (index == null) columnTarget.add(column) else columnTarget.add(index, column)
 }
 
 @Suppress("UNCHECKED_CAST")
-fun <S> TreeTableView<S>.addColumnInternal(column: TreeTableColumn<S, *>, index: Int? = null) {
+fun <S> TreeTableViewWrapper<S>.addColumnInternal(column: TreeTableColumn<S, *>, index: Int? = null) {
   val columnTarget = properties["tornadofx.columnTarget"] as? ObservableList<TreeTableColumn<S, *>> ?: columns
   if (index == null) columnTarget.add(column) else columnTarget.add(index, column)
 }
@@ -327,7 +327,7 @@ fun <S> TreeTableView<S>.addColumnInternal(column: TreeTableColumn<S, *>, index:
  * Create a matt.hurricanefx.tableview.coolColumn holding children columns
  */
 @Suppress("UNCHECKED_CAST")
-fun <S> TableView<S>.nestedColumn(
+fun <S> TableViewWrapper<S>.nestedColumn(
   title: String,
   op: TableView<S>.(TableColumn<S, Any?>)->Unit = {}
 ): TableColumn<S, Any?> {
@@ -344,7 +344,7 @@ fun <S> TableView<S>.nestedColumn(
  * Create a matt.hurricanefx.tableview.coolColumn holding children columns
  */
 @Suppress("UNCHECKED_CAST")
-fun <S> TreeTableView<S>.nestedColumn(title: String, op: TreeTableView<S>.()->Unit = {}): TreeTableColumn<S, Any?> {
+fun <S> TreeTableViewWrapper<S>.nestedColumn(title: String, op: TreeTableView<S>.()->Unit = {}): TreeTableColumn<S, Any?> {
   val column = TreeTableColumn<S, Any?>(title)
   addColumnInternal(column)
   val previousColumnTarget = properties["tornadofx.columnTarget"] as? ObservableList<TableColumn<S, *>>
@@ -357,7 +357,7 @@ fun <S> TreeTableView<S>.nestedColumn(title: String, op: TreeTableView<S>.()->Un
 /**
  * Create a matt.hurricanefx.tableview.coolColumn using the propertyName of the attribute you want shown.
  */
-fun <S, T> TableView<S>.column(
+fun <S, T> TableViewWrapper<S>.column(
   title: String,
   propertyName: String,
   op: TableColumn<S, T>.()->Unit = {}
@@ -372,7 +372,7 @@ fun <S, T> TableView<S>.column(
  * Create a matt.hurricanefx.tableview.coolColumn using the getter of the attribute you want shown.
  */
 @JvmName("pojoColumn")
-fun <S, T> TableView<S>.column(title: String, getter: KFunction<T>): TableColumn<S, T> {
+fun <S, T> TableViewWrapper<S>.column(title: String, getter: KFunction<T>): TableColumn<S, T> {
   val startIndex = if (getter.name.startsWith("is") && getter.name[2].isUpperCase()) 2 else 3
   val propName = getter.name.substring(startIndex).decap()
   return this.column(title, propName)
@@ -381,7 +381,7 @@ fun <S, T> TableView<S>.column(title: String, getter: KFunction<T>): TableColumn
 /**
  * Create a matt.hurricanefx.tableview.coolColumn using the propertyName of the attribute you want shown.
  */
-fun <S, T> TreeTableView<S>.column(
+fun <S, T> TreeTableViewWrapper<S>.column(
   title: String,
   propertyName: String,
   op: TreeTableColumn<S, T>.()->Unit = {}
@@ -396,7 +396,7 @@ fun <S, T> TreeTableView<S>.column(
  * Create a matt.hurricanefx.tableview.coolColumn using the getter of the attribute you want shown.
  */
 @JvmName("pojoColumn")
-fun <S, T> TreeTableView<S>.column(title: String, getter: KFunction<T>): TreeTableColumn<S, T> {
+fun <S, T> TreeTableViewWrapper<S>.column(title: String, getter: KFunction<T>): TreeTableColumn<S, T> {
   val startIndex = if (getter.name.startsWith("is") && getter.name[2].isUpperCase()) 2 else 3
   val propName = getter.name.substring(startIndex).decap()
   return this.column(title, propName)
@@ -487,7 +487,7 @@ val <T> TreeTableView<T>.selectedValue: Any?
  * Create a matt.hurricanefx.tableview.coolColumn with a value factory that extracts the value from the given mutable
  * property and converts the property to an observable value.
  */
-inline fun <reified S, T> TableView<S>.column(
+inline fun <reified S, T> TableViewWrapper<S>.column(
   title: String,
   prop: KMutableProperty1<S, T>,
   noinline op: TableColumn<S, T>.()->Unit = {}
