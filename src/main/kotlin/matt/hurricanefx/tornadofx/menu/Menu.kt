@@ -21,6 +21,7 @@ import javafx.scene.control.ToggleGroup
 import javafx.scene.input.KeyCombination
 import matt.hurricanefx.tornadofx.control.action
 import matt.hurricanefx.wrapper.MenuItemWrapper
+import matt.hurricanefx.wrapper.wrapped
 
 //Menu-related operator functions
 operator fun <T: MenuItem> Menu.plusAssign(menuItem: T) {
@@ -108,7 +109,7 @@ fun ContextMenu.item(
   keyCombination: KeyCombination? = null,
   graphic: Node? = null,
   op: MenuItemWrapper.()->Unit = {}
-) = MenuItemWrapper{this.graphic= graphic}.also {
+) = MenuItemWrapper { this.graphic = graphic }.also {
   it.textProperty().bind(name)
   keyCombination?.apply { it.accelerator = this }
   graphic?.apply { it.graphic = this }
@@ -156,7 +157,7 @@ fun MenuButton.menu(name: String? = null, keyCombination: String, graphic: Node?
   ReplaceWith("item(name, KeyCombination.valueOf(keyCombination), graphic).action(onAction)")
 )
 fun Menu.menuitem(name: String, keyCombination: String, graphic: Node? = null, onAction: ()->Unit = {}) =
-  item(name, KeyCombination.valueOf(keyCombination), graphic).apply { node.action(onAction) }
+  item(name, KeyCombination.valueOf(keyCombination), graphic).apply { action(onAction) }
 
 /**
  * Create a MenuItem. The op block will be configured as the `setOnAction`. This will be deprecated in favor of the `item` call, where the
@@ -168,11 +169,11 @@ fun Menu.menuitem(name: String, keyCombination: String, graphic: Node? = null, o
 )
 fun Menu.menuitem(
   name: String, keyCombination: KeyCombination? = null, graphic: Node? = null, onAction: (ActionEvent)->Unit = {}
-) = MenuItem(name, graphic).also {
+) = MenuItemWrapper { text = name;this.graphic = graphic }.also {
   keyCombination?.apply { it.accelerator = this }
   graphic?.apply { it.graphic = graphic }
   it.setOnAction(onAction)
-  this += it
+  this += it.node
 }
 
 /**
@@ -181,12 +182,12 @@ fun Menu.menuitem(
  * is configured as the `setOnAction` directly.
  */
 fun Menu.item(
-  name: String, keyCombination: KeyCombination? = null, graphic: Node? = null, op: MenuItem.()->Unit = {}
-) = MenuItem(name, graphic).also {
+  name: String, keyCombination: KeyCombination? = null, graphic: Node? = null, op: MenuItemWrapper.()->Unit = {}
+) = MenuItemWrapper { this.text = name; this.graphic = graphic }.also {
   keyCombination?.apply { it.accelerator = this }
   graphic?.apply { it.graphic = graphic }
   op(it)
-  this += it
+  this += it.node
 }
 
 /**
@@ -240,7 +241,7 @@ fun MenuButton.item(
 /**
  * Create a MenuItem. The op block operates on the MenuItem where you can call `setOnAction` to provide the menu item action.
  */
-fun Menu.item(name: String, keyCombination: String, graphic: Node? = null, op: MenuItem.()->Unit = {}) =
+fun Menu.item(name: String, keyCombination: String, graphic: Node? = null, op: MenuItemWrapper.()->Unit = {}) =
   item(name, KeyCombination.valueOf(keyCombination), graphic, op)
 
 /**
