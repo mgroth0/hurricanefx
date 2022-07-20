@@ -751,6 +751,24 @@ open class MenuItemWrapper(
   fun setOnAction(op: (ActionEvent)->Unit) {
 	node.setOnAction(op)
   }
+
+  var text
+	get() = node.text
+	set(value) {
+	  node.text = value
+	}
+
+  fun textProperty() = node.textProperty()
+  var graphic
+	get() = node.graphic
+	set(value) {
+	  node.graphic = value
+	}
+  var accelerator
+	get() = node.accelerator
+	set(value) {
+	  node.accelerator = value
+	}
 }
 
 @FXNodeWrapperDSL
@@ -1248,6 +1266,12 @@ open class LineWrapper(
   companion object {
 	fun Line.wrapped() = LineWrapper(this)
   }
+
+
+  constructor(
+	startX: Double, startY: Double, endX: Double, endY: Double
+  ): this(Line(startX, startY, endX, endY))
+
 
   init {
 	op()

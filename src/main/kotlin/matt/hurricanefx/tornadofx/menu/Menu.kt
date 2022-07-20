@@ -91,11 +91,11 @@ fun ContextMenu.menuitem(
  */
 fun ContextMenu.item(
   name: String, keyCombination: KeyCombination? = null, graphic: Node? = null, op: MenuItemWrapper.()->Unit = {}
-) = MenuItemWrapper(name, graphic).also {
+) = MenuItemWrapper { this.text = name; this.graphic = graphic }.also {
   keyCombination?.apply { it.accelerator = this }
   graphic?.apply { it.graphic = this }
   op(it)
-  this += it
+  this += it.node
 }
 
 /**
@@ -108,12 +108,12 @@ fun ContextMenu.item(
   keyCombination: KeyCombination? = null,
   graphic: Node? = null,
   op: MenuItemWrapper.()->Unit = {}
-) = MenuItemWrapper(null, graphic).also {
+) = MenuItemWrapper{this.graphic= graphic}.also {
   it.textProperty().bind(name)
   keyCombination?.apply { it.accelerator = this }
   graphic?.apply { it.graphic = this }
   op(it)
-  this += it
+  this += it.node
 }
 
 /**
@@ -142,10 +142,10 @@ fun MenuButton.menu(
 
 //Menu extensions
 fun Menu.menu(name: String? = null, keyCombination: String, graphic: Node? = null, op: Menu.()->Unit = {}) =
-	menu(name, KeyCombination.valueOf(keyCombination), graphic, op)
+  menu(name, KeyCombination.valueOf(keyCombination), graphic, op)
 
 fun MenuButton.menu(name: String? = null, keyCombination: String, graphic: Node? = null, op: Menu.()->Unit = {}) =
-	menu(name, KeyCombination.valueOf(keyCombination), graphic, op)
+  menu(name, KeyCombination.valueOf(keyCombination), graphic, op)
 
 /**
  * Create a MenuItem. The op block will be configured as the `setOnAction`. This will be deprecated in favor of the `item` call, where the
@@ -156,7 +156,7 @@ fun MenuButton.menu(name: String? = null, keyCombination: String, graphic: Node?
   ReplaceWith("item(name, KeyCombination.valueOf(keyCombination), graphic).action(onAction)")
 )
 fun Menu.menuitem(name: String, keyCombination: String, graphic: Node? = null, onAction: ()->Unit = {}) =
-	item(name, KeyCombination.valueOf(keyCombination), graphic).apply { action(onAction) }
+  item(name, KeyCombination.valueOf(keyCombination), graphic).apply { node.action(onAction) }
 
 /**
  * Create a MenuItem. The op block will be configured as the `setOnAction`. This will be deprecated in favor of the `item` call, where the
@@ -241,7 +241,7 @@ fun MenuButton.item(
  * Create a MenuItem. The op block operates on the MenuItem where you can call `setOnAction` to provide the menu item action.
  */
 fun Menu.item(name: String, keyCombination: String, graphic: Node? = null, op: MenuItem.()->Unit = {}) =
-	item(name, KeyCombination.valueOf(keyCombination), graphic, op)
+  item(name, KeyCombination.valueOf(keyCombination), graphic, op)
 
 /**
  * Create a MenuItem with the name property bound to the given observable string. The op block operates on the MenuItem where you can
@@ -284,7 +284,7 @@ fun Menu.checkmenuitem(
   selected: Property<Boolean>? = null,
   op: CheckMenuItem.()->Unit = {}
 ) =
-	checkmenuitem(name, KeyCombination.valueOf(keyCombination), graphic, selected, op)
+  checkmenuitem(name, KeyCombination.valueOf(keyCombination), graphic, selected, op)
 
 fun Menu.checkmenuitem(
   name: String,
