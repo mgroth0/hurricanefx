@@ -837,7 +837,7 @@ fun <T: NodeWrapper<*>> T.disableWhen(expr: ()->ObservableValue<Boolean>): T = d
  *
  * @see https://docs.oracle.com/javase/8/javafx/api/javafx/scene/Node.html#disableProperty
  */
-fun <T: NodeWrapper<*>de> T.disableWhen(predicate: ObservableValue<Boolean>) = apply {
+fun <T: NodeWrapper<*>> T.disableWhen(predicate: ObservableValue<Boolean>) = apply {
   disableProperty().cleanBind(predicate)
 }
 

@@ -72,6 +72,7 @@ interface NodeWrapper<N: Node>: EventTargetWrapper<N> {
 
   fun managedProperty() = node.managedProperty()
   fun visibleProperty() = node.visibleProperty()
+  fun disableProperty() = node.disableProperty()
 
 }
 
