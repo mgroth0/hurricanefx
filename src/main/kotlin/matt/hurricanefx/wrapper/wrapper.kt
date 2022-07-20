@@ -14,13 +14,16 @@ import javafx.scene.control.Button
 import javafx.scene.control.ChoiceBox
 import javafx.scene.control.ColorPicker
 import javafx.scene.control.Control
+import javafx.scene.control.Labeled
 import javafx.scene.control.MultipleSelectionModel
 import javafx.scene.control.PasswordField
 import javafx.scene.control.ScrollPane
+import javafx.scene.control.Spinner
 import javafx.scene.control.TabPane
 import javafx.scene.control.TextArea
 import javafx.scene.control.TextField
 import javafx.scene.control.TextInputControl
+import javafx.scene.control.TitledPane
 import javafx.scene.control.TreeItem
 import javafx.scene.control.TreeTableView
 import javafx.scene.control.TreeView
@@ -481,3 +484,39 @@ class TextAreaWrapper(
 }
 
 fun TextArea.wrapped() = TextAreaWrapper(this)
+
+
+@FXNodeWrapperDSL
+interface LabeledWrapper: ControlWrapper {
+  override val node: Labeled
+}
+
+
+@FXNodeWrapperDSL
+class TitledPaneWrapper(
+  override val node: TitledPane = TitledPane(),
+  op: TitledPaneWrapper.()->Unit = {}
+): LabeledWrapper {
+  companion object {
+	fun TitledPane.wrapped() = TitledPaneWrapper(this)
+  }
+
+  init {
+	op()
+  }
+}
+
+
+@FXNodeWrapperDSL
+class SpinnerWrapper(
+  override val node: Spinner = Spinner(),
+  op: SpinnerWrapper.()->Unit = {}
+): ControlWrapper {
+  companion object {
+	fun Spinner.wrapped() = SpinnerWrapper(this)
+  }
+
+  init {
+	op()
+  }
+}

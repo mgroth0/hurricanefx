@@ -64,6 +64,7 @@ import matt.hurricanefx.wrapper.ColorPickerWrapper
 import matt.hurricanefx.wrapper.EventTargetWrapper
 import matt.hurricanefx.wrapper.TextFieldWrapper
 import matt.hurricanefx.wrapper.TextFlowWrapper
+import matt.hurricanefx.wrapper.TextInputControlWrapper
 import matt.hurricanefx.wrapper.TextWrapper
 import matt.hurricanefx.wrapper.wrapped
 import matt.klib.lang.err
@@ -88,7 +89,7 @@ fun EventTargetWrapper<*>.colorpicker(
 
 fun EventTargetWrapper<*>.textflow(op: TextFlowWrapper.()->Unit = {}) = TextFlowWrapper().attachTo(this, op)
 
-fun EventTargetWrapper<*>.text(op: Text.()->Unit = {}) = Text().attachTo(this, op)
+fun EventTargetWrapper<*>.text(op: TextWrapper.()->Unit = {}) = TextWrapper().attachTo(this, op)
 
 internal val EventTarget.properties: ObservableMap<Any, Any>
   get() = when (this) {
@@ -128,7 +129,7 @@ fun EventTargetWrapper<*>.text(initialValue: String? = null, op: TextWrapper.()-
 
 
 fun EventTargetWrapper<*>.text(property: Property<String>, op: TextWrapper.()->Unit = {}) = text().apply {
-  bind(property)
+  node.bind(property)
   op(this)
 }
 
@@ -531,29 +532,29 @@ fun <T> ComboBoxBase<T>.bind(property: ObservableValue<T>, readonly: Boolean = f
 fun ColorPickerWrapper.bind(property: ObservableValue<Color>, readonly: Boolean = false) =
   valueProperty().internalBind(property, readonly)
 
-fun DatePicker.bind(property: ObservableValue<LocalDate>, readonly: Boolean = false) =
+fun DatePickerWrapper.bind(property: ObservableValue<LocalDate>, readonly: Boolean = false) =
   valueProperty().internalBind(property, readonly)
 
-fun ProgressIndicator.bind(property: ObservableValue<Number>, readonly: Boolean = false) =
+fun ProgressIndicatorWrapper.bind(property: ObservableValue<Number>, readonly: Boolean = false) =
   progressProperty().internalBind(property, readonly)
 
-fun <T> ChoiceBox<T>.bind(property: ObservableValue<T>, readonly: Boolean = false) =
+fun <T> ChoiceBoxWrapper<T>.bind(property: ObservableValue<T>, readonly: Boolean = false) =
   valueProperty().internalBind(property, readonly)
 
-fun CheckBox.bind(property: ObservableValue<Boolean>, readonly: Boolean = false) =
+fun CheckBoxWrapper.bind(property: ObservableValue<Boolean>, readonly: Boolean = false) =
   selectedProperty().internalBind(property, readonly)
 
-fun CheckMenuItem.bind(property: ObservableValue<Boolean>, readonly: Boolean = false) =
+fun CheckMenuItemWrapper.bind(property: ObservableValue<Boolean>, readonly: Boolean = false) =
   selectedProperty().internalBind(property, readonly)
 
-fun Slider.bind(property: ObservableValue<Number>, readonly: Boolean = false) =
+fun SliderWrapper.bind(property: ObservableValue<Number>, readonly: Boolean = false) =
   valueProperty().internalBind(property, readonly)
 
-fun <T> Spinner<T>.bind(property: ObservableValue<T>, readonly: Boolean = false) =
+fun <T> SpinnerWrapper<T>.bind(property: ObservableValue<T>, readonly: Boolean = false) =
   valueFactory.valueProperty().internalBind(property, readonly)
 
 
-inline fun <reified S: T, reified T: Any> Labeled.bind(
+inline fun <reified S: T, reified T: Any> LabeledWrapper.bind(
   property: ObservableValue<S>,
   readonly: Boolean = false,
   converter: StringConverter<T>? = null,
@@ -562,21 +563,21 @@ inline fun <reified S: T, reified T: Any> Labeled.bind(
   bindStringProperty(textProperty(), converter, format, property, readonly)
 }
 
-inline fun <reified S: T, reified T: Any> TitledPane.bind(
+inline fun <reified S: T, reified T: Any> TitledPaneWrapper.bind(
   property: ObservableValue<S>,
   readonly: Boolean = false,
   converter: StringConverter<T>? = null,
   format: Format? = null
 ) = bindStringProperty(textProperty(), converter, format, property, readonly)
 
-inline fun <reified S: T, reified T: Any> Text.bind(
+inline fun <reified S: T, reified T: Any> TextWrapper.bind(
   property: ObservableValue<S>,
   readonly: Boolean = false,
   converter: StringConverter<T>? = null,
   format: Format? = null
 ) = bindStringProperty(textProperty(), converter, format, property, readonly)
 
-inline fun <reified S: T, reified T: Any> TextInputControl.bind(
+inline fun <reified S: T, reified T: Any> TextInputControlWrapper.bind(
   property: ObservableValue<S>,
   readonly: Boolean = false,
   converter: StringConverter<T>? = null,
