@@ -365,7 +365,7 @@ class ChoiceBoxWrapper<T>(
 	op()
   }
 
-  fun setOnAction(op: ()->Unit) {
+  fun setOnAction(op: (ActionEvent)->Unit) {
 	node.setOnAction(op)
   }
 }
