@@ -777,7 +777,7 @@ val Region.paddingRightProperty: DoubleProperty
  *
  * @see https://docs.oracle.com/javase/8/javafx/api/javafx/scene/Node.html#managedProperty
  */
-fun <T: Node> T.managedWhen(expr: ()->ObservableValue<Boolean>): T = managedWhen(expr())
+fun <T: NodeWrapper<*>> T.managedWhen(expr: ()->ObservableValue<Boolean>): T = managedWhen(expr())
 
 /**
  * This extension function will automatically bind to the managedProperty of the given node
@@ -785,7 +785,7 @@ fun <T: Node> T.managedWhen(expr: ()->ObservableValue<Boolean>): T = managedWhen
  *
  * @see https://docs.oracle.com/javase/8/javafx/api/javafx/scene/Node.html#managedProperty)
  */
-fun <T: Node> T.managedWhen(predicate: ObservableValue<Boolean>) = apply {
+fun <T: NodeWrapper<*>> T.managedWhen(predicate: ObservableValue<Boolean>) = apply {
   managedProperty().cleanBind(predicate)
 }
 
@@ -795,7 +795,8 @@ fun <T: Node> T.managedWhen(predicate: ObservableValue<Boolean>) = apply {
  *
  * @see https://docs.oracle.com/javase/8/javafx/api/javafx/scene/Node.html#visibleProperty
  */
-fun <T: Node> T.visibleWhen(predicate: ObservableValue<Boolean>) = apply {
+fun <T: NodeWrapper<*>> T.visibleWhen(predicate: ObservableValue<Boolean>) = apply {
+
   visibleProperty().cleanBind(predicate)
 }
 
@@ -805,19 +806,19 @@ fun <T: Node> T.visibleWhen(predicate: ObservableValue<Boolean>) = apply {
  *
  * @see https://docs.oracle.com/javase/8/javafx/api/javafx/scene/Node.html#visibleProperty
  */
-fun <T: Node> T.visibleWhen(expr: ()->ObservableValue<Boolean>): T = visibleWhen(expr())
+fun <T: NodeWrapper<*>> T.visibleWhen(expr: ()->ObservableValue<Boolean>): T = visibleWhen(expr())
 
 /**
  * This extension function will make sure to hide the given node,
  * if the given [expr] returning an observable boolean value equals true.
  */
-fun <T: Node> T.hiddenWhen(expr: ()->ObservableValue<Boolean>): T = hiddenWhen(expr())
+fun <T: NodeWrapper<*>> T.hiddenWhen(expr: ()->ObservableValue<Boolean>): T = hiddenWhen(expr())
 
 /**
  * This extension function will make sure to hide the given node,
  * if the given [predicate] an observable boolean value equals true.
  */
-fun <T: Node> T.hiddenWhen(predicate: ObservableValue<Boolean>) = apply {
+fun <T: NodeWrapper<*>> T.hiddenWhen(predicate: ObservableValue<Boolean>) = apply {
   val binding = if (predicate is BooleanBinding) predicate.not() else predicate.toBinding().not()
   visibleProperty().cleanBind(binding)
 }
@@ -828,7 +829,7 @@ fun <T: Node> T.hiddenWhen(predicate: ObservableValue<Boolean>) = apply {
  *
  * @see https://docs.oracle.com/javase/8/javafx/api/javafx/scene/Node.html#disable
  */
-fun <T: Node> T.disableWhen(expr: ()->ObservableValue<Boolean>): T = disableWhen(expr())
+fun <T: NodeWrapper<*>> T.disableWhen(expr: ()->ObservableValue<Boolean>): T = disableWhen(expr())
 
 /**
  * This extension function will automatically bind to the disableProperty of the given node
@@ -836,7 +837,7 @@ fun <T: Node> T.disableWhen(expr: ()->ObservableValue<Boolean>): T = disableWhen
  *
  * @see https://docs.oracle.com/javase/8/javafx/api/javafx/scene/Node.html#disableProperty
  */
-fun <T: Node> T.disableWhen(predicate: ObservableValue<Boolean>) = apply {
+fun <T: NoNodeWrapper<*>de> T.disableWhen(predicate: ObservableValue<Boolean>) = apply {
   disableProperty().cleanBind(predicate)
 }
 
@@ -844,13 +845,13 @@ fun <T: Node> T.disableWhen(predicate: ObservableValue<Boolean>) = apply {
  * This extension function will make sure that the given node is enabled when ever,
  * the given [expr] returning an observable boolean value equals true.
  */
-fun <T: Node> T.enableWhen(expr: ()->ObservableValue<Boolean>): T = enableWhen(expr())
+fun <T: NodeWrapper<*>> T.enableWhen(expr: ()->ObservableValue<Boolean>): T = enableWhen(expr())
 
 /**
  * This extension function will make sure that the given node is enabled when ever,
  * the given [predicate] observable boolean value equals true.
  */
-fun <T: Node> T.enableWhen(predicate: ObservableValue<Boolean>) = apply {
+fun <T: NodeWrapper<*>> T.enableWhen(predicate: ObservableValue<Boolean>) = apply {
   val binding = if (predicate is BooleanBinding) predicate.not() else predicate.toBinding().not()
   disableProperty().cleanBind(binding)
 }
@@ -859,13 +860,13 @@ fun <T: Node> T.enableWhen(predicate: ObservableValue<Boolean>) = apply {
  * This extension function will make sure that the given node will only be visible in the scene graph,
  * if the given [expr] returning an observable boolean value equals true.
  */
-fun <T: Node> T.removeWhen(expr: ()->ObservableValue<Boolean>): T = removeWhen(expr())
+fun <T: NodeWrapper<*>> T.removeWhen(expr: ()->ObservableValue<Boolean>): T = removeWhen(expr())
 
 /**
  * This extension function will make sure that the given node will only be visible in the scene graph,
  * if the given [predicate] observable boolean value equals true.
  */
-fun <T: Node> T.removeWhen(predicate: ObservableValue<Boolean>) = apply {
+fun <T: NodeWrapper<*>> T.removeWhen(predicate: ObservableValue<Boolean>) = apply {
   val remove = booleanBinding(predicate) { predicate.value.not() }
   visibleProperty().cleanBind(remove)
   managedProperty().cleanBind(remove)

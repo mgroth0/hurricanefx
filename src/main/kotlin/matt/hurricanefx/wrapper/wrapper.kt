@@ -42,6 +42,7 @@ private typealias NW = NodeWrapper<*>
 @DslMarker
 annotation class FXNodeWrapperDSL
 
+@FXNodeWrapperDSL
 interface EventTargetWrapper<N: EventTarget> {
   val node: N
   fun getToggleGroup() = node.getToggleGroup()
@@ -69,12 +70,16 @@ interface NodeWrapper<N: Node>: EventTargetWrapper<N> {
 	node.setOnMousePressed(listener)
   }
 
+  fun managedProperty() = node.managedProperty()
+  fun visibleProperty() = node.visibleProperty()
+
 }
 
 fun Node.wrapped() = object: NodeWrapper<Node> {
   override val node = this@wrapped
 }
 
+@FXNodeWrapperDSL
 interface ParentWrapper: NodeWrapper<Parent> {
   override val node: Parent
 }
@@ -83,6 +88,7 @@ fun Parent.wrapped() = object: ParentWrapper {
   override val node = this@wrapped
 }
 
+@FXNodeWrapperDSL
 interface RegionWrapper: ParentWrapper {
   override val node: Region
 
@@ -164,6 +170,7 @@ fun Region.wrapped() = object: RegionWrapper {
   override val node = this@wrapped
 }
 
+@FXNodeWrapperDSL
 interface PaneWrapper: RegionWrapper {
   override val node: Pane
   operator fun Collection<Node>.unaryPlus() {
@@ -178,7 +185,7 @@ fun Pane.wrapped() = object: PaneWrapper {
   override val node = this@wrapped
 }
 
-
+@FXNodeWrapperDSL
 interface BoxWrapper<N: Pane>: PaneWrapper {
 
   var alignment: Pos
@@ -222,6 +229,7 @@ class ScrollingVBoxWrapper(vbox: VBox = VBox(), op: ScrollingVBoxWrapper.()->Uni
   }
 }
 
+@FXNodeWrapperDSL
 sealed interface TreeLikeWrapper<N: Region, T>: RegionWrapper {
   var root: TreeItem<T>
   var isShowRoot: Boolean
@@ -300,6 +308,7 @@ class TreeTableViewWrapper<T>(
 }
 
 
+@FXNodeWrapperDSL
 class ChoiceBoxWrapper<T>(
   override val node: ChoiceBox<T> = ChoiceBox(),
   op: ChoiceBoxWrapper<T>.()->Unit = {}
@@ -321,6 +330,7 @@ class ChoiceBoxWrapper<T>(
 }
 
 
+@FXNodeWrapperDSL
 class TabPaneWrapper(
   override val node: TabPane = TabPane(),
   op: TabPaneWrapper.()->Unit = {}
@@ -331,8 +341,10 @@ class TabPaneWrapper(
 }
 
 
+@FXNodeWrapperDSL
 interface ControlWrapper: RegionWrapper
 
+@FXNodeWrapperDSL
 class ButtonWrapper(
   override val node: Button = Button(),
   op: ButtonWrapper.()->Unit = {}
