@@ -11,6 +11,8 @@ import javafx.scene.Node
 import javafx.scene.Parent
 import javafx.scene.Scene
 import javafx.scene.control.Button
+import javafx.scene.control.ButtonBar
+import javafx.scene.control.ButtonBase
 import javafx.scene.control.CheckBox
 import javafx.scene.control.CheckMenuItem
 import javafx.scene.control.ChoiceBox
@@ -18,22 +20,30 @@ import javafx.scene.control.ColorPicker
 import javafx.scene.control.ComboBoxBase
 import javafx.scene.control.Control
 import javafx.scene.control.DatePicker
+import javafx.scene.control.Hyperlink
 import javafx.scene.control.Labeled
+import javafx.scene.control.MenuButton
 import javafx.scene.control.MenuItem
 import javafx.scene.control.MultipleSelectionModel
 import javafx.scene.control.PasswordField
+import javafx.scene.control.ProgressBar
 import javafx.scene.control.ProgressIndicator
+import javafx.scene.control.RadioButton
 import javafx.scene.control.ScrollPane
 import javafx.scene.control.Slider
 import javafx.scene.control.Spinner
+import javafx.scene.control.SplitMenuButton
 import javafx.scene.control.TabPane
 import javafx.scene.control.TextArea
 import javafx.scene.control.TextField
 import javafx.scene.control.TextInputControl
 import javafx.scene.control.TitledPane
+import javafx.scene.control.ToggleButton
+import javafx.scene.control.ToolBar
 import javafx.scene.control.TreeItem
 import javafx.scene.control.TreeTableView
 import javafx.scene.control.TreeView
+import javafx.scene.image.ImageView
 import javafx.scene.input.DataFormat
 import javafx.scene.input.KeyEvent
 import javafx.scene.input.MouseEvent
@@ -364,6 +374,27 @@ class TabPaneWrapper(
 
 
 @FXNodeWrapperDSL
+interface ButtonBaseWrapper: LabeledWrapper {
+  override val node: ButtonBase
+  fun fire() = node.fire()
+  var text
+	get() = node.text
+	set(value) {
+	  node.text = value
+	}
+
+  fun textProperty() = node.textProperty()
+  var graphic
+	get() = node.graphic
+	set(value) {
+	  node.graphic = value
+	}
+
+  fun graphicProperty() = node.graphicProperty()
+}
+
+
+@FXNodeWrapperDSL
 interface ControlWrapper: RegionWrapper {
   override val node: Control
 }
@@ -372,25 +403,15 @@ interface ControlWrapper: RegionWrapper {
 class ButtonWrapper(
   override val node: Button = Button(),
   op: ButtonWrapper.()->Unit = {}
-): ControlWrapper {
+): ButtonBaseWrapper {
+  companion object {
+	fun Button.wrapped() = ButtonWrapper(this)
+  }
+
   init {
 	op()
   }
-
-  fun fire() = node.fire()
-  var text
-	get() = node.text
-	set(value) {
-	  node.text = value
-	}
-  var graphic
-	get() = node.graphic
-	set(value) {
-	  node.graphic = value
-	}
 }
-
-fun Button.wrapped() = ButtonWrapper(this)
 
 
 @FXNodeWrapperDSL
@@ -411,12 +432,14 @@ class ColorPickerWrapper(
   override val node: ColorPicker = ColorPicker(),
   op: ColorPickerWrapper.()->Unit = {}
 ): ComboBoxBaseWrapper<Color> {
+  companion object {
+	fun ColorPicker.wrapped() = ColorPickerWrapper(this)
+  }
+
   init {
 	op()
   }
 }
-
-fun ColorPicker.wrapped() = ColorPickerWrapper(this)
 
 
 @FXNodeWrapperDSL
@@ -442,13 +465,15 @@ class TextFlowWrapper(
   override val node: TextFlow = TextFlow(),
   op: TextFlowWrapper.()->Unit = {}
 ): RegionWrapper {
+  companion object {
+	fun TextFlow.wrapped() = TextFlowWrapper(this)
+  }
+
   init {
 	op()
   }
 
 }
-
-fun TextFlow.wrapped() = TextFlowWrapper(this)
 
 
 @FXNodeWrapperDSL
@@ -491,6 +516,10 @@ open class TextFieldWrapper(
   override val node: TextField = TextField(),
   op: TextFieldWrapper.()->Unit = {}
 ): TextInputControlWrapper {
+  companion object {
+	fun TextField.wrapped() = TextFieldWrapper(this)
+  }
+
   init {
 	op()
   }
@@ -503,8 +532,6 @@ open class TextFieldWrapper(
 
   fun textProperty() = node.textProperty()
 }
-
-fun TextField.wrapped() = TextFieldWrapper(this)
 
 
 @FXNodeWrapperDSL
@@ -525,13 +552,15 @@ class TextAreaWrapper(
   override val node: TextArea = TextArea(),
   op: TextAreaWrapper.()->Unit = {}
 ): TextInputControlWrapper {
+  companion object {
+	fun TextArea.wrapped() = TextAreaWrapper(this)
+  }
+
   init {
 	op()
   }
 
 }
-
-fun TextArea.wrapped() = TextAreaWrapper(this)
 
 
 @FXNodeWrapperDSL
@@ -587,6 +616,30 @@ class SliderWrapper(
   init {
 	op()
   }
+
+  var max
+	get() = node.max
+	set(value) {
+	  node.max = value
+	}
+
+  var min
+	get() = node.min
+	set(value) {
+	  node.min = value
+	}
+
+  var orientation
+	get() = node.orientation
+	set(value) {
+	  node.orientation = value
+	}
+
+  var value
+	get() = node.value
+	set(value) {
+	  node.value = value
+	}
 }
 
 
@@ -602,6 +655,35 @@ class CheckMenuItemWrapper(
 ): MenuItemWrapper {
   companion object {
 	fun CheckMenuItem.wrapped() = CheckMenuItemWrapper(this)
+  }
+
+  init {
+	op()
+  }
+}
+
+
+@FXNodeWrapperDSL
+open class MenuButtonWrapper(
+  override val node: MenuButton = MenuButton(),
+  op: MenuButtonWrapper.()->Unit = {}
+): ButtonBaseWrapper {
+  companion object {
+	fun MenuButton.wrapped() = MenuButtonWrapper(this)
+  }
+
+  init {
+	op()
+  }
+}
+
+@FXNodeWrapperDSL
+class SplitMenuButtonWrapper(
+  override val node: SplitMenuButton = SplitMenuButton(),
+  op: SplitMenuButtonWrapper.()->Unit = {}
+): MenuButtonWrapper(node) {
+  companion object {
+	fun SplitMenuButton.wrapped() = SplitMenuButtonWrapper(this)
   }
 
   init {
@@ -639,3 +721,108 @@ class ProgressIndicatorWrapper(
   }
 }
 
+
+@FXNodeWrapperDSL
+class ButtonBarWrapper(
+  override val node: ButtonBar = ButtonBar(),
+  op: ButtonBarWrapper.()->Unit = {}
+): ControlWrapper {
+  companion object {
+	fun ButtonBar.wrapped() = ButtonBarWrapper(this)
+  }
+
+  init {
+	op()
+  }
+}
+
+
+@FXNodeWrapperDSL
+class ProgressBarWrapper(
+  override val node: ProgressBar = ProgressBar(),
+  op: ProgressBarWrapper.()->Unit = {}
+): ControlWrapper {
+  companion object {
+	fun ProgressBar.wrapped() = ProgressBarWrapper(this)
+  }
+
+  init {
+	op()
+  }
+}
+
+
+@FXNodeWrapperDSL
+class ToolBarWrapper(
+  override val node: ToolBar = ToolBar(),
+  op: ToolBarWrapper.()->Unit = {}
+): ControlWrapper {
+  companion object {
+	fun ToolBar.wrapped() = ToolBarWrapper(this)
+  }
+
+  init {
+	op()
+  }
+}
+
+@FXNodeWrapperDSL
+open class ToggleButtonWrapper(
+  override val node: ToggleButton = ToggleButton(),
+  op: ToggleButtonWrapper.()->Unit = {}
+): ButtonBaseWrapper {
+  companion object {
+	fun ToggleButton.wrapped() = ToggleButtonWrapper(this)
+  }
+
+  init {
+	op()
+  }
+}
+
+
+
+@FXNodeWrapperDSL
+class RadioButtonWrapper(
+  override val node: RadioButton = RadioButton(),
+  op: RadioButtonWrapper.()->Unit = {}
+): ToggleButtonWrapper(node) {
+  companion object {
+	fun RadioButton.wrapped() = RadioButtonWrapper(this)
+  }
+
+  init {
+	op()
+  }
+}
+
+
+
+@FXNodeWrapperDSL
+class HyperlinkWrapper(
+  override val node: Hyperlink = Hyperlink(),
+  op: HyperlinkWrapper.()->Unit = {}
+): ButtonBaseWrapper {
+  companion object {
+	fun Hyperlink.wrapped() = HyperlinkWrapper(this)
+  }
+
+  init {
+	op()
+  }
+}
+
+
+@FXNodeWrapperDSL
+class ImageViewWrapper(
+  override val node: ImageView = ImageView(),
+  op: ImageViewWrapper.()->Unit = {}
+): NodeWrapper<ImageView> {
+  companion object {
+	fun ImageView.wrapped() = ImageViewWrapper(this)
+  }
+
+  init {
+	op()
+  }
+}
