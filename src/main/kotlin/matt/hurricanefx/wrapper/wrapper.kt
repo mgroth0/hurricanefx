@@ -13,7 +13,9 @@ import javafx.scene.Scene
 import javafx.scene.control.Button
 import javafx.scene.control.ChoiceBox
 import javafx.scene.control.ColorPicker
+import javafx.scene.control.ComboBoxBase
 import javafx.scene.control.Control
+import javafx.scene.control.DatePicker
 import javafx.scene.control.Labeled
 import javafx.scene.control.MultipleSelectionModel
 import javafx.scene.control.PasswordField
@@ -37,6 +39,7 @@ import javafx.scene.layout.HBox
 import javafx.scene.layout.Pane
 import javafx.scene.layout.Region
 import javafx.scene.layout.VBox
+import javafx.scene.paint.Color
 import javafx.scene.shape.Shape
 import javafx.scene.text.Text
 import javafx.scene.text.TextFlow
@@ -48,6 +51,7 @@ import matt.hurricanefx.eye.lib.onChange
 import matt.hurricanefx.stage
 import matt.hurricanefx.tornadofx.nodes.add
 import matt.hurricanefx.tornadofx.nodes.getToggleGroup
+import java.time.LocalDate
 
 private typealias NW = NodeWrapper<*>
 
@@ -385,14 +389,8 @@ fun Button.wrapped() = ButtonWrapper(this)
 
 
 @FXNodeWrapperDSL
-class ColorPickerWrapper(
-  override val node: ColorPicker = ColorPicker(),
-  op: ColorPickerWrapper.()->Unit = {}
-): ControlWrapper {
-  init {
-	op()
-  }
-
+interface ComboBoxBaseWrapper<T>: ControlWrapper {
+  override val node: ComboBoxBase<T>
   var value
 	get() = node.value
 	set(theVal) {
@@ -402,7 +400,36 @@ class ColorPickerWrapper(
   fun valueProperty() = node.valueProperty()
 }
 
+
+@FXNodeWrapperDSL
+class ColorPickerWrapper(
+  override val node: ColorPicker = ColorPicker(),
+  op: ColorPickerWrapper.()->Unit = {}
+): ComboBoxBaseWrapper<Color> {
+  init {
+	op()
+  }
+}
+
 fun ColorPicker.wrapped() = ColorPickerWrapper(this)
+
+
+@FXNodeWrapperDSL
+class DatePickerWrapper(
+  override val node: DatePicker = DatePicker(),
+  op: DatePickerWrapper.()->Unit = {}
+): ComboBoxBaseWrapper<LocalDate> {
+
+  companion object {
+	fun DatePicker.wrapped() = DatePickerWrapper(this)
+  }
+
+  init {
+	op()
+  }
+
+
+}
 
 
 @FXNodeWrapperDSL

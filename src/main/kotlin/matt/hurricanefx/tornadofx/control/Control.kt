@@ -526,7 +526,7 @@ fun TextField.action(op: ()->Unit) = setOnAction { op() }
 fun MenuItem.action(op: ()->Unit) = setOnAction { op() }
 
 
-fun <T> ComboBoxBase<T>.bind(property: ObservableValue<T>, readonly: Boolean = false) =
+fun <T> ComboBoxBaseWrapper<T>.bind(property: ObservableValue<T>, readonly: Boolean = false) =
   valueProperty().internalBind(property, readonly)
 
 fun ColorPickerWrapper.bind(property: ObservableValue<Color>, readonly: Boolean = false) =
