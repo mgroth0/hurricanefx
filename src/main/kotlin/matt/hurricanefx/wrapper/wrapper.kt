@@ -650,6 +650,14 @@ class SpinnerWrapper<T>(
 	set(value) {
 	  node.valueFactory = value
 	}
+
+
+  var isEditable
+	get() = node.isEditable
+	set(value) {
+	  node.isEditable = value
+	}
+  fun editableProperty() = node.editableProperty()
 }
 
 @FXNodeWrapperDSL
