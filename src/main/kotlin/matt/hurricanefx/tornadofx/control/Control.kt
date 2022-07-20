@@ -236,7 +236,7 @@ fun <T> EventTargetWrapper<*>.textarea(
   }
 
 
-fun EventTargetWrapper<*>.buttonbar(buttonOrder: String? = null, op: (ButtonBar.()->Unit)) =
+fun EventTargetWrapper<*>.buttonbar(buttonOrder: String? = null, op: (ButtonBarWrapper.()->Unit)) =
   ButtonBarWrapper().attachTo(this, op) {
 	if (buttonOrder != null) it.buttonOrder = buttonOrder
   }
@@ -247,7 +247,7 @@ fun EventTargetWrapper<*>.checkbox(
   property: Property<Boolean>? = null,
   op: CheckBoxWrapper.()->Unit = {}
 ) =
-  CheckBoxWrapper(text).attachTo(this, op) {
+  CheckBoxWrapper{text=text}.attachTo(this, op) {
 	if (property != null) it.bind(property)
   }
 
@@ -341,9 +341,9 @@ fun EventTargetWrapper<*>.button(
   }
 
 fun ToolBarWrapper.button(text: String = "", graphic: Node? = null, op: Button.()->Unit = {}) =
-  ButtonWrapper { text = text }.also {
+  ButtonWrapper { this.text = text }.also {
 	if (graphic != null) it.graphic = graphic
-	this@button.items += it
+	this@button.items += it.node
 	op(it)
   }
 
@@ -351,7 +351,7 @@ fun ToolBarWrapper.button(text: ObservableValue<String>, graphic: Node? = null, 
   ButtonWrapper().also {
 	it.textProperty().bind(text)
 	if (graphic != null) it.graphic = graphic
-	this@button.items += it
+	this@button.items += it.node
 	op(it)
   }
 
@@ -436,7 +436,7 @@ fun EventTargetWrapper<*>.togglebutton(
   op: ToggleButtonWrapper.()->Unit = {}
 ) = ToggleButtonWrapper().attachTo(this, op) {
   it.text = if (value != null && text == null) value.toString() else text ?: ""
-  it.properties["tornadofx.toggleGroupValue"] = value ?: text
+  it.node.properties["tornadofx.toggleGroupValue"] = value ?: text
   if (group != null) it.toggleGroup = group
   if (it.toggleGroup?.selectedToggle == null && selectFirst) it.isSelected = true
 }

@@ -39,6 +39,7 @@ import javafx.scene.control.TextField
 import javafx.scene.control.TextInputControl
 import javafx.scene.control.TitledPane
 import javafx.scene.control.ToggleButton
+import javafx.scene.control.ToggleGroup
 import javafx.scene.control.ToolBar
 import javafx.scene.control.TreeItem
 import javafx.scene.control.TreeTableView
@@ -750,6 +751,12 @@ class ProgressBarWrapper(
   init {
 	op()
   }
+
+  var progress
+	get() = node.progress
+	set(value) {
+	  node.progress = value
+	}
 }
 
 
@@ -766,7 +773,7 @@ class ToolBarWrapper(
 	op()
   }
 
-  val items get() = node.items
+  val items: ObservableList<Node> get() = node.items
 
 }
 
@@ -782,6 +789,13 @@ open class ToggleButtonWrapper(
   init {
 	op()
   }
+
+
+  var toggleGroup: ToggleGroup
+	get() = node.toggleGroup
+	set(value) {
+	  node.toggleGroup = value
+	}
 }
 
 
