@@ -51,6 +51,7 @@ import matt.hurricanefx.eye.lib.ChangeListener
 import matt.hurricanefx.eye.lib.onChangeUntilAfterFirst
 import matt.hurricanefx.tornadofx.nodes.add
 import matt.hurricanefx.tsprogressbar.ThreadSafeNodeWrapper
+import matt.hurricanefx.wrapper.ButtonWrapper
 import matt.hurricanefx.wrapper.NodeWrapper
 import matt.hurricanefx.wrapper.RegionWrapper
 import matt.hurricanefx.wrapper.wrapped
@@ -455,8 +456,8 @@ fun NodeWrapper<Pane>.addAll(nodes: Iterable<Node>) = node.addAll(nodes)
 }*/
 
 
-fun Node.onDoubleClickConsume(action: ()->Unit) {
-  setOnMouseClicked {
+fun NodeWrapper<*>.onDoubleClickConsume(action: ()->Unit) {
+  node.setOnMouseClicked {
 	if (it.clickCount == 2) {
 	  action()
 	  it.consume()
@@ -477,10 +478,10 @@ class TreeTableTreeView<T>(val table: Boolean): TreeTableView<T>() {
   }
 }
 
-fun Button.disable() {
-  isDisable = true
+fun ButtonWrapper.disable() {
+ node. isDisable = true
 }
 
-fun Button.enable() {
-  isDisable = false
+fun ButtonWrapper.enable() {
+  node. isDisable = false
 }
