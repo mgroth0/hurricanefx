@@ -62,7 +62,9 @@ import matt.hurricanefx.tornadofx.fx.opcr
 import matt.hurricanefx.wrapper.ButtonWrapper
 import matt.hurricanefx.wrapper.ColorPickerWrapper
 import matt.hurricanefx.wrapper.EventTargetWrapper
+import matt.hurricanefx.wrapper.TextFieldWrapper
 import matt.hurricanefx.wrapper.TextFlowWrapper
+import matt.hurricanefx.wrapper.TextWrapper
 import matt.hurricanefx.wrapper.wrapped
 import matt.klib.lang.err
 import java.text.Format
@@ -120,18 +122,18 @@ fun children(addTo: MutableList<Node>, op: Pane.()->Unit) {
 }
 
 
-fun EventTargetWrapper<*>.text(initialValue: String? = null, op: Text.()->Unit = {}) = Text().attachTo(this, op) {
+fun EventTargetWrapper<*>.text(initialValue: String? = null, op: TextWrapper.()->Unit = {}) = TextWrapper().attachTo(this, op) {
   if (initialValue != null) it.text = initialValue
 }
 
 
-fun EventTargetWrapper<*>.text(property: Property<String>, op: Text.()->Unit = {}) = text().apply {
+fun EventTargetWrapper<*>.text(property: Property<String>, op: TextWrapper.()->Unit = {}) = text().apply {
   bind(property)
   op(this)
 }
 
 
-fun EventTargetWrapper<*>.text(observable: ObservableValue<String>, op: Text.()->Unit = {}) = text().apply {
+fun EventTargetWrapper<*>.text(observable: ObservableValue<String>, op: TextWrapper.()->Unit = {}) = text().apply {
   bind(observable)
   op(this)
 }
@@ -139,23 +141,23 @@ fun EventTargetWrapper<*>.text(observable: ObservableValue<String>, op: Text.()-
 
 
 
-fun EventTargetWrapper<*>.textfield(value: String? = null, op: TextField.()->Unit = {}) = TextField().attachTo(this, op) {
+fun EventTargetWrapper<*>.textfield(value: String? = null, op: TextFieldWrapper.()->Unit = {}) = TextFieldWrapper().attachTo(this, op) {
   if (value != null) it.text = value
 }
 
-fun EventTargetWrapper<*>.textfield(property: ObservableValue<String>, op: TextField.()->Unit = {}) = textfield().apply {
+fun EventTargetWrapper<*>.textfield(property: ObservableValue<String>, op: TextFieldWrapper.()->Unit = {}) = textfield().apply {
   bind(property)
   op(this)
 }
 
 @JvmName("textfieldNumber")
-fun EventTargetWrapper<*>.textfield(property: ObservableValue<Number>, op: TextField.()->Unit = {}) = textfield().apply {
+fun EventTargetWrapper<*>.textfield(property: ObservableValue<Number>, op: TextFieldWrapper.()->Unit = {}) = textfield().apply {
   bind(property)
   op(this)
 }
 
 @JvmName("textfieldInt")
-fun EventTargetWrapper<*>.textfield(property: ObservableValue<Int>, op: TextField.()->Unit = {}) = textfield().apply {
+fun EventTargetWrapper<*>.textfield(property: ObservableValue<Int>, op: TextFieldWrapper.()->Unit = {}) = textfield().apply {
   bind(property)
   op(this)
 }

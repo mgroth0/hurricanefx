@@ -15,8 +15,12 @@ import javafx.scene.control.ChoiceBox
 import javafx.scene.control.ColorPicker
 import javafx.scene.control.Control
 import javafx.scene.control.MultipleSelectionModel
+import javafx.scene.control.PasswordField
 import javafx.scene.control.ScrollPane
 import javafx.scene.control.TabPane
+import javafx.scene.control.TextArea
+import javafx.scene.control.TextField
+import javafx.scene.control.TextInputControl
 import javafx.scene.control.TreeItem
 import javafx.scene.control.TreeTableView
 import javafx.scene.control.TreeView
@@ -430,3 +434,50 @@ class TextWrapper(
 }
 
 fun Text.wrapped() = TextWrapper(this)
+
+
+@FXNodeWrapperDSL
+interface TextInputControlWrapper: ControlWrapper {
+  override val node: TextInputControl
+}
+
+
+@FXNodeWrapperDSL
+open class TextFieldWrapper(
+  override val node: TextField = TextField(),
+  op: TextFieldWrapper.()->Unit = {}
+): TextInputControlWrapper {
+  init {
+	op()
+  }
+
+}
+
+fun TextField.wrapped() = TextFieldWrapper(this)
+
+
+@FXNodeWrapperDSL
+class PasswordFieldWrapper(
+  override val node: PasswordField = PasswordField(),
+  op: PasswordFieldWrapper.()->Unit = {}
+): TextFieldWrapper(node) {
+  init {
+	op()
+  }
+}
+
+fun PasswordField.wrapped() = PasswordFieldWrapper(this)
+
+
+@FXNodeWrapperDSL
+class TextAreaWrapper(
+  override val node: TextArea = TextArea(),
+  op: TextAreaWrapper.()->Unit = {}
+): TextInputControlWrapper {
+  init {
+	op()
+  }
+
+}
+
+fun TextArea.wrapped() = TextAreaWrapper(this)
