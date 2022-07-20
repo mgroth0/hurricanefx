@@ -59,6 +59,7 @@ import matt.hurricanefx.eye.prop.stringBinding
 import matt.hurricanefx.eye.sflist.SortedFilteredList
 import matt.hurricanefx.tornadofx.fx.attachTo
 import matt.hurricanefx.tornadofx.fx.opcr
+import matt.hurricanefx.wrapper.ButtonBarWrapper
 import matt.hurricanefx.wrapper.ButtonWrapper
 import matt.hurricanefx.wrapper.CheckBoxWrapper
 import matt.hurricanefx.wrapper.CheckMenuItemWrapper
@@ -68,8 +69,12 @@ import matt.hurricanefx.wrapper.ComboBoxBaseWrapper
 import matt.hurricanefx.wrapper.DatePickerWrapper
 import matt.hurricanefx.wrapper.EventTargetWrapper
 import matt.hurricanefx.wrapper.LabeledWrapper
+import matt.hurricanefx.wrapper.PasswordFieldWrapper
+import matt.hurricanefx.wrapper.ProgressBarWrapper
+import matt.hurricanefx.wrapper.ProgressIndicatorWrapper
 import matt.hurricanefx.wrapper.SliderWrapper
 import matt.hurricanefx.wrapper.SpinnerWrapper
+import matt.hurricanefx.wrapper.TextAreaWrapper
 import matt.hurricanefx.wrapper.TextFieldWrapper
 import matt.hurricanefx.wrapper.TextFlowWrapper
 import matt.hurricanefx.wrapper.TextInputControlWrapper
@@ -178,13 +183,13 @@ fun EventTargetWrapper<*>.passwordfield(value: String? = null, op: PasswordField
 	if (value != null) it.text = value
   }
 
-fun EventTargetWrapper<*>.passwordfield(property: ObservableValue<String>, op: PasswordField.()->Unit = {}) =
+fun EventTargetWrapper<*>.passwordfield(property: ObservableValue<String>, op: PasswordFieldWrapper.()->Unit = {}) =
   passwordfield().apply {
 	bind(property)
 	op(this)
   }
 
-fun <T> EventTargetWrapper<*>.textfield(property: Property<T>, converter: StringConverter<T>, op: TextField.()->Unit = {}) =
+fun <T> EventTargetWrapper<*>.textfield(property: Property<T>, converter: StringConverter<T>, op: TextFieldWrapper.()->Unit = {}) =
   textfield().apply {
 	textProperty().bindBidirectional(property, converter)
 	op(this)
