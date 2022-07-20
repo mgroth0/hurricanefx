@@ -141,7 +141,7 @@ interface NodeWrapper<N: Node>: EventTargetWrapper<N> {
   }
 
 
-  val parent get() = node.parent.wrapped()
+  val parent get() = node.parent?.wrapped()
 
   val scene: Scene? get() = node.scene
   val stage get() = node.stage
@@ -216,8 +216,7 @@ open class RegionWrapper(override val node: Region = Region()): ParentWrapper {
 	set(value) {
 	  node.padding = value
 	}
-  val paddingProperty: ObjectProperty<Padding> get() = node.paddingProperty()
-
+  val paddingProperty: ObjectProperty<Insets> get() = node.paddingProperty()
 
 
   var background: Background?
