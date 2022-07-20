@@ -326,6 +326,8 @@ class TreeViewWrapper<T>(override val node: TreeView<T> = TreeView(), op: TreeVi
   override val selectionModel: MultipleSelectionModel<TreeItem<T>> get() = node.selectionModel
   override fun scrollTo(i: Int) = node.scrollTo(i)
   override fun getRow(ti: TreeItem<T>) = node.getRow(ti)
+
+
 }
 
 @FXNodeWrapperDSL
@@ -362,6 +364,8 @@ class TreeTableViewWrapper<T>(
 
   override val selectionModel: MultipleSelectionModel<TreeItem<T>> get() = node.selectionModel
   override fun scrollTo(i: Int) = node.scrollTo(i)
+
+
 
 }
 
@@ -470,6 +474,7 @@ class ComboBoxWrapper<T>(
 	set(value) {
 	  node.items = value
 	}
+  fun itemsProperty() = node.itemsProperty()
 
 }
 
@@ -1192,6 +1197,7 @@ open class ListViewWrapper<E>(
 	set(value) {
 	  node.items = value
 	}
+  fun itemsProperty() = node.itemsProperty()
 }
 
 @FXNodeWrapperDSL
@@ -1214,6 +1220,9 @@ open class TableViewWrapper<E>(
 	set(value) {
 	  node.items = value
 	}
+  fun itemsProperty() = node.itemsProperty()
 
   fun comparatorProperty() = node.comparatorProperty()
+
+  val columns get() = node.columns
 }

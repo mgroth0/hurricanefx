@@ -252,7 +252,7 @@ fun <T> EventTargetWrapper<*>.listview(values: ObservableValue<ObservableList<T>
   }
 
 fun <T> EventTargetWrapper<*>.tableview(items: ObservableList<T>? = null, op: TableViewWrapper<T>.()->Unit = {}) =
-  TableView<T>().attachTo(this, op) {
+  TableViewWrapper<T>().attachTo(this, op) {
 	if (items != null) {
 	  if (items is SortedFilteredList<T>) items.bindTo(it)
 	  else it.items = items
@@ -263,7 +263,7 @@ fun <T> EventTargetWrapper<*>.tableview(items: ReadOnlyListProperty<T>, op: Tabl
   tableview(items as ObservableValue<ObservableList<T>>, op)
 
 fun <T> EventTargetWrapper<*>.tableview(items: ObservableValue<out ObservableList<T>>, op: TableViewWrapper<T>.()->Unit = {}) =
-  TableView<T>().attachTo(this, op) {
+  TableViewWrapper<T>().attachTo(this, op) {
 	fun rebinder() {
 	  (it.items as? SortedFilteredList<T>)?.bindTo(it)
 	}
@@ -322,13 +322,13 @@ fun <S, T> TableColumn<S, T>.enableTextWrap() = apply {
 
 @Suppress("UNCHECKED_CAST")
 fun <S> TableViewWrapper<S>.addColumnInternal(column: TableColumn<S, *>, index: Int? = null) {
-  val columnTarget = properties["tornadofx.columnTarget"] as? ObservableList<TableColumn<S, *>> ?: columns
+  val columnTarget = node.properties["tornadofx.columnTarget"] as? ObservableList<TableColumn<S, *>> ?: columns
   if (index == null) columnTarget.add(column) else columnTarget.add(index, column)
 }
 
 @Suppress("UNCHECKED_CAST")
 fun <S> TreeTableViewWrapper<S>.addColumnInternal(column: TreeTableColumn<S, *>, index: Int? = null) {
-  val columnTarget = properties["tornadofx.columnTarget"] as? ObservableList<TreeTableColumn<S, *>> ?: columns
+  val columnTarget = node.properties["tornadofx.columnTarget"] as? ObservableList<TreeTableColumn<S, *>> ?: columns
   if (index == null) columnTarget.add(column) else columnTarget.add(index, column)
 }
 
@@ -338,14 +338,14 @@ fun <S> TreeTableViewWrapper<S>.addColumnInternal(column: TreeTableColumn<S, *>,
 @Suppress("UNCHECKED_CAST")
 fun <S> TableViewWrapper<S>.nestedColumn(
   title: String,
-  op: TableView<S>.(TableColumn<S, Any?>)->Unit = {}
+  op: TableViewWrapper<S>.(TableColumn<S, Any?>)->Unit = {}
 ): TableColumn<S, Any?> {
   val column = TableColumn<S, Any?>(title)
   addColumnInternal(column)
-  val previousColumnTarget = properties["tornadofx.columnTarget"] as? ObservableList<TableColumn<S, *>>
-  properties["tornadofx.columnTarget"] = column.columns
+  val previousColumnTarget = node.properties["tornadofx.columnTarget"] as? ObservableList<TableColumn<S, *>>
+  node.properties["tornadofx.columnTarget"] = column.columns
   op(this, column)
-  properties["tornadofx.columnTarget"] = previousColumnTarget
+  node.properties["tornadofx.columnTarget"] = previousColumnTarget
   return column
 }
 
@@ -353,13 +353,13 @@ fun <S> TableViewWrapper<S>.nestedColumn(
  * Create a matt.hurricanefx.tableview.coolColumn holding children columns
  */
 @Suppress("UNCHECKED_CAST")
-fun <S> TreeTableViewWrapper<S>.nestedColumn(title: String, op: TreeTableView<S>.()->Unit = {}): TreeTableColumn<S, Any?> {
+fun <S> TreeTableViewWrapper<S>.nestedColumn(title: String, op: TreeTableViewWrapper<S>.()->Unit = {}): TreeTableColumn<S, Any?> {
   val column = TreeTableColumn<S, Any?>(title)
   addColumnInternal(column)
-  val previousColumnTarget = properties["tornadofx.columnTarget"] as? ObservableList<TableColumn<S, *>>
-  properties["tornadofx.columnTarget"] = column.columns
+  val previousColumnTarget = node.properties["tornadofx.columnTarget"] as? ObservableList<TableColumn<S, *>>
+  node.properties["tornadofx.columnTarget"] = column.columns
   op(this)
-  properties["tornadofx.columnTarget"] = previousColumnTarget
+  node.  properties["tornadofx.columnTarget"] = previousColumnTarget
   return column
 }
 
@@ -507,7 +507,7 @@ inline fun <reified S, T> TableViewWrapper<S>.column(
   return column.also(op)
 }
 
-inline fun <reified S, T> TreeTableView<S>.column(
+inline fun <reified S, T> TreeTableViewWrapper<S>.column(
   title: String,
   prop: KMutableProperty1<S, T>,
   noinline op: TreeTableColumn<S, T>.()->Unit = {}
@@ -525,7 +525,7 @@ inline fun <reified S, T> TreeTableView<S>.column(
  * ATTENTION: This function was renamed to `readonlyColumn` to avoid shadowing the version for
  * observable properties.
  */
-inline fun <reified S, T> TableView<S>.readonlyColumn(
+inline fun <reified S, T> TableViewWrapper<S>.readonlyColumn(
   title: String,
   prop: KProperty1<S, T>,
   noinline op: TableColumn<S, T>.()->Unit = {}
@@ -536,7 +536,7 @@ inline fun <reified S, T> TableView<S>.readonlyColumn(
   return column.also(op)
 }
 
-inline fun <reified S, T> TreeTableView<S>.column(
+inline fun <reified S, T> TreeTableViewWrapper<S>.column(
   title: String,
   prop: KProperty1<S, T>,
   noinline op: TreeTableColumn<S, T>.()->Unit = {}
@@ -550,7 +550,7 @@ inline fun <reified S, T> TreeTableView<S>.column(
 /**
  * Create a matt.hurricanefx.tableview.coolColumn with a value factory that extracts the value from the given ObservableValue property.
  */
-inline fun <reified S, T> TableView<S>.column(
+inline fun <reified S, T> TableViewWrapper<S>.column(
   title: String,
   prop: KProperty1<S, ObservableValue<T>>,
   noinline op: TableColumn<S, T>.()->Unit = {}
@@ -566,7 +566,7 @@ inline fun <reified S, T> TableView<S>.column(
  * for writing back the data into your domain object and can consentrate on the actual
  * response you want to happen when a matt.hurricanefx.tableview.coolColumn commits and edit.
  */
-fun <S> TableView<S>.onEditCommit(onCommit: TableColumn.CellEditEvent<S, Any>.(S)->Unit) {
+fun <S> TableViewWrapper<S>.onEditCommit(onCommit: TableColumn.CellEditEvent<S, Any>.(S)->Unit) {
   fun addEventHandlerForColumn(column: TableColumn<S, *>) {
 	column.addEventHandler(TableColumn.editCommitEvent<S, Any>()) { event ->
 	  // Make sure the domain object gets the new value before we notify our handler
@@ -591,7 +591,7 @@ fun <S> TableView<S>.onEditCommit(onCommit: TableColumn.CellEditEvent<S, Any>.(S
  * Add a global edit start handler to the TableView. You can use this callback
  * to cancel the edit request by calling cancel()
  */
-fun <S> TableView<S>.onEditStart(onEditStart: TableColumn.CellEditEvent<S, Any?>.(S)->Unit) {
+fun <S> TableViewWrapper<S>.onEditStart(onEditStart: TableColumn.CellEditEvent<S, Any?>.(S)->Unit) {
   fun addEventHandlerForColumn(column: TableColumn<S, *>) {
 	column.addEventHandler(TableColumn.editStartEvent<S, Any?>()) { event ->
 	  onEditStart(event, event.rowValue)
@@ -621,7 +621,7 @@ fun <S, T> TableColumn.CellEditEvent<S, T>.cancel() {
  * `value { it.value.someProperty }` to set up a cellValueFactory that must return T or ObservableValue<T>
  */
 @Suppress("UNUSED_PARAMETER")
-fun <S, T: Any> TableView<S>.column(
+fun <S, T: Any> TableViewWrapper<S>.column(
   title: String,
   cellType: KClass<T>,
   op: TableColumn<S, T>.()->Unit = {}
@@ -634,7 +634,7 @@ fun <S, T: Any> TableView<S>.column(
 /**
  * Create a matt.hurricanefx.tableview.coolColumn with a value factory that extracts the value from the given callback.
  */
-fun <S, T> TableView<S>.column(
+fun <S, T> TableViewWrapper<S>.column(
   title: String,
   valueProvider: (TableColumn.CellDataFeatures<S, T>)->ObservableValue<T>
 ): TableColumn<S, T> {
@@ -657,7 +657,7 @@ infix fun <S> TableColumn<S, *>.value(cellValueFactory: (TableColumn.CellDataFea
 }
 
 @JvmName(name = "columnForObservableProperty")
-inline fun <reified S, T> TreeTableView<S>.column(
+inline fun <reified S, T> TreeTableViewWrapper<S>.column(
   title: String,
   prop: KProperty1<S, ObservableValue<T>>
 ): TreeTableColumn<S, T> {
@@ -671,7 +671,7 @@ inline fun <reified S, T> TreeTableView<S>.column(
  * Create a matt.hurricanefx.tableview.coolColumn with a value factory that extracts the observable value from the given function reference.
  * This method requires that you have kotlin-reflect on your classpath.
  */
-inline fun <S, reified T> TableView<S>.column(
+inline fun <S, reified T> TableViewWrapper<S>.column(
   title: String,
   observableFn: KFunction<ObservableValue<T>>
 ): TableColumn<S, T> {
@@ -681,7 +681,7 @@ inline fun <S, reified T> TableView<S>.column(
   return column
 }
 
-inline fun <S, reified T> TreeTableView<S>.column(
+inline fun <S, reified T> TreeTableViewWrapper<S>.column(
   title: String,
   observableFn: KFunction<ObservableValue<T>>
 ): TreeTableColumn<S, T> {
@@ -694,7 +694,7 @@ inline fun <S, reified T> TreeTableView<S>.column(
 /**
  * Create a matt.hurricanefx.tableview.coolColumn with a value factory that extracts the value from the given callback.
  */
-inline fun <reified S, T> TreeTableView<S>.column(
+inline fun <reified S, T> TreeTableViewWrapper<S>.column(
   title: String,
   noinline valueProvider: (TreeTableColumn.CellDataFeatures<S, T>)->ObservableValue<T>
 ): TreeTableColumn<S, T> {
