@@ -493,7 +493,7 @@ class TabPaneWrapper(
 }
 
 
-class ButtonBaseWrapper(override val node: ButtonBase): LabeledWrapper(node) {
+open class ButtonBaseWrapper(override val node: ButtonBase): LabeledWrapper(node) {
 
   fun fire() = node.fire()
   fun setOnAction(op: (ActionEvent)->Unit) {
@@ -630,7 +630,7 @@ class TextWrapper(
 }
 
 
-class TextInputControlWrapper(override val node: TextInputControl): ControlWrapper(node) {
+open class TextInputControlWrapper(override val node: TextInputControl): ControlWrapper(node) {
   var text
 	get() = node.text
 	set(value) {
@@ -774,7 +774,7 @@ class SpinnerWrapper<T>(
 class SliderWrapper(
   override val node: Slider = Slider(),
   op: SliderWrapper.()->Unit = {}
-): ControlWrapper {
+): ControlWrapper(node) {
   companion object {
 	fun Slider.wrapped() = SliderWrapper(this)
   }
@@ -869,7 +869,7 @@ class CheckMenuItemWrapper(
 open class MenuButtonWrapper(
   override val node: MenuButton = MenuButton(),
   op: MenuButtonWrapper.()->Unit = {}
-): ButtonBaseWrapper {
+): ButtonBaseWrapper(node) {
   companion object {
 	fun MenuButton.wrapped() = MenuButtonWrapper(this)
   }
@@ -897,7 +897,7 @@ class SplitMenuButtonWrapper(
 class CheckBoxWrapper(
   override val node: CheckBox = CheckBox(),
   op: CheckBoxWrapper.()->Unit = {}
-): ButtonBaseWrapper {
+): ButtonBaseWrapper(node) {
   companion object {
 	fun CheckBox.wrapped() = CheckBoxWrapper(this)
   }
@@ -962,7 +962,7 @@ class ButtonBarWrapper(
 class ProgressBarWrapper(
   override val node: ProgressBar = ProgressBar(),
   op: ProgressBarWrapper.()->Unit = {}
-): ControlWrapper {
+): ControlWrapper(node) {
   companion object {
 	fun ProgressBar.wrapped() = ProgressBarWrapper(this)
   }
@@ -1001,7 +1001,7 @@ class ToolBarWrapper(
 open class ToggleButtonWrapper(
   override val node: ToggleButton = ToggleButton(),
   op: ToggleButtonWrapper.()->Unit = {}
-): ButtonBaseWrapper {
+): ButtonBaseWrapper(node) {
   companion object {
 	fun ToggleButton.wrapped() = ToggleButtonWrapper(this)
   }
@@ -1043,7 +1043,7 @@ class RadioButtonWrapper(
 class HyperlinkWrapper(
   override val node: Hyperlink = Hyperlink(),
   op: HyperlinkWrapper.()->Unit = {}
-): ButtonBaseWrapper {
+): ButtonBaseWrapper(node) {
   companion object {
 	fun Hyperlink.wrapped() = HyperlinkWrapper(this)
   }
@@ -1122,7 +1122,7 @@ class ChartWrapper(override val node: Chart): RegionWrapper(node) {
 open class PieChartWrapper(
   override val node: PieChart = PieChart(),
   op: PieChartWrapper.()->Unit = {}
-): ChartWrapper {
+): ChartWrapper(node) {
   companion object {
 	fun PieChart.wrapped() = PieChartWrapper(this)
   }
@@ -1140,7 +1140,7 @@ open class PieChartWrapper(
 open class LineChartWrapper<X, Y>(
   override val node: LineChart<X, Y>,
   op: LineChartWrapper<X, Y>.()->Unit = {}
-): ChartWrapper {
+): ChartWrapper(node) {
   companion object {
 	fun <X, Y> LineChart<X, Y>.wrapped() = LineChartWrapper(this)
   }
@@ -1156,7 +1156,7 @@ open class LineChartWrapper<X, Y>(
 open class AreaChartWrapper<X, Y>(
   override val node: AreaChart<X, Y>,
   op: AreaChartWrapper<X, Y>.()->Unit = {}
-): ChartWrapper {
+): ChartWrapper(node) {
   companion object {
 	fun <X, Y> AreaChart<X, Y>.wrapped() = AreaChartWrapper(this)
   }
@@ -1172,7 +1172,7 @@ open class AreaChartWrapper<X, Y>(
 open class BubbleChartWrapper<X, Y>(
   override val node: BubbleChart<X, Y>,
   op: BubbleChartWrapper<X, Y>.()->Unit = {}
-): ChartWrapper {
+): ChartWrapper(node) {
   companion object {
 	fun <X, Y> BubbleChart<X, Y>.wrapped() = BubbleChartWrapper(this)
   }
@@ -1188,7 +1188,7 @@ open class BubbleChartWrapper<X, Y>(
 open class ScatterChartWrapper<X, Y>(
   override val node: ScatterChart<X, Y>,
   op: ScatterChartWrapper<X, Y>.()->Unit = {}
-): ChartWrapper {
+): ChartWrapper(node) {
   companion object {
 	fun <X, Y> ScatterChart<X, Y>.wrapped() = ScatterChartWrapper(this)
   }
@@ -1204,7 +1204,7 @@ open class ScatterChartWrapper<X, Y>(
 open class BarChartWrapper<X, Y>(
   override val node: BarChart<X, Y>,
   op: BarChartWrapper<X, Y>.()->Unit = {}
-): ChartWrapper {
+): ChartWrapper(node) {
   companion object {
 	fun <X, Y> BarChart<X, Y>.wrapped() = BarChartWrapper(this)
   }
@@ -1220,7 +1220,7 @@ open class BarChartWrapper<X, Y>(
 open class StackedBarChartWrapper<X, Y>(
   override val node: StackedBarChart<X, Y>,
   op: StackedBarChartWrapper<X, Y>.()->Unit = {}
-): ChartWrapper {
+): ChartWrapper(node) {
   companion object {
 	fun <X, Y> StackedBarChart<X, Y>.wrapped() = StackedBarChartWrapper(this)
   }
