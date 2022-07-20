@@ -60,6 +60,7 @@ import matt.hurricanefx.eye.sflist.SortedFilteredList
 import matt.hurricanefx.tornadofx.fx.attachTo
 import matt.hurricanefx.tornadofx.fx.opcr
 import matt.hurricanefx.wrapper.ButtonBarWrapper
+import matt.hurricanefx.wrapper.ButtonBaseWrapper
 import matt.hurricanefx.wrapper.ButtonWrapper
 import matt.hurricanefx.wrapper.CheckBoxWrapper
 import matt.hurricanefx.wrapper.CheckMenuItemWrapper
@@ -68,11 +69,17 @@ import matt.hurricanefx.wrapper.ColorPickerWrapper
 import matt.hurricanefx.wrapper.ComboBoxBaseWrapper
 import matt.hurricanefx.wrapper.DatePickerWrapper
 import matt.hurricanefx.wrapper.EventTargetWrapper
+import matt.hurricanefx.wrapper.HyperlinkWrapper
+import matt.hurricanefx.wrapper.ImageViewWrapper
+import matt.hurricanefx.wrapper.LabelWrapper
 import matt.hurricanefx.wrapper.LabeledWrapper
+import matt.hurricanefx.wrapper.MenuBarWrapper
 import matt.hurricanefx.wrapper.MenuButtonWrapper
+import matt.hurricanefx.wrapper.MenuItemWrapper
 import matt.hurricanefx.wrapper.PasswordFieldWrapper
 import matt.hurricanefx.wrapper.ProgressBarWrapper
 import matt.hurricanefx.wrapper.ProgressIndicatorWrapper
+import matt.hurricanefx.wrapper.RadioButtonWrapper
 import matt.hurricanefx.wrapper.SliderWrapper
 import matt.hurricanefx.wrapper.SpinnerWrapper
 import matt.hurricanefx.wrapper.SplitMenuButtonWrapper
@@ -247,7 +254,7 @@ fun EventTargetWrapper<*>.checkbox(
   property: Property<Boolean>? = null,
   op: CheckBoxWrapper.()->Unit = {}
 ) =
-  CheckBoxWrapper{text=text}.attachTo(this, op) {
+  CheckBoxWrapper{this.text=text}.attachTo(this, op) {
 	if (property != null) it.bind(property)
   }
 
@@ -315,7 +322,7 @@ inline fun EventTargetWrapper<*>.button(
 
 fun EventTargetWrapper<*>.menubutton(text: String = "", graphic: Node? = null, op: MenuButtonWrapper.()->Unit = {}) =
   MenuButtonWrapper {
-	text = text
+	this.text = text
   }.attachTo(this, op) {
 	if (graphic != null) it.graphic = graphic
   }
@@ -340,7 +347,7 @@ fun EventTargetWrapper<*>.button(
 	if (graphic != null) it.graphic = graphic
   }
 
-fun ToolBarWrapper.button(text: String = "", graphic: Node? = null, op: Button.()->Unit = {}) =
+fun ToolBarWrapper.button(text: String = "", graphic: Node? = null, op: ButtonWrapper.()->Unit = {}) =
   ButtonWrapper { this.text = text }.also {
 	if (graphic != null) it.graphic = graphic
 	this@button.items += it.node
@@ -481,15 +488,15 @@ fun EventTargetWrapper<*>.radiobutton(
   text: String? = null,
   group: ToggleGroup? = getToggleGroup(),
   value: Any? = null,
-  op: RadioButton.()->Unit = {}
-) = RadioButton().attachTo(this, op) {
+  op: RadioButtonWrapper.()->Unit = {}
+) = RadioButtonWrapper().attachTo(this, op) {
   it.text = if (value != null && text == null) value.toString() else text ?: ""
   it.properties["tornadofx.toggleGroupValue"] = value ?: text
   if (group != null) it.toggleGroup = group
 }
 
-fun EventTargetWrapper<*>.label(text: String = "", graphic: Node? = null, op: Label.()->Unit = {}) =
-  Label(text).attachTo(this, op) {
+fun EventTargetWrapper<*>.label(text: String = "", graphic: Node? = null, op: LabelWrapper.()->Unit = {}) =
+  LabelWrapper{text=text}.attachTo(this, op) {
 	if (graphic != null) it.graphic = graphic
   }
 
@@ -516,7 +523,7 @@ inline fun <reified T> EventTargetWrapper<*>.label(
 
 
 fun EventTargetWrapper<*>.hyperlink(text: String = "", graphic: Node? = null, op: HyperlinkWrapper.()->Unit = {}) =
-  HyperlinkWrapper(text, graphic).attachTo(this, op)
+  HyperlinkWrapper{text=text;graphic= graphic}.attachTo(this, op)
 
 fun EventTargetWrapper<*>.hyperlink(
   observable: ObservableValue<String>,
@@ -528,10 +535,10 @@ fun EventTargetWrapper<*>.hyperlink(
 	op(this)
   }
 
-fun EventTargetWrapper<*>.menubar(op: MenuBar.()->Unit = {}) = MenuBar().attachTo(this, op)
+fun EventTargetWrapper<*>.menubar(op: MenuBar.()->Unit = {}) = MenuBarWrapper().attachTo(this, op)
 
 fun EventTargetWrapper<*>.imageview(url: String? = null, lazyload: Boolean = true, op: ImageView.()->Unit = {}) =
-  opcr(this, if (url == null) ImageView() else ImageView(Image(url, lazyload)), op)
+  opcr(this, if (url == null) ImageView() else ImageViewWrapper(Image(url, lazyload)), op)
 
 fun EventTargetWrapper<*>.imageview(
   url: ObservableValue<String>,
@@ -547,7 +554,7 @@ fun EventTargetWrapper<*>.imageview(image: ObservableValue<Image?>, op: ImageVie
   }
 
 fun EventTargetWrapper<*>.imageview(image: Image, op: ImageViewWrapper.()->Unit = {}) =
-  ImageViewWrapper(image).attachTo(this, op)
+  ImageViewWrapper{image=image}.attachTo(this, op)
 
 /**
  * Listen to changes and update the value of the property if the given mutator results in a different value
@@ -568,23 +575,23 @@ fun TextInputControl.trimWhitespace() = focusedProperty().onChange { focused: Bo
 /**
  * Remove any whitespace from a Text Input Control.
  */
-fun TextInputControl.stripWhitespace() = textProperty().mutateOnChange { it?.replace(Regex("\\s*"), "") }
+fun TextInputControlWrapper.stripWhitespace() = textProperty().mutateOnChange { it?.replace(Regex("\\s*"), "") }
 
 /**
  * Remove any non integer values from a Text Input Control.
  */
-fun TextInputControl.stripNonInteger() = textProperty().mutateOnChange { it?.replace(Regex("[^0-9-]"), "") }
+fun TextInputControlWrapper.stripNonInteger() = textProperty().mutateOnChange { it?.replace(Regex("[^0-9-]"), "") }
 
 /**
  * Remove any non integer values from a Text Input Control.
  */
-fun TextInputControl.stripNonNumeric(vararg allowedChars: String = arrayOf(".", ",", "-")) =
+fun TextInputControlWrapper.stripNonNumeric(vararg allowedChars: String = arrayOf(".", ",", "-")) =
   textProperty().mutateOnChange { it?.replace(Regex("[^0-9${allowedChars.joinToString("")}]"), "") }
 
-fun ChoiceBox<*>.action(op: ()->Unit) = setOnAction { op() }
-fun ButtonBase.action(op: ()->Unit) = setOnAction { op() }
-fun TextField.action(op: ()->Unit) = setOnAction { op() }
-fun MenuItem.action(op: ()->Unit) = setOnAction { op() }
+fun ChoiceBoxWrapper<*>.action(op: ()->Unit) = setOnAction { op() }
+fun ButtonBaseWrapper.action(op: ()->Unit) = setOnAction { op() }
+fun TextFieldWrapper.action(op: ()->Unit) = setOnAction { op() }
+fun MenuItemWrapper.action(op: ()->Unit) = setOnAction { op() }
 
 
 fun <T> ComboBoxBaseWrapper<T>.bind(property: ObservableValue<T>, readonly: Boolean = false) =

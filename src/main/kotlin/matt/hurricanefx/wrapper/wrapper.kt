@@ -5,6 +5,7 @@ import javafx.beans.property.ObjectProperty
 import javafx.beans.property.ReadOnlyDoubleProperty
 import javafx.beans.property.ReadOnlyObjectProperty
 import javafx.collections.ObservableList
+import javafx.event.ActionEvent
 import javafx.event.EventTarget
 import javafx.geometry.Pos
 import javafx.scene.Node
@@ -21,7 +22,9 @@ import javafx.scene.control.ComboBoxBase
 import javafx.scene.control.Control
 import javafx.scene.control.DatePicker
 import javafx.scene.control.Hyperlink
+import javafx.scene.control.Label
 import javafx.scene.control.Labeled
+import javafx.scene.control.MenuBar
 import javafx.scene.control.MenuButton
 import javafx.scene.control.MenuItem
 import javafx.scene.control.MultipleSelectionModel
@@ -39,7 +42,6 @@ import javafx.scene.control.TextField
 import javafx.scene.control.TextInputControl
 import javafx.scene.control.TitledPane
 import javafx.scene.control.ToggleButton
-import javafx.scene.control.ToggleGroup
 import javafx.scene.control.ToolBar
 import javafx.scene.control.TreeItem
 import javafx.scene.control.TreeTableView
@@ -345,7 +347,7 @@ class TreeTableViewWrapper<T>(
 class ChoiceBoxWrapper<T>(
   override val node: ChoiceBox<T> = ChoiceBox(),
   op: ChoiceBoxWrapper<T>.()->Unit = {}
-): RegionWrapper {
+): ControlWrapper {
   var items
 	get() = node.items
 	set(value) {
@@ -357,8 +359,14 @@ class ChoiceBoxWrapper<T>(
 	  node.value = value
 	}
 
+  fun valueProperty() = node.valueProperty()
+
   init {
 	op()
+  }
+
+  fun setOnAction(op: ()->Unit) {
+	node.setOnAction(op)
   }
 }
 
@@ -378,20 +386,9 @@ class TabPaneWrapper(
 interface ButtonBaseWrapper: LabeledWrapper {
   override val node: ButtonBase
   fun fire() = node.fire()
-  var text
-	get() = node.text
-	set(value) {
-	  node.text = value
-	}
-
-  fun textProperty() = node.textProperty()
-  var graphic
-	get() = node.graphic
-	set(value) {
-	  node.graphic = value
-	}
-
-  fun graphicProperty() = node.graphicProperty()
+  fun setOnAction(op: (ActionEvent)->Unit) {
+	node.setOnAction(op)
+  }
 }
 
 
@@ -568,6 +565,21 @@ class TextAreaWrapper(
 @FXNodeWrapperDSL
 interface LabeledWrapper: ControlWrapper {
   override val node: Labeled
+
+  var text
+	get() = node.text
+	set(value) {
+	  node.text = value
+	}
+
+  fun textProperty() = node.textProperty()
+  var graphic
+	get() = node.graphic
+	set(value) {
+	  node.graphic = value
+	}
+
+  fun graphicProperty() = node.graphicProperty()
 }
 
 
@@ -642,6 +654,8 @@ class SliderWrapper(
 	set(value) {
 	  node.value = value
 	}
+
+  fun valueProperty() = node.valueProperty()
 }
 
 
@@ -662,6 +676,14 @@ class CheckMenuItemWrapper(
   init {
 	op()
   }
+
+  var isSelected
+	get() = node.isSelected
+	set(value) {
+	  node.isSelected = value
+	}
+
+  fun selectedProperty() = node.selectedProperty()
 }
 
 
@@ -698,7 +720,7 @@ class SplitMenuButtonWrapper(
 class CheckBoxWrapper(
   override val node: CheckBox = CheckBox(),
   op: CheckBoxWrapper.()->Unit = {}
-): ControlWrapper {
+): ButtonBaseWrapper {
   companion object {
 	fun CheckBox.wrapped() = CheckBoxWrapper(this)
   }
@@ -706,6 +728,14 @@ class CheckBoxWrapper(
   init {
 	op()
   }
+
+  var isSelected
+	get() = node.isSelected
+	set(value) {
+	  node.isSelected = value
+	}
+
+  fun selectedProperty() = node.selectedProperty()
 }
 
 
@@ -721,6 +751,14 @@ class ProgressIndicatorWrapper(
   init {
 	op()
   }
+
+  var progress
+	get() = node.progress
+	set(value) {
+	  node.progress = value
+	}
+
+  fun progressProperty() = node.progressProperty()
 }
 
 
@@ -736,6 +774,13 @@ class ButtonBarWrapper(
   init {
 	op()
   }
+
+
+  var buttonOrder
+	get() = node.buttonOrder
+	set(value) {
+	  node.buttonOrder = value
+	}
 }
 
 
@@ -757,6 +802,8 @@ class ProgressBarWrapper(
 	set(value) {
 	  node.progress = value
 	}
+
+  fun progressProperty() = node.progressProperty()
 }
 
 
@@ -791,13 +838,12 @@ open class ToggleButtonWrapper(
   }
 
 
-  var toggleGroup: ToggleGroup
-	get() = node.toggleGroup
-	set(value) {
-	  node.toggleGroup = value
-	}
+  //  var toggleGroup: ToggleGroup
+  //	get() = node.toggleGroup
+  //	set(value) {
+  //	  node.toggleGroup = value
+  //	}
 }
-
 
 
 @FXNodeWrapperDSL
@@ -813,7 +859,6 @@ class RadioButtonWrapper(
 	op()
   }
 }
-
 
 
 @FXNodeWrapperDSL
@@ -838,6 +883,45 @@ class ImageViewWrapper(
 ): NodeWrapper<ImageView> {
   companion object {
 	fun ImageView.wrapped() = ImageViewWrapper(this)
+  }
+
+  init {
+	op()
+  }
+
+  var image
+	get() = node.image
+	set(value) {
+	  node.image = value
+	}
+
+  fun imageProperty() = node.imageProperty()
+
+}
+
+
+@FXNodeWrapperDSL
+class LabelWrapper(
+  override val node: Label = Label(),
+  op: LabelWrapper.()->Unit = {}
+): LabeledWrapper {
+  companion object {
+	fun Label.wrapped() = LabelWrapper(this)
+  }
+
+  init {
+	op()
+  }
+}
+
+
+@FXNodeWrapperDSL
+open class MenuBarWrapper(
+  override val node: MenuBar = MenuBar(),
+  op: MenuBarWrapper.()->Unit = {}
+): ControlWrapper {
+  companion object {
+	fun MenuBar.wrapped() = MenuBarWrapper(this)
   }
 
   init {
