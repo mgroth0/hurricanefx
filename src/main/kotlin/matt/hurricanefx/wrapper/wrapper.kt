@@ -10,6 +10,7 @@ import javafx.geometry.Pos
 import javafx.scene.Node
 import javafx.scene.Parent
 import javafx.scene.Scene
+import javafx.scene.control.Button
 import javafx.scene.control.ChoiceBox
 import javafx.scene.control.MultipleSelectionModel
 import javafx.scene.control.ScrollPane
@@ -157,6 +158,7 @@ interface RegionWrapper: ParentWrapper {
 	}
   }
 }
+
 
 fun Region.wrapped() = object: RegionWrapper {
   override val node = this@wrapped
@@ -324,6 +326,16 @@ class TabPaneWrapper(
   op: TabPaneWrapper.()->Unit = {}
 ): RegionWrapper {
   init {
-    op()
+	op()
   }
 }
+
+
+interface ControlWrapper: RegionWrapper
+
+class ButtonWrapper(
+  override val node: Button = Button(),
+  op: ButtonWrapper.()->Unit = {}
+): ControlWrapper
+
+fun Button.wrapped() = ButtonWrapper(this)

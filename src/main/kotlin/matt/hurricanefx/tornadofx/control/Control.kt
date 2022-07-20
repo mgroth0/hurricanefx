@@ -59,7 +59,9 @@ import matt.hurricanefx.eye.prop.stringBinding
 import matt.hurricanefx.eye.sflist.SortedFilteredList
 import matt.hurricanefx.tornadofx.fx.attachTo
 import matt.hurricanefx.tornadofx.fx.opcr
+import matt.hurricanefx.wrapper.ButtonWrapper
 import matt.hurricanefx.wrapper.EventTargetWrapper
+import matt.hurricanefx.wrapper.wrapped
 import matt.klib.lang.err
 import java.text.Format
 import java.time.LocalDate
@@ -251,13 +253,13 @@ fun <T> EventTargetWrapper<*>.slider(
 
 
 // Buttons
-inline fun EventTargetWrapper<*>.button(text: String = "", graphic: Node? = null, op: Button.()->Unit = {}): Button {
+inline fun EventTargetWrapper<*>.button(text: String = "", graphic: Node? = null, op: Button.()->Unit = {}): ButtonWrapper {
   contract {
 	callsInPlace(op, EXACTLY_ONCE)
   }
   return Button(text).attachTo(this, op) {
 	if (graphic != null) it.graphic = graphic
-  }
+  }.wrapped()
 }
 
 fun EventTargetWrapper<*>.menubutton(text: String = "", graphic: Node? = null, op: MenuButton.()->Unit = {}) =
@@ -275,20 +277,20 @@ fun EventTargetWrapper<*>.button(text: ObservableValue<String>, graphic: Node? =
   Button().attachTo(this, op) {
 	it.textProperty().bind(text)
 	if (graphic != null) it.graphic = graphic
-  }
+  }.wrapped()
 
 fun ToolBar.button(text: String = "", graphic: Node? = null, op: Button.()->Unit = {}) = Button(text).also {
   if (graphic != null) it.graphic = graphic
   items += it
   op(it)
-}
+}.wrapped()
 
 fun ToolBar.button(text: ObservableValue<String>, graphic: Node? = null, op: Button.()->Unit = {}) = Button().also {
   it.textProperty().bind(text)
   if (graphic != null) it.graphic = graphic
   items += it
   op(it)
-}
+}.wrapped()
 
 fun ButtonBar.button(
   text: String = "",
@@ -300,7 +302,7 @@ fun ButtonBar.button(
   if (graphic != null) it.graphic = graphic
   buttons += it
   op(it)
-}
+}.wrapped()
 
 fun ButtonBar.button(
   text: ObservableValue<String>,
@@ -313,7 +315,7 @@ fun ButtonBar.button(
   if (graphic != null) it.graphic = graphic
   buttons += it
   op(it)
-}
+}.wrapped()
 
 fun Node.togglegroup(property: ObservableValue<Any>? = null, op: ToggleGroup.()->Unit = {}) =
   ToggleGroup().also { tg ->
