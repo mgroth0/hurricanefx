@@ -80,10 +80,12 @@ import javafx.scene.shape.CubicCurve
 import javafx.scene.shape.Ellipse
 import javafx.scene.shape.Line
 import javafx.scene.shape.Path
+import javafx.scene.shape.PathElement
 import javafx.scene.shape.Polygon
 import javafx.scene.shape.Polyline
 import javafx.scene.shape.QuadCurve
 import javafx.scene.shape.Rectangle
+import javafx.scene.shape.SVGPath
 import javafx.scene.shape.Shape
 import javafx.scene.text.Text
 import javafx.scene.text.TextFlow
@@ -1184,6 +1186,8 @@ open class RectangleWrapper(
 	fun Rectangle.wrapped() = RectangleWrapper(this)
   }
 
+  constructor(x: Double, y: Double, width: Double, height: Double): this(Rectangle(x, y, width, height))
+
   init {
 	op()
   }
@@ -1287,6 +1291,13 @@ open class PathWrapper(
 	fun Path.wrapped() = PathWrapper(this)
   }
 
+  constructor(
+	vararg elements: PathElement
+  ): this(Path(*elements))
+
+
+  val elements get() = node.elements
+
   init {
 	op()
   }
@@ -1302,6 +1313,11 @@ open class PolygonWrapper(
 	fun Polygon.wrapped() = PolygonWrapper(this)
   }
 
+  constructor(
+	vararg points: Double
+  ): this(Polygon(points))
+
+
   init {
 	op()
   }
@@ -1316,6 +1332,11 @@ open class PolylineWrapper(
 	fun Polyline.wrapped() = PolylineWrapper(this)
   }
 
+  constructor(
+	vararg points: Double
+  ): this(Polyline(points))
+
+
   init {
 	op()
   }
@@ -1329,6 +1350,11 @@ open class QuadCurveWrapper(
   companion object {
 	fun QuadCurve.wrapped() = QuadCurveWrapper(this)
   }
+
+  constructor(
+	startX: Double, startY: Double, controlX: Double, controlY: Double, endX: Double, endY: Double
+  ): this(QuadCurve(startX, startY, controlX, controlY, endX, endY))
+
 
   init {
 	op()
@@ -1356,6 +1382,33 @@ open class CircleWrapper(
   }
 }
 
+
+@FXNodeWrapperDSL
+open class SVGPathWrapper(
+  override val node: SVGPath = SVGPath(),
+  op: SVGPathWrapper.()->Unit = {}
+): ShapeWrapper {
+  companion object {
+	fun SVGPath.wrapped() = SVGPathWrapper(this)
+  }
+
+
+  var content
+	get() = node.content
+	set(value) {
+	  node.content = value
+	}
+  var fillRule
+	get() = node.fillRule
+	set(value) {
+	  node.fillRule = value
+	}
+
+
+  init {
+	op()
+  }
+}
 
 @FXNodeWrapperDSL
 open class ListViewWrapper<E>(
@@ -1405,3 +1458,4 @@ open class TableViewWrapper<E>(
 
   val columns get() = node.columns
 }
+
