@@ -45,6 +45,7 @@ import javafx.scene.control.MenuBar
 import javafx.scene.control.MenuButton
 import javafx.scene.control.MenuItem
 import javafx.scene.control.MultipleSelectionModel
+import javafx.scene.control.Pagination
 import javafx.scene.control.PasswordField
 import javafx.scene.control.ProgressBar
 import javafx.scene.control.ProgressIndicator
@@ -1570,7 +1571,7 @@ class GroupWrapper(override val node: Group = Group()): ParentWrapper
 class CanvasWrapper(override val node: Canvas = Canvas()): NodeWrapper<Canvas> {
   constructor(
 	width: Double,
-	height: ouble
+	height: Double
   ): this(Canvas(width,height))
 
 }
