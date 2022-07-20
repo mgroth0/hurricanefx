@@ -128,6 +128,7 @@ interface NodeWrapper<N: Node>: EventTargetWrapper<N> {
   fun managedProperty() = node.managedProperty()
   fun visibleProperty() = node.visibleProperty()
   fun disableProperty() = node.disableProperty()
+  fun focusedProperty() = node.focusedProperty()
 
 }
 
@@ -451,7 +452,7 @@ class ComboBoxWrapper<T>(
   op: ComboBoxWrapper<T>.()->Unit = {}
 ): ComboBoxBaseWrapper<T> {
   companion object {
-	fun ComboBox<T>.wrapped() = ComboBoxWrapper(this)
+	fun <T> ComboBox<T>.wrapped() = ComboBoxWrapper(this)
   }
 
   init {
@@ -664,7 +665,7 @@ class SpinnerWrapper<T>(
 	}
 
   fun editableProperty() = node.editableProperty()
-  
+
   fun increment() = node.increment()
   fun decrement() = node.decrement()
 }
