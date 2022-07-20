@@ -215,7 +215,7 @@ inline fun <T> EventTargetWrapper<*>.choicebox(property: Property<T>? = null, va
 }
 
 
-inline fun <T> choicebox(property: Property<T>? = null, values: List<T>? = null, op: ChoiceBoxrapper<T>.()->Unit = {}): ChoiceBoxWrapper<T> {
+inline fun <T> choicebox(property: Property<T>? = null, values: List<T>? = null, op: ChoiceBoxWrapper<T>.()->Unit = {}): ChoiceBoxWrapper<T> {
   contract {
 	callsInPlace(op,EXACTLY_ONCE)
   }

@@ -1174,6 +1174,12 @@ open class ListViewWrapper<E>(
   init {
 	op()
   }
+
+  var items
+	get() = node.items
+	set(value) {
+	  node.items = value
+	}
 }
 
 @FXNodeWrapperDSL
@@ -1188,4 +1194,14 @@ open class TableViewWrapper<E>(
   init {
 	op()
   }
+
+
+
+  var items
+	get() = node.items
+	set(value) {
+	  node.items = value
+	}
+
+  fun comparatorProperty() = node.comparatorProperty()
 }

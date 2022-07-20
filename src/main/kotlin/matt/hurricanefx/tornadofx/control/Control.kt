@@ -73,6 +73,7 @@ import matt.hurricanefx.wrapper.HyperlinkWrapper
 import matt.hurricanefx.wrapper.ImageViewWrapper
 import matt.hurricanefx.wrapper.LabelWrapper
 import matt.hurricanefx.wrapper.LabeledWrapper
+import matt.hurricanefx.wrapper.ListViewWrapper
 import matt.hurricanefx.wrapper.MenuBarWrapper
 import matt.hurricanefx.wrapper.MenuButtonWrapper
 import matt.hurricanefx.wrapper.MenuItemWrapper
@@ -83,6 +84,7 @@ import matt.hurricanefx.wrapper.RadioButtonWrapper
 import matt.hurricanefx.wrapper.SliderWrapper
 import matt.hurricanefx.wrapper.SpinnerWrapper
 import matt.hurricanefx.wrapper.SplitMenuButtonWrapper
+import matt.hurricanefx.wrapper.TableViewWrapper
 import matt.hurricanefx.wrapper.TextAreaWrapper
 import matt.hurricanefx.wrapper.TextFieldWrapper
 import matt.hurricanefx.wrapper.TextFlowWrapper
@@ -663,7 +665,7 @@ inline fun <reified S: T, reified T: Any> TextInputControlWrapper.bind(
  *
  * The underlying sortedItems.comparatorProperty` is automatically bound to `tableView.comparatorProperty`.
  */
-fun <T> SortedFilteredList<T>.bindTo(tableView: TableView<T>): SortedFilteredList<T> = apply {
+fun <T> SortedFilteredList<T>.bindTo(tableView: TableViewWrapper<T>): SortedFilteredList<T> = apply {
   tableView.items = this
   sortedItems.comparatorProperty().bind(tableView.comparatorProperty())
 }
@@ -674,7 +676,7 @@ fun <T> SortedFilteredList<T>.bindTo(tableView: TableView<T>): SortedFilteredLis
  * The `listView.items` is set to the underlying sortedItems.
  *
  */
-fun <T> SortedFilteredList<T>.bindTo(listView: ListView<T>): SortedFilteredList<T> = apply { listView.items = this }
+fun <T> SortedFilteredList<T>.bindTo(listView: ListViewWrapper<T>): SortedFilteredList<T> = apply { listView.items = this }
 
 
 
