@@ -82,6 +82,7 @@ import javafx.scene.layout.FlowPane
 import javafx.scene.layout.GridPane
 import javafx.scene.layout.HBox
 import javafx.scene.layout.Pane
+import javafx.scene.layout.Priority
 import javafx.scene.layout.Region
 import javafx.scene.layout.StackPane
 import javafx.scene.layout.TilePane
@@ -110,6 +111,7 @@ import matt.hurricanefx.eye.lib.onChange
 import matt.hurricanefx.stage
 import matt.hurricanefx.tornadofx.nodes.add
 import matt.hurricanefx.tornadofx.nodes.getToggleGroup
+import matt.hurricanefx.wrapper.ParentWrapper.Companion.wrapped
 import java.time.LocalDate
 
 private typealias NW = NodeWrapper<*>
@@ -119,23 +121,28 @@ annotation class FXNodeWrapperDSL
 
 @FXNodeWrapperDSL
 interface EventTargetWrapper<N: EventTarget> {
+  companion object {
+	fun EventTarget.wrapped() = object: EventTargetWrapper<EventTarget> {
+	  override val node = this@wrapped
+	}
+  }
+
   val node: N
   fun getToggleGroup() = node.getToggleGroup()
-}
-
-fun EventTarget.wrapped() = object: EventTargetWrapper<EventTarget> {
-  override val node = this@wrapped
-
 }
 
 
 interface NodeWrapper<N: Node>: EventTargetWrapper<N> {
   companion object {
 
-	fun Node.wrapped() = object: NodeWrapper<Node> {
+	fun <N: Node> N.wrapped(): NodeWrapper<N> = object: NodeWrapper<N> {
 	  override val node = this@wrapped
 	}
   }
+
+
+  val parent get() = node.parent.wrapped()
+
   val scene: Scene? get() = node.scene
   val stage get() = node.stage
 
@@ -163,8 +170,18 @@ interface NodeWrapper<N: Node>: EventTargetWrapper<N> {
 
   val styleClass get() = node.styleClass
 
-}
+  var hGrow: Priority
+	get() = HBox.getHgrow(node)
+	set(value) {
+	  HBox.setHgrow(node, value)
+	}
+  var vGrow: Priority
+	get() = VBox.getVgrow(node)
+	set(value) {
+	  VBox.setVgrow(node, value)
+	}
 
+}
 
 
 interface ParentWrapper: NodeWrapper<Parent> {
@@ -173,10 +190,12 @@ interface ParentWrapper: NodeWrapper<Parent> {
 	  override val node = this@wrapped
 	}
   }
+
   override val node: Parent
+
+  val childrenUnmodifiable get() = node.childrenUnmodifiable
+
 }
-
-
 
 
 open class RegionWrapper(override val node: Region = Region()): ParentWrapper {
@@ -190,8 +209,16 @@ open class RegionWrapper(override val node: Region = Region()): ParentWrapper {
 	set(value) {
 	  node.border = value
 	}
-
   val borderProperty: ObjectProperty<Border> get() = node.borderProperty()
+
+  var padding
+	get() = node.padding
+	set(value) {
+	  node.padding = value
+	}
+  val paddingProperty: ObjectProperty<Padding> get() = node.paddingProperty()
+
+
 
   var background: Background?
 	get() = node.background
@@ -347,6 +374,11 @@ open class BorderPaneWrapper(override val node: BorderPane = BorderPane()): Pane
 	get() = node.right
 	set(value) {
 	  node.right = value
+	}
+  var bottom
+	get() = node.bottom
+	set(value) {
+	  node.bottom = value
 	}
 }
 
@@ -523,6 +555,8 @@ class ButtonWrapper(
   companion object {
 	fun Button.wrapped() = ButtonWrapper(this)
   }
+
+  constructor(text: String, graphic: Node): this(Button(text, graphic))
 
   init {
 	op()
@@ -1356,7 +1390,6 @@ open class LineWrapper(
   }
 
 
-
   var startX
 	get() = node.startX
 	set(value) {
@@ -1576,7 +1609,9 @@ open class SeparatorWrapper(
 
 }
 
-class GroupWrapper(override val node: Group = Group()): ParentWrapper
+class GroupWrapper(override val node: Group = Group()): ParentWrapper {
+  val children get() = node.children
+}
 
 class CanvasWrapper(override val node: Canvas = Canvas()): NodeWrapper<Canvas> {
   constructor(
@@ -1590,4 +1625,15 @@ class AccordionWrapper(override val node: Accordion = Accordion()): ControlWrapp
   val panes get() = node.panes
 }
 
-class PaginationWrapper(override val node: Pagination = Pagination()): ControlWrapper(node)
+class PaginationWrapper(override val node: Pagination = Pagination()): ControlWrapper(node) {
+  var pageCount
+	get() = node.pageCount
+	set(value) {
+	  node.pageCount = value
+	}
+  var currentPageIndex
+	get() = node.currentPageIndex
+	set(value) {
+	  node.currentPageIndex = value
+	}
+}
