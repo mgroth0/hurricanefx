@@ -445,6 +445,10 @@ interface ComboBoxBaseWrapper<T>: ControlWrapper {
 	}
 
   fun valueProperty() = node.valueProperty()
+
+
+
+
 }
 
 @FXNodeWrapperDSL
@@ -459,6 +463,14 @@ class ComboBoxWrapper<T>(
   init {
 	op()
   }
+
+
+  var items
+	get() = node.items
+	set(value) {
+	  node.items = value
+	}
+
 }
 
 
