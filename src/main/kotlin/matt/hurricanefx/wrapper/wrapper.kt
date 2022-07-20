@@ -530,6 +530,10 @@ open class TextFieldWrapper(
 	op()
   }
 
+  fun setOnAction(op: (ActionEvent)->Unit) {
+	node.setOnAction(op)
+  }
+
 }
 
 
@@ -662,6 +666,9 @@ class SliderWrapper(
 @FXNodeWrapperDSL
 interface MenuItemWrapper: EventTargetWrapper<MenuItem> {
   override val node: MenuItem
+  fun setOnAction(op: (ActionEvent)->Unit) {
+	node.setOnAction(op)
+  }
 }
 
 @FXNodeWrapperDSL
@@ -838,11 +845,18 @@ open class ToggleButtonWrapper(
   }
 
 
-  //  var toggleGroup: ToggleGroup
-  //	get() = node.toggleGroup
-  //	set(value) {
-  //	  node.toggleGroup = value
-  //	}
+  var isSelected
+	get() = node.isSelected
+	set(value) {
+	  node.isSelected = value
+	}
+
+
+//    var toggleGroup: ToggleGroup
+//  	get() = node.toggleGroup
+//  	set(value) {
+//  	  node.toggleGroup = value
+//  	}
 }
 
 

@@ -118,10 +118,10 @@ fun EventTargetWrapper<*>.text(op: TextWrapper.()->Unit = {}) = TextWrapper().at
 
 internal val EventTarget.properties: ObservableMap<Any, Any>
   get() = when (this) {
-	is Node -> properties
-	is Tab -> properties
+	is Node     -> properties
+	is Tab      -> properties
 	is MenuItem -> properties
-	else -> throw IllegalArgumentException("Don't know how to extract properties object from $this")
+	else        -> throw IllegalArgumentException("Don't know how to extract properties object from $this")
   }
 
 //var EventTarget.tagProperty: Property<Any?>
@@ -254,7 +254,7 @@ fun EventTargetWrapper<*>.checkbox(
   property: Property<Boolean>? = null,
   op: CheckBoxWrapper.()->Unit = {}
 ) =
-  CheckBoxWrapper{this.text=text}.attachTo(this, op) {
+  CheckBoxWrapper { this.text = text }.attachTo(this, op) {
 	if (property != null) it.bind(property)
   }
 
@@ -444,8 +444,8 @@ fun EventTargetWrapper<*>.togglebutton(
 ) = ToggleButtonWrapper().attachTo(this, op) {
   it.text = if (value != null && text == null) value.toString() else text ?: ""
   it.node.properties["tornadofx.toggleGroupValue"] = value ?: text
-  if (group != null) it.toggleGroup = group
-  if (it.toggleGroup?.selectedToggle == null && selectFirst) it.isSelected = true
+  if (group != null) it.node.toggleGroup = group
+  if (it.node.toggleGroup?.selectedToggle == null && selectFirst) it.isSelected = true
 }
 
 fun EventTargetWrapper<*>.togglebutton(
@@ -456,9 +456,9 @@ fun EventTargetWrapper<*>.togglebutton(
   op: ToggleButtonWrapper.()->Unit = {}
 ) = ToggleButtonWrapper().attachTo(this, op) {
   it.textProperty().bind(text)
-  it.properties["tornadofx.toggleGroupValue"] = value ?: text
-  if (group != null) it.toggleGroup = group
-  if (it.toggleGroup?.selectedToggle == null && selectFirst) it.isSelected = true
+  it.node.properties["tornadofx.toggleGroupValue"] = value ?: text
+  if (group != null) it.node.toggleGroup = group
+  if (it.node.toggleGroup?.selectedToggle == null && selectFirst) it.isSelected = true
 }
 
 fun EventTargetWrapper<*>.togglebutton(
@@ -467,9 +467,9 @@ fun EventTargetWrapper<*>.togglebutton(
   value: Any? = null,
   op: ToggleButtonWrapper.()->Unit = {}
 ) = ToggleButtonWrapper().attachTo(this, op) {
-  it.properties["tornadofx.toggleGroupValue"] = value
-  if (group != null) it.toggleGroup = group
-  if (it.toggleGroup?.selectedToggle == null && selectFirst) it.isSelected = true
+  it.node.properties["tornadofx.toggleGroupValue"] = value
+  if (group != null) it.node.toggleGroup = group
+  if (it.node.toggleGroup?.selectedToggle == null && selectFirst) it.isSelected = true
 }
 
 fun ToggleButton.whenSelected(op: ()->Unit) {
@@ -491,12 +491,12 @@ fun EventTargetWrapper<*>.radiobutton(
   op: RadioButtonWrapper.()->Unit = {}
 ) = RadioButtonWrapper().attachTo(this, op) {
   it.text = if (value != null && text == null) value.toString() else text ?: ""
-  it.properties["tornadofx.toggleGroupValue"] = value ?: text
-  if (group != null) it.toggleGroup = group
+  it.node.properties["tornadofx.toggleGroupValue"] = value ?: text
+  if (group != null) it.node.toggleGroup = group
 }
 
 fun EventTargetWrapper<*>.label(text: String = "", graphic: Node? = null, op: LabelWrapper.()->Unit = {}) =
-  LabelWrapper{text=text}.attachTo(this, op) {
+  LabelWrapper { this.text = text }.attachTo(this, op) {
 	if (graphic != null) it.graphic = graphic
   }
 
@@ -523,22 +523,22 @@ inline fun <reified T> EventTargetWrapper<*>.label(
 
 
 fun EventTargetWrapper<*>.hyperlink(text: String = "", graphic: Node? = null, op: HyperlinkWrapper.()->Unit = {}) =
-  HyperlinkWrapper{text=text;graphic= graphic}.attachTo(this, op)
+  HyperlinkWrapper { this.text = text;this.graphic = graphic }.attachTo(this, op)
 
 fun EventTargetWrapper<*>.hyperlink(
   observable: ObservableValue<String>,
   graphic: Node? = null,
-  op: Hyperlink.()->Unit = {}
+  op: HyperlinkWrapper.()->Unit = {}
 ) =
   hyperlink(graphic = graphic).apply {
 	bind(observable)
 	op(this)
   }
 
-fun EventTargetWrapper<*>.menubar(op: MenuBar.()->Unit = {}) = MenuBarWrapper().attachTo(this, op)
+fun EventTargetWrapper<*>.menubar(op: MenuBarWrapper.()->Unit = {}) = MenuBarWrapper().attachTo(this, op)
 
-fun EventTargetWrapper<*>.imageview(url: String? = null, lazyload: Boolean = true, op: ImageView.()->Unit = {}) =
-  opcr(this, if (url == null) ImageView() else ImageViewWrapper(Image(url, lazyload)), op)
+fun EventTargetWrapper<*>.imageview(url: String? = null, lazyload: Boolean = true, op: ImageViewWrapper.()->Unit = {}) =
+  opcr(this, if (url == null) ImageViewWrapper() else ImageViewWrapper { this.image = Image(url, lazyload) }, op)
 
 fun EventTargetWrapper<*>.imageview(
   url: ObservableValue<String>,
@@ -554,7 +554,7 @@ fun EventTargetWrapper<*>.imageview(image: ObservableValue<Image?>, op: ImageVie
   }
 
 fun EventTargetWrapper<*>.imageview(image: Image, op: ImageViewWrapper.()->Unit = {}) =
-  ImageViewWrapper{image=image}.attachTo(this, op)
+  ImageViewWrapper { this.image = image }.attachTo(this, op)
 
 /**
  * Listen to changes and update the value of the property if the given mutator results in a different value
@@ -604,6 +604,9 @@ fun DatePickerWrapper.bind(property: ObservableValue<LocalDate>, readonly: Boole
   valueProperty().internalBind(property, readonly)
 
 fun ProgressIndicatorWrapper.bind(property: ObservableValue<Number>, readonly: Boolean = false) =
+  progressProperty().internalBind(property, readonly)
+
+fun ProgressBarWrapper.bind(property: ObservableValue<Number>, readonly: Boolean = false) =
   progressProperty().internalBind(property, readonly)
 
 fun <T> ChoiceBoxWrapper<T>.bind(property: ObservableValue<T>, readonly: Boolean = false) =
