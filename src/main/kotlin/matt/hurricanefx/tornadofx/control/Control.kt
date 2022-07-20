@@ -72,7 +72,7 @@ import kotlin.contracts.contract
 fun EventTargetWrapper<*>.colorpicker(
   color: Color? = null,
   op: ColorPicker.()->Unit = {}
-) = ColorPicker().attachTo(this, op) {
+) = ColorPicker().wrapped().attachTo(this, op) {
   if (color != null) it.value = color
 }
 
@@ -261,7 +261,7 @@ inline fun EventTargetWrapper<*>.button(text: String = "", graphic: Node? = null
 	this.text = text
 	if (graphic != null) this.graphic = graphic
 	op()
-  }.node.attachTo(this, op)
+  }.attachTo(this, op)
 }
 
 fun EventTargetWrapper<*>.menubutton(text: String = "", graphic: Node? = null, op: MenuButton.()->Unit = {}) =
