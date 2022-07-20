@@ -322,4 +322,8 @@ class ChoiceBoxWrapper<T>(
 class TabPaneWrapper(
   override val node: TabPane = TabPane(),
   op: TabPaneWrapper.()->Unit = {}
-): RegionWrapper
+): RegionWrapper {
+  init {
+    op()
+  }
+}
