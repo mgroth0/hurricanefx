@@ -52,6 +52,7 @@ import matt.hurricanefx.tornadofx.control.bindTo
 import matt.hurricanefx.tornadofx.fx.attachTo
 import matt.hurricanefx.tornadofx.nodes.selectedItem
 import matt.hurricanefx.wrapper.EventTargetWrapper
+import matt.hurricanefx.wrapper.SpinnerWrapper
 import matt.klib.lang.decap
 import matt.klib.lang.err
 import kotlin.contracts.InvocationKind.EXACTLY_ONCE

@@ -49,6 +49,7 @@ import javafx.scene.control.Slider
 import javafx.scene.control.Spinner
 import javafx.scene.control.SplitMenuButton
 import javafx.scene.control.TabPane
+import javafx.scene.control.TableView
 import javafx.scene.control.TextArea
 import javafx.scene.control.TextField
 import javafx.scene.control.TextInputControl
@@ -961,6 +962,16 @@ open class MenuBarWrapper(
 @FXNodeWrapperDSL
 interface ChartWrapper: RegionWrapper {
   override val node: Chart
+
+
+  var title
+	get() = node.title
+	set(value) {
+	  node.title = value
+	}
+
+  fun titleProperty() = node.titleProperty()
+
 }
 
 @FXNodeWrapperDSL
@@ -972,9 +983,13 @@ open class PieChartWrapper(
 	fun PieChart.wrapped() = PieChartWrapper(this)
   }
 
+  constructor(data: ObservableList<PieChart.Data>): this(PieChart(data))
+
   init {
 	op()
   }
+
+  val data = node.data
 }
 
 @FXNodeWrapperDSL
@@ -1112,6 +1127,20 @@ open class ListViewWrapper<E>(
 ): ControlWrapper {
   companion object {
 	fun <E> ListView<E>.wrapped() = ListViewWrapper<E>(this)
+  }
+
+  init {
+	op()
+  }
+}
+
+@FXNodeWrapperDSL
+open class TableViewWrapper<E>(
+  override val node: TableView<E> = TableView<E>(),
+  op: TableViewWrapper<E>.()->Unit = {}
+): ControlWrapper {
+  companion object {
+	fun <E> TableView<E>.wrapped() = TableViewWrapper<E>(this)
   }
 
   init {
