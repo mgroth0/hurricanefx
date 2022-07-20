@@ -11,15 +11,20 @@ import javafx.scene.Node
 import javafx.scene.Parent
 import javafx.scene.Scene
 import javafx.scene.control.Button
+import javafx.scene.control.CheckBox
+import javafx.scene.control.CheckMenuItem
 import javafx.scene.control.ChoiceBox
 import javafx.scene.control.ColorPicker
 import javafx.scene.control.ComboBoxBase
 import javafx.scene.control.Control
 import javafx.scene.control.DatePicker
 import javafx.scene.control.Labeled
+import javafx.scene.control.MenuItem
 import javafx.scene.control.MultipleSelectionModel
 import javafx.scene.control.PasswordField
+import javafx.scene.control.ProgressIndicator
 import javafx.scene.control.ScrollPane
+import javafx.scene.control.Slider
 import javafx.scene.control.Spinner
 import javafx.scene.control.TabPane
 import javafx.scene.control.TextArea
@@ -447,7 +452,7 @@ fun TextFlow.wrapped() = TextFlowWrapper(this)
 
 
 @FXNodeWrapperDSL
-interface ShapeWrapper: NodeWrapper<out Shape> {
+interface ShapeWrapper: NodeWrapper<Shape> {
   override val node: Shape
 }
 
@@ -457,13 +462,22 @@ class TextWrapper(
   override val node: Text = Text(),
   op: TextWrapper.()->Unit = {}
 ): ShapeWrapper {
+  companion object {
+	fun Text.wrapped() = TextWrapper(this)
+  }
+
   init {
 	op()
   }
 
-}
+  var text
+	get() = node.text
+	set(value) {
+	  node.text = value
+	}
 
-fun Text.wrapped() = TextWrapper(this)
+  fun textProperty() = node.textProperty()
+}
 
 
 @FXNodeWrapperDSL
@@ -481,6 +495,13 @@ open class TextFieldWrapper(
 	op()
   }
 
+  var text
+	get() = node.text
+	set(value) {
+	  node.text = value
+	}
+
+  fun textProperty() = node.textProperty()
 }
 
 fun TextField.wrapped() = TextFieldWrapper(this)
@@ -535,15 +556,86 @@ class TitledPaneWrapper(
 
 
 @FXNodeWrapperDSL
-class SpinnerWrapper(
-  override val node: Spinner = Spinner(),
-  op: SpinnerWrapper.()->Unit = {}
+class SpinnerWrapper<T>(
+  override val node: Spinner<T> = Spinner<T>(),
+  op: SpinnerWrapper<T>.()->Unit = {}
 ): ControlWrapper {
   companion object {
-	fun Spinner.wrapped() = SpinnerWrapper(this)
+	fun <T> Spinner<T>.wrapped() = SpinnerWrapper<T>(this)
+  }
+
+  init {
+	op()
+  }
+
+  var valueFactory
+	get() = node.valueFactory
+	set(value) {
+	  node.valueFactory = value
+	}
+}
+
+@FXNodeWrapperDSL
+class SliderWrapper(
+  override val node: Slider = Slider(),
+  op: SliderWrapper.()->Unit = {}
+): ControlWrapper {
+  companion object {
+	fun Slider.wrapped() = SliderWrapper(this)
   }
 
   init {
 	op()
   }
 }
+
+
+@FXNodeWrapperDSL
+interface MenuItemWrapper: EventTargetWrapper<MenuItem> {
+  override val node: MenuItem
+}
+
+@FXNodeWrapperDSL
+class CheckMenuItemWrapper(
+  override val node: CheckMenuItem = CheckMenuItem(),
+  op: CheckMenuItemWrapper.()->Unit = {}
+): MenuItemWrapper {
+  companion object {
+	fun CheckMenuItem.wrapped() = CheckMenuItemWrapper(this)
+  }
+
+  init {
+	op()
+  }
+}
+
+
+@FXNodeWrapperDSL
+class CheckBoxWrapper(
+  override val node: CheckBox = CheckBox(),
+  op: CheckBoxWrapper.()->Unit = {}
+): ControlWrapper {
+  companion object {
+	fun CheckBox.wrapped() = CheckBoxWrapper(this)
+  }
+
+  init {
+	op()
+  }
+}
+
+
+@FXNodeWrapperDSL
+class ProgressIndicatorWrapper(
+  override val node: ProgressIndicator = ProgressIndicator(),
+  op: ProgressIndicatorWrapper.()->Unit = {}
+): ControlWrapper {
+  companion object {
+	fun ProgressIndicator.wrapped() = ProgressIndicatorWrapper(this)
+  }
+
+  init {
+	op()
+  }
+}
+

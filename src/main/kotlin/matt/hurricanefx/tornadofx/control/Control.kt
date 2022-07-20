@@ -62,10 +62,13 @@ import matt.hurricanefx.tornadofx.fx.opcr
 import matt.hurricanefx.wrapper.ButtonWrapper
 import matt.hurricanefx.wrapper.ColorPickerWrapper
 import matt.hurricanefx.wrapper.EventTargetWrapper
+import matt.hurricanefx.wrapper.LabeledWrapper
+import matt.hurricanefx.wrapper.SpinnerWrapper
 import matt.hurricanefx.wrapper.TextFieldWrapper
 import matt.hurricanefx.wrapper.TextFlowWrapper
 import matt.hurricanefx.wrapper.TextInputControlWrapper
 import matt.hurricanefx.wrapper.TextWrapper
+import matt.hurricanefx.wrapper.TitledPaneWrapper
 import matt.hurricanefx.wrapper.wrapped
 import matt.klib.lang.err
 import java.text.Format
@@ -84,7 +87,7 @@ fun EventTargetWrapper<*>.colorpicker(
 fun EventTargetWrapper<*>.colorpicker(
   colorProperty: ObjectProperty<Color>,
   op: ColorPickerWrapper.()->Unit = {}
-) = ColorPickerWrapper().apply { node.bind(colorProperty) }.attachTo(this, op) {
+) = ColorPickerWrapper().apply { bind(colorProperty) }.attachTo(this, op) {
 }
 
 fun EventTargetWrapper<*>.textflow(op: TextFlowWrapper.()->Unit = {}) = TextFlowWrapper().attachTo(this, op)
@@ -129,7 +132,7 @@ fun EventTargetWrapper<*>.text(initialValue: String? = null, op: TextWrapper.()-
 
 
 fun EventTargetWrapper<*>.text(property: Property<String>, op: TextWrapper.()->Unit = {}) = text().apply {
-  node.bind(property)
+  bind(property)
   op(this)
 }
 
