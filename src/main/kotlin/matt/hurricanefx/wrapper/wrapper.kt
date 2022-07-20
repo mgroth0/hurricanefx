@@ -13,6 +13,7 @@ import javafx.scene.Scene
 import javafx.scene.control.ChoiceBox
 import javafx.scene.control.MultipleSelectionModel
 import javafx.scene.control.ScrollPane
+import javafx.scene.control.TabPane
 import javafx.scene.control.TreeItem
 import javafx.scene.control.TreeTableView
 import javafx.scene.control.TreeView
@@ -141,7 +142,7 @@ interface RegionWrapper: ParentWrapper {
 	  node.maxHeight = value
 	}
 
-  fun setOnFilesDropped(op: (List<MFile>) -> Unit) {
+  fun setOnFilesDropped(op: (List<MFile>)->Unit) {
 	node.setOnDragEntered {
 	  it.acceptTransferModes(*ANY)
 	}
@@ -317,3 +318,8 @@ class ChoiceBoxWrapper<T>(
   }
 }
 
+
+class TabPaneWrapper(
+  override val node: TabPane = TabPane(),
+  op: TabPaneWrapper.()->Unit = {}
+): RegionWrapper
