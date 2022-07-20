@@ -64,6 +64,7 @@ import javafx.scene.image.ImageView
 import javafx.scene.input.DataFormat
 import javafx.scene.input.KeyEvent
 import javafx.scene.input.MouseEvent
+import javafx.scene.input.ScrollEvent
 import javafx.scene.input.TransferMode.ANY
 import javafx.scene.layout.Background
 import javafx.scene.layout.Border
@@ -118,6 +119,10 @@ interface NodeWrapper<N: Node>: EventTargetWrapper<N> {
 
   fun setOnMousePressed(listener: (MouseEvent)->Unit) {
 	node.setOnMousePressed(listener)
+  }
+
+  fun setOnScroll(listener: (ScrollEvent)->Unit) {
+	node.setOnScroll(listener)
   }
 
   fun managedProperty() = node.managedProperty()
@@ -657,7 +662,11 @@ class SpinnerWrapper<T>(
 	set(value) {
 	  node.isEditable = value
 	}
+
   fun editableProperty() = node.editableProperty()
+  
+  fun increment() = node.increment()
+  fun decrement() = node.decrement()
 }
 
 @FXNodeWrapperDSL
