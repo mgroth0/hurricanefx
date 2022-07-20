@@ -1105,7 +1105,7 @@ open class MenuBarWrapper(
 }
 
 
-class ChartWrapper(override val node: Chart): RegionWrapper(node) {
+open class ChartWrapper(override val node: Chart): RegionWrapper(node) {
 
 
   var title
