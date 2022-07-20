@@ -52,8 +52,13 @@ import matt.hurricanefx.tornadofx.control.bindTo
 import matt.hurricanefx.tornadofx.fx.attachTo
 import matt.hurricanefx.tornadofx.nodes.selectedItem
 import matt.hurricanefx.wrapper.ChoiceBoxWrapper
+import matt.hurricanefx.wrapper.ComboBoxWrapper
 import matt.hurricanefx.wrapper.EventTargetWrapper
+import matt.hurricanefx.wrapper.ListViewWrapper
 import matt.hurricanefx.wrapper.SpinnerWrapper
+import matt.hurricanefx.wrapper.TableViewWrapper
+import matt.hurricanefx.wrapper.TreeTableViewWrapper
+import matt.hurricanefx.wrapper.TreeViewWrapper
 import matt.klib.lang.decap
 import matt.klib.lang.err
 import kotlin.contracts.InvocationKind.EXACTLY_ONCE
@@ -108,13 +113,15 @@ inline fun <reified T: Number> EventTargetWrapper<*>.spinner(
 	(property is IntegerProperty && property !is DoubleProperty && property !is FloatProperty) || min is Int || max is Int || initialValue is Int ||
 		T::class == Int::class || T::class == Integer::class || T::class.javaPrimitiveType == Integer::class.java
   if (isInt) {
-	spinner = SpinnerWrapper(
-	  min?.toInt() ?: 0, max?.toInt() ?: 100, initialValue?.toInt() ?: 0, amountToStepBy?.toInt()
-		?: 1
-	)
+	spinner = SpinnerWrapper {
+	  min?.toInt() ?: 0
+	  max?.toInt() ?: 100
+	  initialValue?.toInt() ?: 0
+	  amountToStepBy?.toInt()
+	  ?: 1
+	}
   } else {
-	spinner = SpinnerWrapper(
-	  min?.toDouble() ?: 0.0, max?.toDouble() ?: 100.0, initialValue?.toDouble()
+	spinner = SpinnerWrapper(min?.toDouble() ?: 0.0, max?.toDouble() ?: 100.0, initialValue?.toDouble()
 		?: 0.0, amountToStepBy?.toDouble() ?: 1.0
 	)
   }
@@ -197,7 +204,7 @@ fun <T> EventTargetWrapper<*>.combobox(property: Property<T>? = null, values: Li
   }
 
 
-inline fun <T> EventTargetWrapper<*>.choicebox(property: Property<T>? = null, values: List<T>? = null, op: ChoiceBoxrapper<T>.()->Unit = {}): ChoiceBoxrapper<T> {
+inline fun <T> EventTargetWrapper<*>.choicebox(property: Property<T>? = null, values: List<T>? = null, op: ChoiceBoxWrapper<T>.()->Unit = {}): ChoiceBoxWrapper<T> {
   contract {
 	callsInPlace(op,EXACTLY_ONCE)
   }
@@ -212,7 +219,7 @@ inline fun <T> choicebox(property: Property<T>? = null, values: List<T>? = null,
   contract {
 	callsInPlace(op,EXACTLY_ONCE)
   }
-  return ChoiceBox<T>().also {
+  return ChoiceBoxWrapper<T>().also {
 	it.op()
 	if (values != null) it.items = (values as? ObservableList<T>) ?: values.asObservable()
 	if (property != null) it.bind(property)
@@ -280,7 +287,7 @@ fun <T> EventTargetWrapper<*>.treetableview(root: TreeItem<T>? = null, op: TreeT
 	if (root != null) it.root = root
   }
 
-fun <T> TreeItem<T>.treeitem(value: T? = null, op: TreeItem<T>.()->Unit = {}): TreeItemWrapper<T> {
+fun <T> TreeItem<T>.treeitem(value: T? = null, op: TreeItem<T>.()->Unit = {}): TreeItem<T> {
   val treeItem = value?.let { TreeItem<T>(it) } ?: TreeItem<T>()
   treeItem.op()
   this += treeItem

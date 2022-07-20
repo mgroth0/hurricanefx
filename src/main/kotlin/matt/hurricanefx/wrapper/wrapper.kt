@@ -48,6 +48,7 @@ import javafx.scene.control.RadioButton
 import javafx.scene.control.ScrollPane
 import javafx.scene.control.Slider
 import javafx.scene.control.Spinner
+import javafx.scene.control.SpinnerValueFactory
 import javafx.scene.control.SplitMenuButton
 import javafx.scene.control.TabPane
 import javafx.scene.control.TableView
@@ -647,6 +648,11 @@ class SpinnerWrapper<T>(
 	fun <T> Spinner<T>.wrapped() = SpinnerWrapper<T>(this)
   }
 
+  constructor(min: Int, max: Int, initial: Int, step: Int): this(Spinner(min, max, initial, step))
+  constructor(min: Double, max: Double, initiall: Double, step: Double): this(Spinner(min, max, initiall, step))
+  constructor(items: ObservableList<T>): this(Spinner(items))
+  constructor(valueFactory: SpinnerValueFactory<T>): this(Spinner(valueFactory))
+
   init {
 	op()
   }
@@ -664,10 +670,13 @@ class SpinnerWrapper<T>(
 	  node.isEditable = value
 	}
 
+
   fun editableProperty() = node.editableProperty()
 
   fun increment() = node.increment()
   fun decrement() = node.decrement()
+  fun increment(steps: Int) = node.increment(steps)
+  fun decrement(steps: Int) = node.decrement(steps)
 }
 
 @FXNodeWrapperDSL
