@@ -20,6 +20,7 @@ import javafx.scene.control.SeparatorMenuItem
 import javafx.scene.control.ToggleGroup
 import javafx.scene.input.KeyCombination
 import matt.hurricanefx.tornadofx.control.action
+import matt.hurricanefx.wrapper.MenuItemWrapper
 
 //Menu-related operator functions
 operator fun <T: MenuItem> Menu.plusAssign(menuItem: T) {
@@ -56,7 +57,7 @@ fun ContextMenu.menu(name: String? = null, op: Menu.()->Unit = {}) = Menu(name).
 )
 fun ContextMenu.menuitem(
   name: String, keyCombination: String, graphic: Node? = null, onAction: ()->Unit = {}
-): MenuItem = item(name, KeyCombination.valueOf(keyCombination), graphic).apply { action(onAction) }
+): MenuItemWrapper = item(name, KeyCombination.valueOf(keyCombination), graphic).apply { action(onAction) }
 
 fun ContextMenu.checkmenuitem(
   name: String, keyCombination: KeyCombination? = null, graphic: Node? = null, op: CheckMenuItem.()->Unit = {}
@@ -89,8 +90,8 @@ fun ContextMenu.menuitem(
  * from the deprecated `menuitem` builder where the op is configured as the `setOnAction` directly.
  */
 fun ContextMenu.item(
-  name: String, keyCombination: KeyCombination? = null, graphic: Node? = null, op: MenuItem.()->Unit = {}
-) = MenuItem(name, graphic).also {
+  name: String, keyCombination: KeyCombination? = null, graphic: Node? = null, op: MenuItemWrapper.()->Unit = {}
+) = MenuItemWrapper(name, graphic).also {
   keyCombination?.apply { it.accelerator = this }
   graphic?.apply { it.graphic = this }
   op(it)
@@ -106,8 +107,8 @@ fun ContextMenu.item(
   name: ObservableValue<String>,
   keyCombination: KeyCombination? = null,
   graphic: Node? = null,
-  op: MenuItem.()->Unit = {}
-) = MenuItem(null, graphic).also {
+  op: MenuItemWrapper.()->Unit = {}
+) = MenuItemWrapper(null, graphic).also {
   it.textProperty().bind(name)
   keyCombination?.apply { it.accelerator = this }
   graphic?.apply { it.graphic = this }

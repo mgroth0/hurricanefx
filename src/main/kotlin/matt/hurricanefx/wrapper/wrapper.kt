@@ -74,7 +74,15 @@ import javafx.scene.layout.Pane
 import javafx.scene.layout.Region
 import javafx.scene.layout.VBox
 import javafx.scene.paint.Color
+import javafx.scene.shape.Arc
 import javafx.scene.shape.Circle
+import javafx.scene.shape.CubicCurve
+import javafx.scene.shape.Ellipse
+import javafx.scene.shape.Line
+import javafx.scene.shape.Path
+import javafx.scene.shape.Polygon
+import javafx.scene.shape.Polyline
+import javafx.scene.shape.QuadCurve
 import javafx.scene.shape.Rectangle
 import javafx.scene.shape.Shape
 import javafx.scene.text.Text
@@ -366,7 +374,6 @@ class TreeTableViewWrapper<T>(
   override fun scrollTo(i: Int) = node.scrollTo(i)
 
 
-
 }
 
 
@@ -451,8 +458,6 @@ interface ComboBoxBaseWrapper<T>: ControlWrapper {
   fun valueProperty() = node.valueProperty()
 
 
-
-
 }
 
 @FXNodeWrapperDSL
@@ -474,6 +479,7 @@ class ComboBoxWrapper<T>(
 	set(value) {
 	  node.items = value
 	}
+
   fun itemsProperty() = node.itemsProperty()
 
 }
@@ -738,8 +744,10 @@ class SliderWrapper(
 
 
 @FXNodeWrapperDSL
-interface MenuItemWrapper: EventTargetWrapper<MenuItem> {
-  override val node: MenuItem
+open class MenuItemWrapper(
+  override val node: MenuItem = MenuItem(),
+  op: MenuItemWrapper.()->Unit = {}
+): EventTargetWrapper<MenuItem> {
   fun setOnAction(op: (ActionEvent)->Unit) {
 	node.setOnAction(op)
   }
@@ -749,7 +757,7 @@ interface MenuItemWrapper: EventTargetWrapper<MenuItem> {
 class CheckMenuItemWrapper(
   override val node: CheckMenuItem = CheckMenuItem(),
   op: CheckMenuItemWrapper.()->Unit = {}
-): MenuItemWrapper {
+): MenuItemWrapper(node) {
   companion object {
 	fun CheckMenuItem.wrapped() = CheckMenuItemWrapper(this)
   }
@@ -1165,6 +1173,146 @@ open class RectangleWrapper(
 
 
 @FXNodeWrapperDSL
+open class ArcWrapper(
+  override val node: Arc = Arc(),
+  op: ArcWrapper.()->Unit = {}
+): ShapeWrapper {
+  companion object {
+	fun Arc.wrapped() = ArcWrapper(this)
+  }
+
+  constructor(
+	centerX: Double,
+	centerY: Double,
+	radiusX: Double,
+	radiusY: Double,
+	startAngle: Double,
+	length: Double
+  ): this(Arc(centerX, centerY, radiusX, radiusY, startAngle, length))
+
+  init {
+	op()
+  }
+}
+
+@FXNodeWrapperDSL
+open class CubicCurveWrapper(
+  override val node: CubicCurve = CubicCurve(),
+  op: CubicCurveWrapper.()->Unit = {}
+): ShapeWrapper {
+  companion object {
+	fun CubicCurve.wrapped() = CubicCurveWrapper(this)
+  }
+
+  constructor(
+	startX: Double,
+	startY: Double,
+	controlX1: Double,
+	controlY1: Double,
+	controlX2: Double,
+	controlY2: Double,
+	endX: Double,
+	endY: Double
+  ): this(CubicCurve(startX, startY, controlX1, controlY1, controlX2, controlY2, endX, endY))
+
+  init {
+	op()
+  }
+}
+
+
+@FXNodeWrapperDSL
+open class EllipseWrapper(
+  override val node: Ellipse = Ellipse(),
+  op: EllipseWrapper.()->Unit = {}
+): ShapeWrapper {
+  companion object {
+	fun Ellipse.wrapped() = EllipseWrapper(this)
+  }
+
+  constructor(
+	centerX: Double, centerY: Double, radiusX: Double, radiusY: Double
+  ): this(Ellipse(centerX, centerY, radiusX, radiusY))
+
+
+  init {
+	op()
+  }
+}
+
+@FXNodeWrapperDSL
+open class LineWrapper(
+  override val node: Line = Line(),
+  op: LineWrapper.()->Unit = {}
+): ShapeWrapper {
+  companion object {
+	fun Line.wrapped() = LineWrapper(this)
+  }
+
+  init {
+	op()
+  }
+}
+
+@FXNodeWrapperDSL
+open class PathWrapper(
+  override val node: Path = Path(),
+  op: PathWrapper.()->Unit = {}
+): ShapeWrapper {
+  companion object {
+	fun Path.wrapped() = PathWrapper(this)
+  }
+
+  init {
+	op()
+  }
+}
+
+
+@FXNodeWrapperDSL
+open class PolygonWrapper(
+  override val node: Polygon = Polygon(),
+  op: PolygonWrapper.()->Unit = {}
+): ShapeWrapper {
+  companion object {
+	fun Polygon.wrapped() = PolygonWrapper(this)
+  }
+
+  init {
+	op()
+  }
+}
+
+@FXNodeWrapperDSL
+open class PolylineWrapper(
+  override val node: Polyline = Polyline(),
+  op: PolylineWrapper.()->Unit = {}
+): ShapeWrapper {
+  companion object {
+	fun Polyline.wrapped() = PolylineWrapper(this)
+  }
+
+  init {
+	op()
+  }
+}
+
+@FXNodeWrapperDSL
+open class QuadCurveWrapper(
+  override val node: QuadCurve = QuadCurve(),
+  op: QuadCurveWrapper.()->Unit = {}
+): ShapeWrapper {
+  companion object {
+	fun QuadCurve.wrapped() = QuadCurveWrapper(this)
+  }
+
+  init {
+	op()
+  }
+}
+
+
+@FXNodeWrapperDSL
 open class CircleWrapper(
   override val node: Circle = Circle(),
   op: CircleWrapper.()->Unit = {}
@@ -1172,6 +1320,12 @@ open class CircleWrapper(
   companion object {
 	fun Circle.wrapped() = CircleWrapper(this)
   }
+
+  constructor(
+	centerX: Double,
+	centerY: Double,
+	radius: Double,
+  ): this(Circle(centerX, centerY, radius))
 
   init {
 	op()
@@ -1197,6 +1351,7 @@ open class ListViewWrapper<E>(
 	set(value) {
 	  node.items = value
 	}
+
   fun itemsProperty() = node.itemsProperty()
 }
 
@@ -1214,12 +1369,12 @@ open class TableViewWrapper<E>(
   }
 
 
-
   var items
 	get() = node.items
 	set(value) {
 	  node.items = value
 	}
+
   fun itemsProperty() = node.itemsProperty()
 
   fun comparatorProperty() = node.comparatorProperty()

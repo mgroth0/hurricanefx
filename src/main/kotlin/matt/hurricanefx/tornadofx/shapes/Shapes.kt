@@ -3,16 +3,11 @@ package matt.hurricanefx.tornadofx.shapes
 /*slightly modified code I stole from tornadofx*/
 
 import javafx.scene.Parent
-import javafx.scene.shape.Arc
 import javafx.scene.shape.ArcTo
-import javafx.scene.shape.Circle
 import javafx.scene.shape.ClosePath
-import javafx.scene.shape.CubicCurve
 import javafx.scene.shape.CubicCurveTo
-import javafx.scene.shape.Ellipse
 import javafx.scene.shape.FillRule
 import javafx.scene.shape.HLineTo
-import javafx.scene.shape.Line
 import javafx.scene.shape.LineTo
 import javafx.scene.shape.MoveTo
 import javafx.scene.shape.Path
@@ -25,46 +20,52 @@ import javafx.scene.shape.Rectangle
 import javafx.scene.shape.SVGPath
 import javafx.scene.shape.VLineTo
 import matt.hurricanefx.tornadofx.fx.attachTo
+import matt.hurricanefx.wrapper.ArcWrapper
+import matt.hurricanefx.wrapper.CircleWrapper
+import matt.hurricanefx.wrapper.CubicCurveWrapper
+import matt.hurricanefx.wrapper.EllipseWrapper
+import matt.hurricanefx.wrapper.LineWrapper
 import matt.hurricanefx.wrapper.NodeWrapper
+import matt.hurricanefx.wrapper.PathWrapper
 
-fun NodeWrapper<out Parent>.arc(centerX: Number = 0.0, centerY: Number = 0.0, radiusX: Number = 0.0, radiusY: Number = 0.0, startAngle: Number = 0.0, length: Number = 0.0, op: Arc.() -> Unit = {}) =
-    Arc(centerX.toDouble(), centerY.toDouble(), radiusX.toDouble(), radiusY.toDouble(), startAngle.toDouble(), length.toDouble()).attachTo(this, op)
+fun NodeWrapper<out Parent>.arc(centerX: Number = 0.0, centerY: Number = 0.0, radiusX: Number = 0.0, radiusY: Number = 0.0, startAngle: Number = 0.0, length: Number = 0.0, op: ArcWrapper.() -> Unit = {}) =
+    ArcWrapper(centerX.toDouble(), centerY.toDouble(), radiusX.toDouble(), radiusY.toDouble(), startAngle.toDouble(), length.toDouble()).attachTo(this, op)
 
-fun NodeWrapper<out Parent>.circle(centerX: Number = 0.0, centerY: Number = 0.0, radius: Number = 0.0, op: Circle.() -> Unit = {}) =
-    Circle(centerX.toDouble(), centerY.toDouble(), radius.toDouble()).attachTo(this, op)
+fun NodeWrapper<out Parent>.circle(centerX: Number = 0.0, centerY: Number = 0.0, radius: Number = 0.0, op: CircleWrapper.() -> Unit = {}) =
+    CircleWrapper(centerX.toDouble(), centerY.toDouble(), radius.toDouble()).attachTo(this, op)
 
-fun NodeWrapper<out Parent>.cubiccurve(startX: Number = 0.0, startY: Number = 0.0, controlX1: Number = 0.0, controlY1: Number = 0.0, controlX2: Number = 0.0, controlY2: Number = 0.0, endX: Number = 0.0, endY: Number = 0.0, op: CubicCurve.() -> Unit = {}) =
-    CubicCurve(startX.toDouble(), startY.toDouble(), controlX1.toDouble(), controlY1.toDouble(), controlX2.toDouble(), controlY2.toDouble(), endX.toDouble(), endY.toDouble()).attachTo(this, op)
+fun NodeWrapper<out Parent>.cubiccurve(startX: Number = 0.0, startY: Number = 0.0, controlX1: Number = 0.0, controlY1: Number = 0.0, controlX2: Number = 0.0, controlY2: Number = 0.0, endX: Number = 0.0, endY: Number = 0.0, op: CubicCurveWrapper.() -> Unit = {}) =
+    CubicCurveWrapper(startX.toDouble(), startY.toDouble(), controlX1.toDouble(), controlY1.toDouble(), controlX2.toDouble(), controlY2.toDouble(), endX.toDouble(), endY.toDouble()).attachTo(this, op)
 
-fun NodeWrapper<out Parent>.ellipse(centerX: Number = 0.0, centerY: Number = 0.0, radiusX: Number = 0.0, radiusY: Number = 0.0, op: Ellipse.() -> Unit = {}) =
-    Ellipse(centerX.toDouble(), centerY.toDouble(), radiusX.toDouble(), radiusY.toDouble()).attachTo(this, op)
+fun NodeWrapper<out Parent>.ellipse(centerX: Number = 0.0, centerY: Number = 0.0, radiusX: Number = 0.0, radiusY: Number = 0.0, op: EllipseWrapper.() -> Unit = {}) =
+    EllipseWrapper(centerX.toDouble(), centerY.toDouble(), radiusX.toDouble(), radiusY.toDouble()).attachTo(this, op)
 
-fun NodeWrapper<out Parent>.line(startX: Number = 0.0, startY: Number = 0.0, endX: Number = 0.0, endY: Number = 0.0, op: Line.() -> Unit = {}) =
-    Line(startX.toDouble(), startY.toDouble(), endX.toDouble(), endY.toDouble()).attachTo(this, op)
+fun NodeWrapper<out Parent>.line(startX: Number = 0.0, startY: Number = 0.0, endX: Number = 0.0, endY: Number = 0.0, op: LineWrapper.() -> Unit = {}) =
+    LineWrapper(startX.toDouble(), startY.toDouble(), endX.toDouble(), endY.toDouble()).attachTo(this, op)
 
-fun NodeWrapper<out Parent>.path(vararg elements: PathElement, op: Path.() -> Unit = {}) =  Path(*elements).attachTo(this, op)
+fun NodeWrapper<out Parent>.path(vararg elements: PathElement, op: Path.() -> Unit = {}) =  PathWrapper(*elements).attachTo(this, op)
 
-fun Path.moveTo(x: Number = 0.0, y: Number = 0.0) = apply {
+fun PathWrapper.moveTo(x: Number = 0.0, y: Number = 0.0) = apply {
     elements.add(MoveTo(x.toDouble(), y.toDouble()))
 }
 
-fun Path.hlineTo(x: Number) = apply { elements.add(HLineTo(x.toDouble())) }
+fun PathWrapper.hlineTo(x: Number) = apply { elements.add(HLineTo(x.toDouble())) }
 
-fun Path.vlineTo(y: Number) = apply { elements.add(VLineTo(y.toDouble())) }
+fun PathWrapper.vlineTo(y: Number) = apply { elements.add(VLineTo(y.toDouble())) }
 
-fun Path.quadcurveTo(controlX: Number = 0.0, controlY: Number = 0.0, x: Number = 0.0, y: Number = 0.0, op: QuadCurveTo.() -> Unit = {}) = apply {
+fun PathWrapper.quadcurveTo(controlX: Number = 0.0, controlY: Number = 0.0, x: Number = 0.0, y: Number = 0.0, op: QuadCurveTo.() -> Unit = {}) = apply {
     elements.add(QuadCurveTo(controlX.toDouble(), controlY.toDouble(), x.toDouble(), y.toDouble()).also(op))
 }
 
-fun Path.cubiccurveTo(controlX1: Number = 0.0, controlY1: Number = 0.0, controlX2: Number = 0.0, controlY2: Number = 0.0, x: Number = 0.0, y: Number = 0.0, op: CubicCurveTo.() -> Unit = {}) = apply {
+fun PathWrapper.cubiccurveTo(controlX1: Number = 0.0, controlY1: Number = 0.0, controlX2: Number = 0.0, controlY2: Number = 0.0, x: Number = 0.0, y: Number = 0.0, op: CubicCurveTo.() -> Unit = {}) = apply {
     elements.add(CubicCurveTo(controlX1.toDouble(), controlY1.toDouble(), controlX2.toDouble(), controlY2.toDouble(), x.toDouble(), y.toDouble()).also(op))
 }
 
-fun Path.lineTo(x: Number = 0.0, y: Number = 0.0) = apply {
+fun PathWrapper.lineTo(x: Number = 0.0, y: Number = 0.0) = apply {
     elements.add(LineTo(x.toDouble(), y.toDouble()))
 }
 
-fun Path.arcTo(
+fun PathWrapper.arcTo(
     radiusX: Number = 0.0, radiusY: Number = 0.0,
     xAxisRotation: Number = 0.0, x: Number = 0.0,
     y: Number = 0.0, largeArcFlag: Boolean = false,
@@ -72,7 +73,7 @@ fun Path.arcTo(
     elements.add(ArcTo(radiusX.toDouble(), radiusY.toDouble(), xAxisRotation.toDouble(), x.toDouble(), y.toDouble(), largeArcFlag, sweepFlag).also(op))
 }
 
-fun Path.closepath() = apply { elements.add(ClosePath()) }
+fun PathWrapper.closepath() = apply { elements.add(ClosePath()) }
 
 fun NodeWrapper<out Parent>.polygon(vararg points: Number, op: Polygon.() -> Unit = {}) =
     Polygon(*points.map(Number::toDouble).toDoubleArray()).attachTo(this, op)
