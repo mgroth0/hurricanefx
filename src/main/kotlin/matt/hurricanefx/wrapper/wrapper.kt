@@ -20,6 +20,7 @@ import javafx.scene.Group
 import javafx.scene.Node
 import javafx.scene.Parent
 import javafx.scene.Scene
+import javafx.scene.SnapshotParameters
 import javafx.scene.canvas.Canvas
 import javafx.scene.chart.AreaChart
 import javafx.scene.chart.Axis
@@ -74,11 +75,15 @@ import javafx.scene.control.ToolBar
 import javafx.scene.control.TreeItem
 import javafx.scene.control.TreeTableView
 import javafx.scene.control.TreeView
+import javafx.scene.image.Image
 import javafx.scene.image.ImageView
+import javafx.scene.image.WritableImage
 import javafx.scene.input.DataFormat
+import javafx.scene.input.DragEvent
 import javafx.scene.input.KeyEvent
 import javafx.scene.input.MouseEvent
 import javafx.scene.input.ScrollEvent
+import javafx.scene.input.TransferMode
 import javafx.scene.input.TransferMode.ANY
 import javafx.scene.input.ZoomEvent
 import javafx.scene.layout.AnchorPane
@@ -149,7 +154,21 @@ interface NodeWrapper<N: Node>: EventTargetWrapper<N> {
 	}
   }
 
+  fun snapshot(params: SnapshotParameters, image: WritableImage?) = node.snapshot(params, image)
+
+  fun startDragAndDrop(vararg transferModes: TransferMode) = node.startDragAndDrop(*transferModes)
+  fun startFullDrag() = node.startFullDrag()
+
   fun lookupAll(selector: String) = node.lookupAll(selector)
+
+  var cursor
+	get() = node.cursor
+	set(value) {
+	  node.cursor = value
+	}
+
+  fun cursorProperty() = node.cursorProperty()
+
 
   var clip
 	get() = node.clip
@@ -215,6 +234,31 @@ interface NodeWrapper<N: Node>: EventTargetWrapper<N> {
   fun setOnMouseExited(listener: (MouseEvent)->Unit) {
 	node.setOnMouseExited(listener)
   }
+
+  fun setOnDragEntered(listener: (DragEvent)->Unit) {
+	node.setOnDragEntered(listener)
+  }
+
+  fun setOnDragOver(listener: (DragEvent)->Unit) {
+	node.setOnDragOver(listener)
+  }
+
+  fun setOnDragDetected(listener: (MouseEvent)->Unit) {
+	node.setOnDragDetected(listener)
+  }
+
+  fun setOnDragDone(listener: (DragEvent)->Unit) {
+	node.setOnDragDone(listener)
+  }
+
+  fun setOnDragExited(listener: (DragEvent)->Unit) {
+	node.setOnDragExited(listener)
+  }
+
+  fun setOnDragDropped(listener: (DragEvent)->Unit) {
+	node.setOnDragDropped(listener)
+  }
+
 
   fun toFront() = node.toFront()
   fun toBack() = node.toBack()
@@ -320,6 +364,7 @@ interface NodeWrapper<N: Node>: EventTargetWrapper<N> {
   fun scaleYProperty() = node.scaleYProperty()
 
   fun requestFocus() = node.requestFocus()
+
 
 }
 
@@ -477,7 +522,7 @@ open class VBoxWrapper(node: VBox = VBox(), op: VBoxWrapper.()->Unit = {}): BoxW
 }
 
 
-class HBoxWrapper(node: HBox = HBox(), op: HBoxWrapper.()->Unit = {}): BoxWrapper<HBox>(node) {
+open class HBoxWrapper(node: HBox = HBox(), op: HBoxWrapper.()->Unit = {}): BoxWrapper<HBox>(node) {
   constructor(vararg nodes: Node): this(HBox(*nodes))
 
   init {
@@ -579,6 +624,43 @@ open class FlowPaneWrapper(override val node: FlowPane = FlowPane()): PaneWrappe
   companion object {
 	fun FlowPane.wrapped() = FlowPaneWrapper(this)
   }
+
+  var orientation
+	get() = node.orientation
+	set(value) {
+	  node.orientation = value
+	}
+
+  fun orientationProperty() = node.orientationProperty()
+
+
+  var hgap
+	get() = node.hgap
+	set(value) {
+	  node.hgap = value
+	}
+
+  fun hgapProperty() = node.hgapProperty()
+
+
+  var vgap
+	get() = node.vgap
+	set(value) {
+	  node.vgap = value
+	}
+
+  fun vgapProperty() = node.vgapProperty()
+
+
+  var prefWrapLength
+	get() = node.prefWrapLength
+	set(value) {
+	  node.prefWrapLength = value
+	}
+
+  fun prefWrapLengthProperty() = node.prefWrapLengthProperty()
+
+
 }
 
 
@@ -731,6 +813,9 @@ class TreeTableViewWrapper<T>(
 	op()
   }
 
+
+  var sortOrder get() = node.sortOrder
+
   override var root: TreeItem<T>
 	get() = node.root
 	set(value) {
@@ -788,15 +873,20 @@ class ChoiceBoxWrapper<T>(
 }
 
 
-class TabPaneWrapper(
+open class TabPaneWrapper(
   override val node: TabPane = TabPane(),
   op: TabPaneWrapper.()->Unit = {}
 ): ControlWrapper(node) {
+
+  constructor(vararg tabs: Tab): this(TabPane(*tabs))
+
   init {
 	op()
   }
 
   val tabs get() = node.tabs
+
+  val selectionModel get() = node.selectionModel
 }
 
 
@@ -820,7 +910,7 @@ class ButtonWrapper(
 	fun Button.wrapped() = ButtonWrapper(this)
   }
 
-  constructor(text: String? = null, graphic: Node? = null): this(Button(text, graphic))
+  constructor(text: String?, graphic: Node? = null): this(Button(text, graphic))
 
   init {
 	op()
@@ -838,6 +928,14 @@ open class ComboBoxBaseWrapper<T>(override val node: ComboBoxBase<T>): ControlWr
 
   fun valueProperty() = node.valueProperty()
 
+  var promptText
+	get() = node.promptText
+	set(value) {
+	  node.promptText = value
+	}
+
+  fun promptTextProperty() = node.promptTextProperty()
+
 
 }
 
@@ -849,6 +947,8 @@ class ComboBoxWrapper<T>(
   companion object {
 	fun <T> ComboBox<T>.wrapped() = ComboBoxWrapper(this)
   }
+
+  constructor(items: ObservableList<T>): this(ComboBox(items))
 
   init {
 	op()
@@ -862,6 +962,17 @@ class ComboBoxWrapper<T>(
 	}
 
   fun itemsProperty() = node.itemsProperty()
+
+  var converter
+	get() = node.converter
+	set(value) {
+	  node.converter = value
+	}
+
+  fun converterProperty() = node.converterProperty()
+
+  val selectionModel get() = node.selectionModel
+
 
 }
 
@@ -980,6 +1091,13 @@ class TextWrapper(
 
   fun fontProperty() = node.fontProperty()
 
+  var textAlignment
+	get() = node.textAlignment
+	set(value) {
+	  node.textAlignment = value
+	}
+
+  fun textAlignmentProperty() = node.textAlignmentProperty()
 
 }
 
@@ -1025,6 +1143,8 @@ open class TextFieldWrapper(
   companion object {
 	fun TextField.wrapped() = TextFieldWrapper(this)
   }
+
+  constructor(text: String?): this(TextField(text))
 
   init {
 	op()
@@ -1210,6 +1330,58 @@ class SliderWrapper(
 	}
 
   fun valueProperty() = node.valueProperty()
+
+  var valueChanging
+	get() = node.isValueChanging
+	set(value) {
+	  node.isValueChanging = value
+	}
+
+  fun valueChangingProperty() = node.valueChangingProperty()
+
+  var isSnapToTicks
+	get() = node.isSnapToTicks
+	set(value) {
+	  node.isSnapToTicks = value
+	}
+
+  fun snapToTicksProperty() = node.snapToTicksProperty()
+
+
+  var isShowTickMarks
+	get() = node.isShowTickMarks
+	set(value) {
+	  node.isShowTickMarks = value
+	}
+
+  fun showTickMarksProperty() = node.showTickMarksProperty()
+
+
+  var isShowTickLabels
+	get() = node.isShowTickLabels
+	set(value) {
+	  node.isShowTickLabels = value
+	}
+
+  fun showTickLabelsProperty() = node.showTickLabelsProperty()
+
+
+  var majorTickUnit
+	get() = node.majorTickUnit
+	set(value) {
+	  node.majorTickUnit = value
+	}
+
+  fun majorTickUnitProperty() = node.majorTickUnitProperty()
+
+
+  var minorTickCount
+	get() = node.minorTickCount
+	set(value) {
+	  node.minorTickCount = value
+	}
+
+  fun minorTickCountProperty() = node.minorTickCountProperty()
 }
 
 
@@ -1218,9 +1390,25 @@ open class MenuItemWrapper(
   op: MenuItemWrapper.()->Unit = {}
 ): EventTargetWrapper<MenuItem> {
 
+  constructor(text: String?, g: Node? = null): this(MenuItem(text, g))
+
   init {
 	op()
   }
+
+  var isMnemonicParsing
+	get() = node.isMnemonicParsing
+	set(value) {
+	  node.isMnemonicParsing = value
+	}
+
+  fun mnemonicParsingProperty() = node.mnemonicParsingProperty()
+
+  var onAction
+	get() = node.onAction
+	set(value) {
+	  node.onAction = value
+	}
 
   fun setOnAction(op: (ActionEvent)->Unit) {
 	node.setOnAction(op)
@@ -1467,6 +1655,8 @@ class ImageViewWrapper(
 	fun ImageView.wrapped() = ImageViewWrapper(this)
   }
 
+  constructor(image: Image): this(ImageView(image))
+
   init {
 	op()
   }
@@ -1517,7 +1707,7 @@ class ImageViewWrapper(
 }
 
 
-class LabelWrapper(
+open class LabelWrapper(
   override val node: Label = Label(),
   op: LabelWrapper.()->Unit = {}
 ): LabeledWrapper(node) {
@@ -1525,7 +1715,7 @@ class LabelWrapper(
 	fun Label.wrapped() = LabelWrapper(this)
   }
 
-  constructor(text: String? = null, graphic: Node? = null): this(Label(text, graphic))
+  constructor(text: String?, graphic: Node? = null): this(Label(text, graphic))
 
   init {
 	op()
@@ -1687,7 +1877,7 @@ open class RectangleWrapper(
 
   constructor(x: Double, y: Double, width: Double, height: Double): this(Rectangle(x, y, width, height))
 
-//  val widthProperty = node.widthProperty()
+  val widthProperty = node.widthProperty()
   val heightProperty = node.heightProperty()
 
   init {
@@ -1974,6 +2164,7 @@ open class TableViewWrapper<E>(
 	op()
   }
 
+  var sortOrder get() = node.sortOrder
 
   var items
 	get() = node.items

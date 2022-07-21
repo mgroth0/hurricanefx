@@ -70,6 +70,7 @@ import matt.hurricanefx.tornadofx.fx.getChildList
 import matt.hurricanefx.wrapper.EventTargetWrapper
 import matt.hurricanefx.wrapper.NodeWrapper
 import matt.hurricanefx.wrapper.PaneWrapper
+import matt.hurricanefx.wrapper.TreeTableViewWrapper
 
 fun EventTarget.getToggleGroup(): ToggleGroup? = properties["tornadofx.togglegroup"] as ToggleGroup?
 
@@ -632,7 +633,7 @@ fun <S: Any> TableColumn<S, String>.makeEditable(): TableColumn<S, String> = app
 }
 
 
-fun <T> TreeTableView<T>.populate(
+fun <T> TreeTableViewWrapper<T>.populate(
   itemFactory: (T)->TreeItem<T> = { TreeItem(it) },
   childFactory: (TreeItem<T>)->Iterable<T>?
 ) =

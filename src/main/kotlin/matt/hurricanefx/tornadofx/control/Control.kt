@@ -343,11 +343,10 @@ fun EventTargetWrapper<*>.button(
   text: ObservableValue<String>,
   graphic: Node? = null,
   op: ButtonWrapper.()->Unit = {}
-) =
-  ButtonWrapper().attachTo(this, op) {
-	it.textProperty().bind(text)
-	if (graphic != null) it.graphic = graphic
-  }
+) = ButtonWrapper().attachTo(this, op) {
+  it.textProperty().bind(text)
+  if (graphic != null) it.graphic = graphic
+}
 
 fun ToolBarWrapper.button(text: String = "", graphic: Node? = null, op: ButtonWrapper.()->Unit = {}) =
   ButtonWrapper { this.text = text }.also {

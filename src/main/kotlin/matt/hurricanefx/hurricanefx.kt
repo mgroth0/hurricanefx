@@ -249,7 +249,7 @@ var ThreadSafeNodeWrapper<*>.visibleAndManaged: Boolean
   }
 
 
-var Button.op: ()->Unit
+var ButtonWrapper.op: ()->Unit
   set(value) {
 	setOnAction {
 	  value()
