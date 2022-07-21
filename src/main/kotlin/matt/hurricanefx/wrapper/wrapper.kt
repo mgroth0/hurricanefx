@@ -73,6 +73,7 @@ import javafx.scene.control.TitledPane
 import javafx.scene.control.ToggleButton
 import javafx.scene.control.ToolBar
 import javafx.scene.control.TreeItem
+import javafx.scene.control.TreeTableRow
 import javafx.scene.control.TreeTableView
 import javafx.scene.control.TreeView
 import javafx.scene.image.Image
@@ -100,6 +101,7 @@ import javafx.scene.layout.StackPane
 import javafx.scene.layout.TilePane
 import javafx.scene.layout.VBox
 import javafx.scene.paint.Color
+import javafx.scene.paint.Paint
 import javafx.scene.shape.Arc
 import javafx.scene.shape.Circle
 import javafx.scene.shape.CubicCurve
@@ -239,6 +241,12 @@ interface NodeWrapper<N: Node>: EventTargetWrapper<N> {
   fun setOnMousePressed(listener: (MouseEvent)->Unit) {
 	node.setOnMousePressed(listener)
   }
+
+
+  fun setOnMouseClicked(listener: (MouseEvent)->Unit) {
+	node.setOnMouseClicked(listener)
+  }
+
 
   fun setOnMouseDragged(listener: (MouseEvent)->Unit) {
 	node.setOnMouseDragged(listener)
@@ -566,13 +574,28 @@ open class StackPaneWrapper(override val node: StackPane = StackPane()): PaneWra
   }
 
   constructor(vararg nodes: Node): this(StackPane(*nodes))
+
+
+  var alignment
+	get() = node.alignment
+	set(value) {
+	  node.alignment = value
+	}
+
+  fun alignmentProperty() = node.alignmentProperty()
 }
 
 
 open class AnchorPaneWrapper(override val node: AnchorPane = AnchorPane()): PaneWrapper(node) {
   companion object {
 	fun AnchorPane.wrapped() = AnchorPaneWrapper(this)
+	fun setTopAnchor(n: Node, offset: Double) = AnchorPane.setTopAnchor(n, offset)
+	fun setBottomAnchor(n: Node, offset: Double) = AnchorPane.setBottomAnchor(n, offset)
+	fun setLeftAnchor(n: Node, offset: Double) = AnchorPane.setLeftAnchor(n, offset)
+	fun setRightAnchor(n: Node, offset: Double) = AnchorPane.setRightAnchor(n, offset)
   }
+
+
 }
 
 
@@ -798,6 +821,7 @@ class TreeViewWrapper<T>(override val node: TreeView<T> = TreeView(), op: TreeVi
 	op()
   }
 
+
   override var root: TreeItem<T>
 	get() = node.root
 	set(value) {
@@ -859,6 +883,9 @@ class TreeTableViewWrapper<T>(
   override val selectionModel: MultipleSelectionModel<TreeItem<T>> get() = node.selectionModel
   override fun scrollTo(i: Int) = node.scrollTo(i)
 
+  fun setRowFactory(value: Callback<TreeTableView<T>, TreeTableRow<T>>) = node.setRowFactory(value)
+
+  fun sort() = node.sort()
 
 }
 
@@ -867,6 +894,17 @@ class ChoiceBoxWrapper<T>(
   override val node: ChoiceBox<T> = ChoiceBox(),
   op: ChoiceBoxWrapper<T>.()->Unit = {}
 ): ControlWrapper(node) {
+
+
+  var converter
+	get() = node.converter
+	set(value) {
+	  node.converter = value
+	}
+
+  fun converterProperty() = node.converterProperty()
+
+
   var items
 	get() = node.items
 	set(value) {
@@ -919,7 +957,7 @@ open class ButtonBaseWrapper(override val node: ButtonBase): LabeledWrapper(node
 abstract class ControlWrapper(override val node: Control): RegionWrapper(node)
 
 
-class ButtonWrapper(
+open class ButtonWrapper(
   override val node: Button = Button(),
   op: ButtonWrapper.()->Unit = {}
 ): ButtonBaseWrapper(node) {
@@ -932,6 +970,8 @@ class ButtonWrapper(
   init {
 	op()
   }
+
+
 }
 
 
@@ -1032,6 +1072,7 @@ open class TextFlowWrapper(
   companion object {
 	fun TextFlow.wrapped() = TextFlowWrapper(this)
   }
+  constructor(vararg nodes: Node): this(TextFlow(*nodes))
 
   init {
 	op()
@@ -1187,7 +1228,7 @@ class PasswordFieldWrapper(
 fun PasswordField.wrapped() = PasswordFieldWrapper(this)
 
 
-class TextAreaWrapper(
+open class TextAreaWrapper(
   override val node: TextArea = TextArea(),
   op: TextAreaWrapper.()->Unit = {}
 ): TextInputControlWrapper(node) {
@@ -1203,6 +1244,26 @@ class TextAreaWrapper(
 
 
 open class LabeledWrapper(override val node: Labeled): ControlWrapper(node) {
+
+
+  var textAlignment
+	get() = node.textAlignment
+	set(value) {
+	  node.textAlignment = value
+	}
+
+  fun textAlignmentProperty() = node.textAlignmentProperty()
+
+
+
+
+  var isMnemonicParsing
+	get() = node.isMnemonicParsing
+	set(value) {
+	  node.isMnemonicParsing = value
+	}
+
+  fun mnemonicParsingProperty() = node.mnemonicParsingProperty()
 
   var text
 	get() = node.text
@@ -1241,6 +1302,16 @@ open class LabeledWrapper(override val node: Labeled): ControlWrapper(node) {
 	}
 
   fun wrapTextProperty() = node.wrapTextProperty()
+
+
+  var textFill
+	get() = node.textFill
+	set(value) {
+	  node.textFill = value
+	}
+
+  fun textFillProperty() = node.textFillProperty()
+
 
 }
 
@@ -1411,7 +1482,11 @@ open class MenuItemWrapper(
 
   init {
 	op()
+
   }
+
+  fun visibleProperty() = node.visibleProperty()
+  fun disableProperty() = node.disableProperty()
 
   var isMnemonicParsing
 	get() = node.isMnemonicParsing
@@ -1508,6 +1583,8 @@ class CheckBoxWrapper(
   companion object {
 	fun CheckBox.wrapped() = CheckBoxWrapper(this)
   }
+
+  constructor(text: String?): this(CheckBox(text))
 
   init {
 	op()
@@ -1644,6 +1721,8 @@ class RadioButtonWrapper(
 	fun RadioButton.wrapped() = RadioButtonWrapper(this)
   }
 
+  constructor(text: String): this(RadioButton(text))
+
   init {
 	op()
   }
@@ -1673,6 +1752,7 @@ class ImageViewWrapper(
   }
 
   constructor(image: Image): this(ImageView(image))
+  constructor(imageURL: String): this(ImageView(imageURL))
 
   init {
 	op()
@@ -1737,6 +1817,7 @@ open class LabelWrapper(
   init {
 	op()
   }
+
 
 
 }
@@ -1893,9 +1974,29 @@ open class RectangleWrapper(
   }
 
   constructor(x: Double, y: Double, width: Double, height: Double): this(Rectangle(x, y, width, height))
+  constructor(width: Double, height: Double, fill: Paint): this(Rectangle(width, height, fill))
+  constructor(width: Double, height: Double): this(Rectangle(width, height))
 
+  var width
+	get() = node.width
+	set(value) {
+	  node.width = value
+	}
   val widthProperty = node.widthProperty()
+
+  var height
+	get() = node.height
+	set(value) {
+	  node.height = value
+	}
   val heightProperty = node.heightProperty()
+
+  var rotate
+	get() = node.rotate
+	set(value) {
+	  node.rotate = value
+	}
+  val rotateProperty = node.rotateProperty()
 
   init {
 	op()
@@ -1967,6 +2068,26 @@ open class EllipseWrapper(
   init {
 	op()
   }
+
+
+  var radiusX
+	get() = node.radiusX
+	set(value) {
+	  node.radiusX = value
+	}
+
+  fun radiusXProperty() = node.radiusXProperty()
+
+
+  var radiusY
+	get() = node.radiusY
+	set(value) {
+	  node.radiusY = value
+	}
+
+  fun radiusYProperty() = node.radiusYProperty()
+
+
 }
 
 
@@ -2106,6 +2227,8 @@ open class CircleWrapper(
 	radius: Double,
   ): this(Circle(centerX, centerY, radius))
 
+  constructor(radius: Double,fill: Paint): this(Circle(radius,fill))
+
   init {
 	op()
   }
@@ -2153,6 +2276,23 @@ open class ListViewWrapper<E>(
 	op()
   }
 
+
+  var cellFactory
+	get() = node.cellFactory
+	set(value) {
+	  node.cellFactory = value
+	}
+
+  fun cellFactoryProperty() = node.cellFactoryProperty()
+
+  var isEditable
+	get() = node.isEditable
+	set(value) {
+	  node.isEditable = value
+	}
+
+  fun editableProperty() = node.editableProperty()
+
   var items
 	get() = node.items
 	set(value) {
@@ -2196,6 +2336,8 @@ open class TableViewWrapper<E>(
   val columns get() = node.columns
 
   val selectionModel get() = node.selectionModel
+
+  fun sort() = node.sort()
 }
 
 

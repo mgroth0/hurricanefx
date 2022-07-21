@@ -25,7 +25,6 @@ import javafx.scene.control.ComboBoxBase
 import javafx.scene.control.Control
 import javafx.scene.control.ListCell
 import javafx.scene.control.ListView
-import javafx.scene.control.MenuItem
 import javafx.scene.control.SplitPane
 import javafx.scene.control.Tab
 import javafx.scene.control.TableCell
@@ -68,6 +67,7 @@ import matt.hurricanefx.tornadofx.control.properties
 import matt.hurricanefx.tornadofx.fx.addChildIfPossible
 import matt.hurricanefx.tornadofx.fx.getChildList
 import matt.hurricanefx.wrapper.EventTargetWrapper
+import matt.hurricanefx.wrapper.MenuItemWrapper
 import matt.hurricanefx.wrapper.NodeWrapper
 import matt.hurricanefx.wrapper.PaneWrapper
 import matt.hurricanefx.wrapper.TreeTableViewWrapper
@@ -902,13 +902,13 @@ fun <T: Node> T.onHover(onHover: (Boolean)->Unit) = apply {
 }
 
 // -- MenuItem helpers
-fun MenuItem.visibleWhen(expr: ()->ObservableValue<Boolean>) = visibleWhen(expr())
+fun MenuItemWrapper.visibleWhen(expr: ()->ObservableValue<Boolean>) = visibleWhen(expr())
 
-fun MenuItem.visibleWhen(predicate: ObservableValue<Boolean>) = visibleProperty().cleanBind(predicate)
-fun MenuItem.disableWhen(expr: ()->ObservableValue<Boolean>) = disableWhen(expr())
-fun MenuItem.disableWhen(predicate: ObservableValue<Boolean>) = disableProperty().cleanBind(predicate)
-fun MenuItem.enableWhen(expr: ()->ObservableValue<Boolean>) = enableWhen(expr())
-fun MenuItem.enableWhen(obs: ObservableValue<Boolean>) {
+fun MenuItemWrapper.visibleWhen(predicate: ObservableValue<Boolean>) = visibleProperty().cleanBind(predicate)
+fun MenuItemWrapper.disableWhen(expr: ()->ObservableValue<Boolean>) = disableWhen(expr())
+fun MenuItemWrapper.disableWhen(predicate: ObservableValue<Boolean>) = disableProperty().cleanBind(predicate)
+fun MenuItemWrapper.enableWhen(expr: ()->ObservableValue<Boolean>) = enableWhen(expr())
+fun MenuItemWrapper.enableWhen(obs: ObservableValue<Boolean>) {
   val binding = if (obs is BooleanBinding) obs.not() else obs.toBinding().not()
   disableProperty().cleanBind(binding)
 }

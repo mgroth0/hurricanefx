@@ -20,8 +20,6 @@ import javafx.scene.Cursor
 import javafx.scene.Node
 import javafx.scene.Parent
 import javafx.scene.chart.NumberAxis
-import javafx.scene.control.Button
-import javafx.scene.control.CheckBox
 import javafx.scene.control.Tab
 import javafx.scene.control.TreeTableView
 import javafx.scene.image.ImageView
@@ -50,6 +48,7 @@ import matt.hurricanefx.eye.lib.onChangeUntilAfterFirst
 import matt.hurricanefx.tornadofx.nodes.add
 import matt.hurricanefx.tsprogressbar.ThreadSafeNodeWrapper
 import matt.hurricanefx.wrapper.ButtonWrapper
+import matt.hurricanefx.wrapper.CheckBoxWrapper
 import matt.hurricanefx.wrapper.ImageViewWrapper
 import matt.hurricanefx.wrapper.NodeWrapper
 import matt.hurricanefx.wrapper.NodeWrapper.Companion.wrapped
@@ -443,7 +442,7 @@ typealias FXDuration = javafx.util.Duration
 fun matt.async.date.Duration.toFXDuration(): FXDuration = FXDuration.millis(this.inMilliseconds)
 
 
-fun BooleanProperty.checkbox() = CheckBox(name).also {
+fun BooleanProperty.checkbox() = CheckBoxWrapper(name).also {
   it.selectedProperty().bindBidirectional(this)
 }
 
