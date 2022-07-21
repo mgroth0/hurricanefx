@@ -8,7 +8,10 @@ import javafx.beans.property.ReadOnlyDoubleProperty
 import javafx.beans.property.ReadOnlyObjectProperty
 import javafx.collections.ObservableList
 import javafx.event.ActionEvent
+import javafx.event.Event
+import javafx.event.EventHandler
 import javafx.event.EventTarget
+import javafx.event.EventType
 import javafx.geometry.Bounds
 import javafx.geometry.Insets
 import javafx.geometry.Orientation
@@ -133,6 +136,8 @@ interface EventTargetWrapper<N: EventTarget> {
 
   val node: N
   fun getToggleGroup() = node.getToggleGroup()
+
+
 }
 
 
@@ -144,6 +149,12 @@ interface NodeWrapper<N: Node>: EventTargetWrapper<N> {
 	}
   }
 
+  fun <T: Event> addEventFilter(eventType: EventType<T>, handler: EventHandler<T>) = node.addEventFilter(eventType, handler)
+  fun <T: Event> addEventHandler(eventType: EventType<T>, handler: EventHandler<T>) = node.addEventHandler(eventType, handler)
+
+
+  fun <T: Event> removeEventFilter(eventType: EventType<T>, handler: EventHandler<T>) = node.removeEventFilter(eventType, handler)
+  fun <T: Event> removeEventHandler(eventType: EventType<T>, handler: EventHandler<T>) = node.removeEventHandler(eventType, handler)
 
   fun localToScene(bounds: Bounds) = node.localToScene(bounds)
   fun localToScreen(bounds: Bounds) = node.localToScreen(bounds)
@@ -173,7 +184,17 @@ interface NodeWrapper<N: Node>: EventTargetWrapper<N> {
 
   fun managedProperty() = node.managedProperty()
   fun visibleProperty() = node.visibleProperty()
+
+
+  var isDisable
+	get() = node.isDisable
+	set(value) {
+	  node.isDisable = value
+	}
+
   fun disableProperty() = node.disableProperty()
+
+  val isFocused get() = node.isFocused
   fun focusedProperty() = node.focusedProperty()
 
   val styleClass get() = node.styleClass
@@ -240,7 +261,6 @@ interface NodeWrapper<N: Node>: EventTargetWrapper<N> {
 	}
 
   fun layoutYProperty() = node.layoutYProperty()
-
 
 
   var scaleX
@@ -920,6 +940,13 @@ open class TextInputControlWrapper(override val node: TextInputControl): Control
 	}
 
   fun fontProperty() = node.fontProperty()
+
+
+  val caretPosition get() = node.caretPosition
+  fun caretPositionProperty() = node.caretPositionProperty()
+
+  fun end() = node.end()
+
 }
 
 
@@ -1001,6 +1028,14 @@ open class LabeledWrapper(override val node: Labeled): ControlWrapper(node) {
 	}
 
   fun fontProperty() = node.fontProperty()
+
+  var isWrapText
+	get() = node.isWrapText
+	set(value) {
+	  node.isWrapText = value
+	}
+
+  fun wrapTextProperty() = node.wrapTextProperty()
 
 }
 
@@ -1376,6 +1411,41 @@ class ImageViewWrapper(
 
   fun imageProperty() = node.imageProperty()
 
+
+  var isPreserveRatio
+	get() = node.isPreserveRatio
+	set(value) {
+	  node.isPreserveRatio = value
+	}
+
+  fun preserveRatioProperty() = node.preserveRatioProperty()
+
+
+  var fitWidth
+	get() = node.fitWidth
+	set(value) {
+	  node.fitWidth = value
+	}
+
+  fun fitWidthProperty() = node.fitWidthProperty()
+
+  var fitHeight
+	get() = node.fitHeight
+	set(value) {
+	  node.fitHeight = value
+	}
+
+  fun fitHeightProperty() = node.fitHeightProperty()
+
+
+  var isSmooth
+	get() = node.isSmooth
+	set(value) {
+	  node.isSmooth = value
+	}
+
+  fun smoothProperty() = node.smoothProperty()
+
 }
 
 
@@ -1392,6 +1462,7 @@ class LabelWrapper(
   init {
 	op()
   }
+
 
 }
 
@@ -1797,6 +1868,7 @@ open class ListViewWrapper<E>(
   companion object {
 	fun <E> ListView<E>.wrapped() = ListViewWrapper<E>(this)
   }
+
   constructor(items: ObservableList<E>): this(ListView(items))
 
   init {
@@ -1824,6 +1896,7 @@ open class TableViewWrapper<E>(
   companion object {
 	fun <E> TableView<E>.wrapped() = TableViewWrapper<E>(this)
   }
+
   constructor(items: ObservableList<E>): this(TableView(items))
 
   init {
@@ -1876,7 +1949,6 @@ class CanvasWrapper(override val node: Canvas = Canvas()): NodeWrapper<Canvas> {
 	width: Double,
 	height: Double
   ): this(Canvas(width, height))
-
 
 
   val width get() = widthProperty.value

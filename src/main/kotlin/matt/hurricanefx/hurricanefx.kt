@@ -51,6 +51,7 @@ import matt.hurricanefx.eye.lib.onChangeUntilAfterFirst
 import matt.hurricanefx.tornadofx.nodes.add
 import matt.hurricanefx.tsprogressbar.ThreadSafeNodeWrapper
 import matt.hurricanefx.wrapper.ButtonWrapper
+import matt.hurricanefx.wrapper.ImageViewWrapper
 import matt.hurricanefx.wrapper.NodeWrapper
 import matt.hurricanefx.wrapper.NodeWrapper.Companion.wrapped
 import matt.hurricanefx.wrapper.ParentWrapper
@@ -206,10 +207,10 @@ val fitBothProps = WeakHashMap<ImageView, DoubleProperty>().withStoringDefault {
   }
 }
 
-fun ImageView.fitBothProp(): DoubleProperty = fitBothProps[this]
-fun ImageView.bindFitTo(r: Region) {
-  fitWidthProperty().bind(r.widthProperty())
-  fitHeightProperty().bind(r.heightProperty())
+fun ImageViewWrapper.fitBothProp(): DoubleProperty = fitBothProps[this.node]
+fun ImageViewWrapper.bindFitTo(r: RegionWrapper) {
+  fitWidthProperty().bind(r.widthProperty)
+  fitHeightProperty().bind(r.heightProperty)
 }
 
 fun Node.visibleAndManagedProp(): BooleanProperty {
