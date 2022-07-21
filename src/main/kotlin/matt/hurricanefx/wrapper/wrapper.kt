@@ -149,22 +149,38 @@ interface NodeWrapper<N: Node>: EventTargetWrapper<N> {
 	}
   }
 
+  fun lookupAll(selector: String) = node.lookupAll(selector)
+
+  var clip
+	get() = node.clip
+	set(value) {
+	  node.clip = value
+	}
+
+  fun clipProperty() = node.clipProperty()
 
   var blendMode
 	get() = node.blendMode
 	set(value) {
 	  node.blendMode = value
 	}
+
   fun blendModeProperty() = node.blendModeProperty()
 
   fun autosize() = node.autosize()
 
-  fun <T: Event> addEventFilter(eventType: EventType<T>, handler: EventHandler<T>) = node.addEventFilter(eventType, handler)
-  fun <T: Event> addEventHandler(eventType: EventType<T>, handler: EventHandler<T>) = node.addEventHandler(eventType, handler)
+  fun <T: Event> addEventFilter(eventType: EventType<T>, handler: EventHandler<T>) =
+	node.addEventFilter(eventType, handler)
+
+  fun <T: Event> addEventHandler(eventType: EventType<T>, handler: EventHandler<T>) =
+	node.addEventHandler(eventType, handler)
 
 
-  fun <T: Event> removeEventFilter(eventType: EventType<T>, handler: EventHandler<T>) = node.removeEventFilter(eventType, handler)
-  fun <T: Event> removeEventHandler(eventType: EventType<T>, handler: EventHandler<T>) = node.removeEventHandler(eventType, handler)
+  fun <T: Event> removeEventFilter(eventType: EventType<T>, handler: EventHandler<T>) =
+	node.removeEventFilter(eventType, handler)
+
+  fun <T: Event> removeEventHandler(eventType: EventType<T>, handler: EventHandler<T>) =
+	node.removeEventHandler(eventType, handler)
 
   fun localToScene(bounds: Bounds) = node.localToScene(bounds)
   fun localToScreen(bounds: Bounds) = node.localToScreen(bounds)
@@ -187,6 +203,21 @@ interface NodeWrapper<N: Node>: EventTargetWrapper<N> {
   fun setOnMousePressed(listener: (MouseEvent)->Unit) {
 	node.setOnMousePressed(listener)
   }
+
+  fun setOnMouseDragged(listener: (MouseEvent)->Unit) {
+	node.setOnMouseDragged(listener)
+  }
+
+  fun setOnMouseReleased(listener: (MouseEvent)->Unit) {
+	node.setOnMouseReleased(listener)
+  }
+
+  fun setOnMouseExited(listener: (MouseEvent)->Unit) {
+	node.setOnMouseExited(listener)
+  }
+
+  fun toFront() = node.toFront()
+  fun toBack() = node.toBack()
 
   fun setOnScroll(listener: (ScrollEvent)->Unit) {
 	node.setOnScroll(listener)
@@ -471,6 +502,8 @@ open class StackPaneWrapper(override val node: StackPane = StackPane()): PaneWra
   companion object {
 	fun StackPane.wrapped() = StackPaneWrapper(this)
   }
+
+  constructor(vararg nodes: Node): this(StackPane(*nodes))
 }
 
 
@@ -558,7 +591,6 @@ open class ScrollPaneWrapper(override val node: ScrollPane = ScrollPane()): Cont
   constructor(content: Node?): this(ScrollPane(content))
 
 
-
   var viewportBounds
 	get() = node.viewportBounds
 	set(value) {
@@ -607,12 +639,14 @@ open class ScrollPaneWrapper(override val node: ScrollPane = ScrollPane()): Cont
 	set(value) {
 	  node.isFitToWidth = value
 	}
+
   fun fitToWidthProperty() = node.fitToWidthProperty()
   var isFitToHeight
 	get() = node.isFitToHeight
 	set(value) {
 	  node.isFitToHeight = value
 	}
+
   fun fitToHeightProperty() = node.fitToHeightProperty()
 
   var prefViewportWidth
@@ -887,6 +921,25 @@ interface ShapeWrapper: NodeWrapper<Shape> {
 	}
 
   fun strokeProperty() = node.strokeProperty()
+
+
+  var strokeWidth
+	get() = node.strokeWidth
+	set(value) {
+	  node.strokeWidth = value
+	}
+
+  fun strokeWidthProperty() = node.strokeWidthProperty()
+
+  var strokeType
+	get() = node.strokeType
+	set(value) {
+	  node.strokeType = value
+	}
+
+  fun strokeTypeProperty() = node.strokeTypeProperty()
+
+
   var fill
 	get() = node.fill
 	set(value) {
@@ -1633,6 +1686,9 @@ open class RectangleWrapper(
   }
 
   constructor(x: Double, y: Double, width: Double, height: Double): this(Rectangle(x, y, width, height))
+
+//  val widthProperty = node.widthProperty()
+  val heightProperty = node.heightProperty()
 
   init {
 	op()
