@@ -115,7 +115,6 @@ import matt.hurricanefx.eye.lib.onChange
 import matt.hurricanefx.stage
 import matt.hurricanefx.tornadofx.nodes.add
 import matt.hurricanefx.tornadofx.nodes.getToggleGroup
-import matt.hurricanefx.wrapper.NodeWrapper.Companion.wrapped
 import matt.hurricanefx.wrapper.ParentWrapper.Companion.wrapped
 import java.time.LocalDate
 
@@ -1825,7 +1824,7 @@ open class TableViewWrapper<E>(
   companion object {
 	fun <E> TableView<E>.wrapped() = TableViewWrapper<E>(this)
   }
-  constructor(items: ObservableList<E>): this(items)
+  constructor(items: ObservableList<E>): this(TableView(items))
 
   init {
 	op()
