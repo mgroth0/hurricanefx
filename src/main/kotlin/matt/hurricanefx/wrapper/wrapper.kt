@@ -814,7 +814,7 @@ class TreeTableViewWrapper<T>(
   }
 
 
-  var sortOrder get() = node.sortOrder
+  val sortOrder get() = node.sortOrder
 
   override var root: TreeItem<T>
 	get() = node.root
@@ -2164,7 +2164,7 @@ open class TableViewWrapper<E>(
 	op()
   }
 
-  var sortOrder get() = node.sortOrder
+  val sortOrder get() = node.sortOrder
 
   var items
 	get() = node.items
