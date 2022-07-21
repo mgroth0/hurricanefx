@@ -114,6 +114,7 @@ import matt.hurricanefx.eye.lib.onChange
 import matt.hurricanefx.stage
 import matt.hurricanefx.tornadofx.nodes.add
 import matt.hurricanefx.tornadofx.nodes.getToggleGroup
+import matt.hurricanefx.wrapper.NodeWrapper.Companion.wrapped
 import matt.hurricanefx.wrapper.ParentWrapper.Companion.wrapped
 import java.time.LocalDate
 
@@ -198,11 +199,34 @@ interface NodeWrapper<N: Node>: EventTargetWrapper<N> {
 	set(value) {
 	  node.translateX = value
 	}
+
+  fun translateXProperty() = node.translateXProperty()
+
   var translateY
 	get() = node.translateY
 	set(value) {
 	  node.translateY = value
 	}
+
+  fun translateYProperty() = node.translateYProperty()
+
+
+  var layoutX
+	get() = node.layoutX
+	set(value) {
+	  node.layoutX = value
+	}
+
+  fun layoutXProperty() = node.layoutXProperty()
+  var layoutY
+	get() = node.layoutY
+	set(value) {
+	  node.layoutY = value
+	}
+
+  fun layoutYProperty() = node.layoutYProperty()
+
+  fun requestFocus() = node.requestFocus()
 
 }
 
@@ -217,6 +241,9 @@ interface ParentWrapper: NodeWrapper<Parent> {
   override val node: Parent
 
   val childrenUnmodifiable get() = node.childrenUnmodifiable
+
+  fun requestLayout() = node.requestLayout()
+
 
 }
 
@@ -346,6 +373,7 @@ abstract class BoxWrapper<N: Pane>(override val node: N): PaneWrapper(node) {
 
 open class VBoxWrapper(node: VBox = VBox(), op: VBoxWrapper.()->Unit = {}): BoxWrapper<VBox>(node) {
   constructor(vararg nodes: Node): this(VBox(*nodes))
+  constructor(vararg nodes: NodeWrapper<*>): this(VBox(*nodes.map { it.node }.toTypedArray()))
 
   init {
 	op()
@@ -644,7 +672,7 @@ class ButtonWrapper(
 	fun Button.wrapped() = ButtonWrapper(this)
   }
 
-  constructor(text: String, graphic: Node?): this(Button(text, graphic))
+  constructor(text: String? = null, graphic: Node? = null): this(Button(text, graphic))
 
   init {
 	op()
