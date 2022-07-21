@@ -339,6 +339,8 @@ abstract class BoxWrapper<N: Pane>(override val node: N): PaneWrapper(node) {
 
 
 open class VBoxWrapper(node: VBox = VBox(), op: VBoxWrapper.()->Unit = {}): BoxWrapper<VBox>(node) {
+  constructor(vararg nodes: Node): this(VBox(*nodes))
+
   init {
 	op()
   }
@@ -346,6 +348,7 @@ open class VBoxWrapper(node: VBox = VBox(), op: VBoxWrapper.()->Unit = {}): BoxW
 
 
 class HBoxWrapper(node: HBox = HBox(), op: HBoxWrapper.()->Unit = {}): BoxWrapper<HBox>(node) {
+  constructor(vararg nodes: Node): this(HBox(*nodes))
   init {
 	op()
   }
@@ -771,6 +774,13 @@ open class TextInputControlWrapper(override val node: TextInputControl): Control
 	}
 
   fun textProperty() = node.textProperty()
+
+  var promptText
+	get() = node.promptText
+	set(value) {
+	  node.promptText = value
+	}
+  fun promptTextProperty() = node.promptTextProperty()
 }
 
 
@@ -789,6 +799,8 @@ open class TextFieldWrapper(
   fun setOnAction(op: (ActionEvent)->Unit) {
 	node.setOnAction(op)
   }
+
+
 
 }
 
