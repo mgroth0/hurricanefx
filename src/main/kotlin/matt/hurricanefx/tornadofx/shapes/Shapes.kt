@@ -20,6 +20,7 @@ import matt.hurricanefx.wrapper.CubicCurveWrapper
 import matt.hurricanefx.wrapper.EllipseWrapper
 import matt.hurricanefx.wrapper.LineWrapper
 import matt.hurricanefx.wrapper.NodeWrapper
+import matt.hurricanefx.wrapper.ParentWrapper
 import matt.hurricanefx.wrapper.PathWrapper
 import matt.hurricanefx.wrapper.PolygonWrapper
 import matt.hurricanefx.wrapper.PolylineWrapper
@@ -140,13 +141,13 @@ fun PathWrapper.arcTo(
 
 fun PathWrapper.closepath() = apply { elements.add(ClosePath()) }
 
-fun NodeWrapper<out Parent>.polygon(vararg points: Number, op: PolygonWrapper.()->Unit = {}) =
+fun ParentWrapper.polygon(vararg points: Number, op: PolygonWrapper.()->Unit = {}) =
   PolygonWrapper(*points.map(Number::toDouble).toDoubleArray()).attachTo(this, op)
 
-fun NodeWrapper<out Parent>.polyline(vararg points: Number, op: PolylineWrapper.()->Unit = {}) =
+fun ParentWrapper.polyline(vararg points: Number, op: PolylineWrapper.()->Unit = {}) =
   PolylineWrapper(*points.map(Number::toDouble).toDoubleArray()).attachTo(this, op)
 
-fun NodeWrapper<out Parent>.quadcurve(
+fun ParentWrapper.quadcurve(
   startX: Number = 0.0,
   startY: Number = 0.0,
   controlX: Number = 0.0,

@@ -147,6 +147,7 @@ interface NodeWrapper<N: Node>: EventTargetWrapper<N> {
   val parent get() = node.parent?.wrapped()
 
   val scene: Scene? get() = node.scene
+  fun sceneProperty() = node.sceneProperty()
   val stage get() = node.stage
 
 
@@ -172,6 +173,11 @@ interface NodeWrapper<N: Node>: EventTargetWrapper<N> {
   fun focusedProperty() = node.focusedProperty()
 
   val styleClass get() = node.styleClass
+  var style
+	get() = node.style
+	set(value) {
+	  node.style = value
+	}
 
   var hGrow: Priority
 	get() = HBox.getHgrow(node)
@@ -349,6 +355,7 @@ open class VBoxWrapper(node: VBox = VBox(), op: VBoxWrapper.()->Unit = {}): BoxW
 
 class HBoxWrapper(node: HBox = HBox(), op: HBoxWrapper.()->Unit = {}): BoxWrapper<HBox>(node) {
   constructor(vararg nodes: Node): this(HBox(*nodes))
+
   init {
 	op()
   }
@@ -714,10 +721,10 @@ class DatePickerWrapper(
 }
 
 
-class TextFlowWrapper(
+open class TextFlowWrapper(
   override val node: TextFlow = TextFlow(),
   op: TextFlowWrapper.()->Unit = {}
-): RegionWrapper(node) {
+): PaneWrapper(node) {
   companion object {
 	fun TextFlow.wrapped() = TextFlowWrapper(this)
   }
@@ -736,11 +743,15 @@ interface ShapeWrapper: NodeWrapper<Shape> {
 	set(value) {
 	  node.stroke = value
 	}
+
+  fun strokeProperty() = node.strokeProperty()
   var fill
 	get() = node.fill
 	set(value) {
 	  node.fill = value
 	}
+
+  fun fillProperty() = node.fillProperty()
 }
 
 
@@ -751,6 +762,8 @@ class TextWrapper(
   companion object {
 	fun Text.wrapped() = TextWrapper(this)
   }
+
+  constructor(text: String): this(Text(text))
 
   init {
 	op()
@@ -763,6 +776,16 @@ class TextWrapper(
 	}
 
   fun textProperty() = node.textProperty()
+
+  var font
+	get() = node.font
+	set(value) {
+	  node.font = value
+	}
+
+  fun fontProperty() = node.fontProperty()
+
+
 }
 
 
@@ -780,7 +803,16 @@ open class TextInputControlWrapper(override val node: TextInputControl): Control
 	set(value) {
 	  node.promptText = value
 	}
+
   fun promptTextProperty() = node.promptTextProperty()
+
+  var font
+	get() = node.font
+	set(value) {
+	  node.font = value
+	}
+
+  fun fontProperty() = node.fontProperty()
 }
 
 
@@ -799,7 +831,6 @@ open class TextFieldWrapper(
   fun setOnAction(op: (ActionEvent)->Unit) {
 	node.setOnAction(op)
   }
-
 
 
 }
@@ -848,6 +879,22 @@ open class LabeledWrapper(override val node: Labeled): ControlWrapper(node) {
 	}
 
   fun graphicProperty() = node.graphicProperty()
+
+
+  var contentDisplay
+	get() = node.contentDisplay
+	set(value) {
+	  node.contentDisplay = value
+	}
+
+  var font
+	get() = node.font
+	set(value) {
+	  node.font = value
+	}
+
+  fun fontProperty() = node.fontProperty()
+
 }
 
 
@@ -1233,9 +1280,12 @@ class LabelWrapper(
 	fun Label.wrapped() = LabelWrapper(this)
   }
 
+  constructor(text: String? = null, graphic: Node? = null): this(Label(text, graphic))
+
   init {
 	op()
   }
+
 }
 
 
