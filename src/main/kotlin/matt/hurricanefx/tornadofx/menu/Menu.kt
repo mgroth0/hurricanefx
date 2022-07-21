@@ -20,6 +20,7 @@ import javafx.scene.control.SeparatorMenuItem
 import javafx.scene.control.ToggleGroup
 import javafx.scene.input.KeyCombination
 import matt.hurricanefx.tornadofx.control.action
+import matt.hurricanefx.wrapper.MenuBarWrapper
 import matt.hurricanefx.wrapper.MenuItemWrapper
 import matt.hurricanefx.wrapper.wrapped
 
@@ -28,7 +29,7 @@ operator fun <T: MenuItem> Menu.plusAssign(menuItem: T) {
   this.items += menuItem
 }
 
-operator fun MenuBar.plusAssign(menu: Menu) {
+operator fun MenuBarWrapper.plusAssign(menu: Menu) {
   this.menus += menu
 }
 
@@ -37,7 +38,7 @@ operator fun <T: MenuItem> ContextMenu.plusAssign(menuItem: T) {
 }
 
 //MenuBar extensions
-fun MenuBar.menu(name: String? = null, graphic: Node? = null, op: Menu.()->Unit = {}) = Menu(name, graphic).also {
+fun MenuBarWrapper.menu(name: String? = null, graphic: Node? = null, op: Menu.()->Unit = {}) = Menu(name, graphic).also {
   op(it)
   this += it
 }

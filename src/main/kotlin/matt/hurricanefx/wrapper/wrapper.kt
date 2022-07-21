@@ -1831,6 +1831,8 @@ open class MenuBarWrapper(
 	fun MenuBar.wrapped() = MenuBarWrapper(this)
   }
 
+  val menus get() = node.menus
+
   init {
 	op()
   }
