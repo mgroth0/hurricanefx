@@ -33,16 +33,16 @@ fun <T: Node> TabPaneWrapper.tab(index: Int, text: String, content: T, op: T.()-
 }
 
 /*matt was here*/
-fun <T: Node> TabPaneWrapper.staticTab(text: String, content: T, op: T.()->Unit = {}): Tab {
+fun <T: Node> TabPaneWrapper.staticTab(text: String, content: T, op: T.()->Unit = {}): TabWrapper {
   return staticTab(tabs.size, text, content, op)
 }
 
 /*matt was here*/
-fun <T: Node> TabPaneWrapper.staticTab(index: Int, text: String, content: T, op: T.()->Unit = {}): Tab {
-  val tab = Tab(text, content).apply {
+fun <T: Node> TabPaneWrapper.staticTab(index: Int, text: String, content: T, op: T.()->Unit = {}): TabWrapper {
+  val tab = TabWrapper(text, content).apply {
 	isClosable = false
   }
-  tabs.add(index, tab)
+  tabs.add(index, tab.node)
   op(content)
   return tab
 }

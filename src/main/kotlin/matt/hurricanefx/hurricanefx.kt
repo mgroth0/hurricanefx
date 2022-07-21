@@ -22,7 +22,6 @@ import javafx.scene.Parent
 import javafx.scene.chart.NumberAxis
 import javafx.scene.control.Button
 import javafx.scene.control.CheckBox
-import javafx.scene.control.ScrollPane
 import javafx.scene.control.Tab
 import javafx.scene.control.TreeTableView
 import javafx.scene.image.ImageView
@@ -53,8 +52,11 @@ import matt.hurricanefx.tornadofx.nodes.add
 import matt.hurricanefx.tsprogressbar.ThreadSafeNodeWrapper
 import matt.hurricanefx.wrapper.ButtonWrapper
 import matt.hurricanefx.wrapper.NodeWrapper
+import matt.hurricanefx.wrapper.NodeWrapper.Companion.wrapped
+import matt.hurricanefx.wrapper.ParentWrapper
 import matt.hurricanefx.wrapper.RegionWrapper
-import matt.hurricanefx.wrapper.wrapped
+import matt.hurricanefx.wrapper.ScrollPaneWrapper
+import matt.hurricanefx.wrapper.parent
 import matt.klib.commons.thisMachine
 import matt.klib.dmap.withStoringDefault
 import matt.klib.lang.NEVER
@@ -66,7 +68,7 @@ import java.util.WeakHashMap
 import javax.swing.JFileChooser
 import javax.swing.filechooser.FileSystemView
 
-fun Node.saveChoose(
+fun NodeWrapper<*>.saveChoose(
   initialDir: MFile, title: String
 ): MFile? {
   return FileChooser().apply {
@@ -84,14 +86,14 @@ inline fun <T: Any, V> inRunLater(crossinline op: T.(V)->Unit): T.(V)->Unit {
   }
 }
 
-val Node.boundsInScene: Bounds
+val NodeWrapper<*>.boundsInScene: Bounds
   get() = localToScene(boundsInLocal)
 
-val Node.boundsInScreen: Bounds
+val NodeWrapper<*>.boundsInScreen: Bounds
   get() = localToScreen(boundsInLocal)
 
-fun Node.minYRelativeTo(ancestor: Node): Double? { //  println("${this} minYRelative to ${ancestor}")
-  var p: Parent? = parent
+fun NodeWrapper<*>.minYRelativeTo(ancestor: NodeWrapper<*>): Double? { //  println("${this} minYRelative to ${ancestor}")
+  var p: ParentWrapper? = parent
   var y = boundsInParent.minY //  tab("y = ${y}")
   while (true) {
 	when (p) {
@@ -111,20 +113,20 @@ fun Node.minYRelativeTo(ancestor: Node): Double? { //  println("${this} minYRela
   }
 }
 
-fun Node.maxYRelativeTo(ancestor: Node): Double? {
+fun NodeWrapper<*>.maxYRelativeTo(ancestor: NodeWrapper<*>): Double? {
   return minYRelativeTo(ancestor)?.plus(boundsInParent.height)
 }
 
 interface Scrolls {
-  val scrollPane: ScrollPane
+  val scrollPane: ScrollPaneWrapper
 }
 
-fun Scrolls.scrollToMinYOf(node: Node) {
+fun Scrolls.scrollToMinYOf(node: NodeWrapper<*>) {
   scrollPane.scrollToMinYOf(node)
 }
 
-fun ScrollPane.scrollToMinYOf(node: Node): Boolean {/*scrolling values range from 0 to 1*/
-  node.minYRelativeTo(content)?.let {
+fun ScrollPaneWrapper.scrollToMinYOf(node: NodeWrapper<*>): Boolean {/*scrolling values range from 0 to 1*/
+  node.minYRelativeTo(content.wrapped())?.let {
 	vvalue =
 	  (it/content.boundsInLocal.height)*1.1 /*IDK why, but y is always coming up a bit short, but this fixes it*/
 	return true
@@ -132,21 +134,21 @@ fun ScrollPane.scrollToMinYOf(node: Node): Boolean {/*scrolling values range fro
   return false
 }
 
-val ScrollPane.vValueConverted
+val ScrollPaneWrapper.vValueConverted
   get() = vvalue*((content.boundsInParent.height - viewportBounds.height).takeIf { it > 0 } ?: 0.0)
 
-val ScrollPane.vValueConvertedMax get() = vValueConverted + viewportBounds.height
+val ScrollPaneWrapper.vValueConvertedMax get() = vValueConverted + viewportBounds.height
 
-fun Node.isFullyVisibleIn(sp: ScrollPane): Boolean {
+fun NodeWrapper<*>.isFullyVisibleIn(sp: ScrollPaneWrapper): Boolean {
   require(sp.vmin == 0.0)
   require(sp.vmax == 1.0)
-  if (this.parent.chain { it.parent }.none { it == sp }) return false
+  if (this.parent!!.chain { it.parent }.none { it == sp }) return false
   if (!this.isVisible) return false
   if (!this.isManaged) return false
-  val minY = this.minYRelativeTo(sp.content)
+  val minY = this.minYRelativeTo(sp.content.wrapped())
   val maxY =
 	this.maxYRelativeTo(
-	  sp.content
+	  sp.content.wrapped()
 	) // /* println("vValueConverted=${sp.vValueConverted},vValueConvertedMax=${sp.vValueConvertedMax},minY=${minY},maxY=${maxY}")*/ /*,boundsInParent.height=${boundsInParent.height},boundsInLocal.height=${boundsInLocal.height},boundsInScene.height=${boundsInScene.height}*/
   require(minY != null && maxY != null)
   return minY >= sp.vValueConverted && maxY <= sp.vValueConvertedMax

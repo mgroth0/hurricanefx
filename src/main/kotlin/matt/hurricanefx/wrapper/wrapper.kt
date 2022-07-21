@@ -9,6 +9,7 @@ import javafx.beans.property.ReadOnlyObjectProperty
 import javafx.collections.ObservableList
 import javafx.event.ActionEvent
 import javafx.event.EventTarget
+import javafx.geometry.Bounds
 import javafx.geometry.Insets
 import javafx.geometry.Orientation
 import javafx.geometry.Pos
@@ -145,7 +146,10 @@ interface NodeWrapper<N: Node>: EventTargetWrapper<N> {
   }
 
 
-  val parent get() = node.parent?.wrapped()
+  fun localToScene(bounds: Bounds) = node.localToScene(bounds)
+  fun localToScreen(bounds: Bounds) = node.localToScreen(bounds)
+  val boundsInLocal get() = node.boundsInLocal
+  val boundsInParent get() = node.boundsInParent
 
   val scene: Scene? get() = node.scene
   fun sceneProperty() = node.sceneProperty()
@@ -193,6 +197,18 @@ interface NodeWrapper<N: Node>: EventTargetWrapper<N> {
 
   fun setOnZoom(op: (ZoomEvent)->Unit) = node.setOnZoom(op)
 
+
+  var isVisible
+	get() = node.isVisible
+	set(value) {
+	  node.isVisible = value
+	}
+
+  var isManaged
+	get() = node.isManaged
+	set(value) {
+	  node.isManaged = value
+	}
 
   var translateX
 	get() = node.translateX
@@ -246,6 +262,8 @@ interface ParentWrapper: NodeWrapper<Parent> {
 
 
 }
+
+val NodeWrapper<*>.parent get() : ParentWrapper? = node.parent?.wrapped()
 
 
 open class RegionWrapper(override val node: Region = Region()): ParentWrapper {
@@ -489,6 +507,51 @@ open class ScrollPaneWrapper(override val node: ScrollPane = ScrollPane()): Cont
   companion object {
 	fun ScrollPane.wrapped() = ScrollPaneWrapper(this)
   }
+
+  constructor(content: Node?): this(ScrollPane(content))
+
+  var viewportBounds
+	get() = node.viewportBounds
+	set(value) {
+	  node.viewportBounds = value
+	}
+
+  var vmin
+	get() = node.vmin
+	set(value) {
+	  node.vmin = value
+	}
+
+  var vmax
+	get() = node.vmax
+	set(value) {
+	  node.vmax = value
+	}
+
+
+  var hmin
+	get() = node.hmin
+	set(value) {
+	  node.hmin = value
+	}
+  var hmax
+	get() = node.hmax
+	set(value) {
+	  node.hmax = value
+	}
+
+
+  var vbarPolicy
+	get() = node.vbarPolicy
+	set(value) {
+	  node.vbarPolicy = value
+	}
+
+  var hbarPolicy
+	get() = node.hbarPolicy
+	set(value) {
+	  node.hbarPolicy = value
+	}
 
   var isFitToWidth
 	get() = node.isFitToWidth
@@ -1810,5 +1873,11 @@ class PaginationWrapper(override val node: Pagination = Pagination()): ControlWr
 }
 
 class TabWrapper(override val node: Tab = Tab()): EventTargetWrapper<Tab> {
+  constructor(text: String?, content: Node?): this(Tab(text, content))
 
+  var isClosable
+	get() = node.isClosable
+	set(value) {
+	  node.isClosable = value
+	}
 }
