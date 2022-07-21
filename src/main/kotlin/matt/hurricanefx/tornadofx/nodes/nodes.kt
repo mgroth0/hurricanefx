@@ -318,7 +318,7 @@ fun Node.setOnDoubleClick(filter: Boolean = false, action: (MouseEvent)->Unit) {
 fun NodeWrapper<*>.setOnDoubleClick(filter: Boolean = false, action: (MouseEvent)->Unit) =
   node.setOnDoubleClick(filter, action)
 
-fun Node.onLeftClick(clickCount: Int = 1, filter: Boolean = false, action: (MouseEvent)->Unit) {
+fun NodeWrapper<*>.onLeftClick(clickCount: Int = 1, filter: Boolean = false, action: (MouseEvent)->Unit) {
   if (filter) {
 	addEventFilter(MouseEvent.MOUSE_CLICKED) {
 	  if (it.clickCount == clickCount && it.button === MouseButton.PRIMARY)
@@ -332,7 +332,7 @@ fun Node.onLeftClick(clickCount: Int = 1, filter: Boolean = false, action: (Mous
   }
 }
 
-fun Node.onRightClick(clickCount: Int = 1, filter: Boolean = false, action: (MouseEvent)->Unit) {
+fun NodeWrapper<*>.onRightClick(clickCount: Int = 1, filter: Boolean = false, action: (MouseEvent)->Unit) {
   if (filter) {
 	addEventFilter(MouseEvent.MOUSE_CLICKED) {
 	  if (it.clickCount == clickCount && it.button === MouseButton.SECONDARY)
@@ -897,8 +897,8 @@ fun ListView<*>.editableWhen(predicate: ObservableValue<Boolean>) = apply {
  * This extension function will make sure that the given [onHover] function will always be calles
  * when ever the hoverProperty of the given node changes.
  */
-fun <T: Node> T.onHover(onHover: (Boolean)->Unit) = apply {
-  hoverProperty().onChange { onHover(isHover) }
+fun NodeWrapper<*>.onHover(onHover: (Boolean)->Unit) = apply {
+  node.hoverProperty().onChange { onHover(node.isHover) }
 }
 
 // -- MenuItem helpers

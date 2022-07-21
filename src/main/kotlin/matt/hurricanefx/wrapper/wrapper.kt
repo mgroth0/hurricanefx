@@ -46,6 +46,7 @@ import javafx.scene.control.DatePicker
 import javafx.scene.control.Hyperlink
 import javafx.scene.control.Label
 import javafx.scene.control.Labeled
+import javafx.scene.control.ListCell
 import javafx.scene.control.ListView
 import javafx.scene.control.MenuBar
 import javafx.scene.control.MenuButton
@@ -72,10 +73,12 @@ import javafx.scene.control.TextInputControl
 import javafx.scene.control.TitledPane
 import javafx.scene.control.ToggleButton
 import javafx.scene.control.ToolBar
+import javafx.scene.control.TreeCell
 import javafx.scene.control.TreeItem
 import javafx.scene.control.TreeTableRow
 import javafx.scene.control.TreeTableView
 import javafx.scene.control.TreeView
+import javafx.scene.control.cell.ComboBoxListCell
 import javafx.scene.image.Image
 import javafx.scene.image.ImageView
 import javafx.scene.image.WritableImage
@@ -224,6 +227,7 @@ interface NodeWrapper<N: Node>: EventTargetWrapper<N> {
   fun localToScreen(bounds: Bounds) = node.localToScreen(bounds)
   val boundsInLocal get() = node.boundsInLocal
   val boundsInParent get() = node.boundsInParent
+
 
   val scene: Scene? get() = node.scene
   fun sceneProperty() = node.sceneProperty()
@@ -419,6 +423,7 @@ open class RegionWrapper(override val node: Region = Region()): ParentWrapper {
   companion object {
 	fun Region.wrapped() = RegionWrapper(this)
   }
+
 
   var border: Border?
 	get() = node.border
@@ -649,7 +654,12 @@ open class SplitPaneWrapper(override val node: SplitPane = SplitPane()): Control
 open class GridPaneWrapper(override val node: GridPane = GridPane()): PaneWrapper(node) {
   companion object {
 	fun GridPane.wrapped() = GridPaneWrapper(this)
+	fun setConstraints(child: Node, columnIndex: Int, rowIndex: Int) = GridPane.setConstraints(child,columnIndex, rowIndex)
   }
+
+  val columnConstraints = node.columnConstraints
+  val rowConstraints = node.rowConstraints
+
 }
 
 
@@ -670,6 +680,7 @@ open class FlowPaneWrapper(override val node: FlowPane = FlowPane()): PaneWrappe
 	set(value) {
 	  node.orientation = value
 	}
+
   fun orientationProperty() = node.orientationProperty()
 
   var alignment
@@ -677,6 +688,7 @@ open class FlowPaneWrapper(override val node: FlowPane = FlowPane()): PaneWrappe
 	set(value) {
 	  node.alignment = value
 	}
+
   fun alignmentProperty() = node.alignmentProperty()
 
   var rowValignment
@@ -684,6 +696,7 @@ open class FlowPaneWrapper(override val node: FlowPane = FlowPane()): PaneWrappe
 	set(value) {
 	  node.rowValignment = value
 	}
+
   fun rowValignmentProperty() = node.rowValignmentProperty()
 
   var columnHalignment
@@ -691,9 +704,8 @@ open class FlowPaneWrapper(override val node: FlowPane = FlowPane()): PaneWrappe
 	set(value) {
 	  node.columnHalignment = value
 	}
+
   fun columnHalignmentProperty() = node.columnHalignmentProperty()
-
-
 
 
   var hgap
@@ -844,6 +856,17 @@ class TreeViewWrapper<T>(override val node: TreeView<T> = TreeView(), op: TreeVi
   }
 
 
+  var cellFactory
+	get() = node.cellFactory
+	set(value) {
+	  node.cellFactory = value
+
+	}
+
+  fun cellFactoryProperty() = node.cellFactoryProperty()
+  @JvmName("setCellFactory1") fun setCellFactory(value: Callback<TreeView<T>, TreeCell<T>>) = node.setCellFactory(value)
+
+
   override var root: TreeItem<T>
 	get() = node.root
 	set(value) {
@@ -916,6 +939,8 @@ class ChoiceBoxWrapper<T>(
   override val node: ChoiceBox<T> = ChoiceBox(),
   op: ChoiceBoxWrapper<T>.()->Unit = {}
 ): ControlWrapper(node) {
+
+  constructor(items: ObservableList<T>): this(ChoiceBox(items))
 
 
   var converter
@@ -1034,6 +1059,17 @@ class ComboBoxWrapper<T>(
   }
 
 
+  var cellFactory
+	get() = node.cellFactory
+	set(value) {
+	  node.cellFactory = value
+
+	}
+
+  fun cellFactoryProperty() = node.cellFactoryProperty()
+  @JvmName("setCellFactory1") fun setCellFactory(value: Callback<ListView<T>, ListCell<T>>) = node.setCellFactory(value)
+
+
   var items
 	get() = node.items
 	set(value) {
@@ -1094,7 +1130,8 @@ open class TextFlowWrapper(
   companion object {
 	fun TextFlow.wrapped() = TextFlowWrapper(this)
   }
-  constructor(vararg nodes: Node): this(TextFlow(*nodes))
+
+  constructor(vararg nodes: Node?): this(TextFlow(*nodes))
 
   init {
 	op()
@@ -1141,7 +1178,7 @@ interface ShapeWrapper: NodeWrapper<Shape> {
 }
 
 
-class TextWrapper(
+open class TextWrapper(
   override val node: Text = Text(),
   op: TextWrapper.()->Unit = {}
 ): ShapeWrapper {
@@ -1212,6 +1249,7 @@ open class TextInputControlWrapper(override val node: TextInputControl): Control
   fun caretPositionProperty() = node.caretPositionProperty()
 
   fun end() = node.end()
+  fun home() = node.home()
 
 }
 
@@ -1275,8 +1313,6 @@ open class LabeledWrapper(override val node: Labeled): ControlWrapper(node) {
 	}
 
   fun textAlignmentProperty() = node.textAlignmentProperty()
-
-
 
 
   var isMnemonicParsing
@@ -1379,6 +1415,9 @@ class SpinnerWrapper<T>(
   init {
 	op()
   }
+
+  val value get() = node.value
+  fun valueProperty() = node.valueProperty()
 
   var valueFactory
 	get() = node.valueFactory
@@ -1841,7 +1880,6 @@ open class LabelWrapper(
   }
 
 
-
 }
 
 
@@ -2139,21 +2177,25 @@ open class LineWrapper(
 	set(value) {
 	  node.startX = value
 	}
+  fun startXProperty() = node.startXProperty()
   var startY
 	get() = node.startY
 	set(value) {
 	  node.startY = value
 	}
+  fun startYProperty() = node.startYProperty()
   var endX
 	get() = node.endX
 	set(value) {
 	  node.endX = value
 	}
+  fun endXProperty() = node.endXProperty()
   var endY
 	get() = node.endY
 	set(value) {
 	  node.endY = value
 	}
+  fun endYProperty() = node.endYProperty()
 
 
 }
@@ -2192,6 +2234,7 @@ open class PolygonWrapper(
 	vararg points: Double
   ): this(Polygon(*points))
 
+  val points get() = node.points
 
   init {
 	op()
@@ -2251,7 +2294,8 @@ open class CircleWrapper(
 	radius: Double,
   ): this(Circle(centerX, centerY, radius))
 
-  constructor(radius: Double,fill: Paint): this(Circle(radius,fill))
+  constructor(radius: Double, fill: Paint): this(Circle(radius, fill))
+  constructor(radius: Double): this(Circle(radius))
 
   init {
 	op()
@@ -2300,14 +2344,17 @@ open class ListViewWrapper<E>(
 	op()
   }
 
+  fun scrollTo(i: Int) = node.scrollTo(i)
 
   var cellFactory
 	get() = node.cellFactory
 	set(value) {
 	  node.cellFactory = value
+
 	}
 
   fun cellFactoryProperty() = node.cellFactoryProperty()
+  @JvmName("setCellFactory1") fun setCellFactory(value: Callback<ListView<E>, ListCell<E>>) = node.setCellFactory(value)
 
   var isEditable
 	get() = node.isEditable
@@ -2326,6 +2373,7 @@ open class ListViewWrapper<E>(
   fun itemsProperty() = node.itemsProperty()
 
   val selectionModel get() = node.selectionModel
+  val selectedItem get() = selectionModel.selectedItem
 
 
 }
@@ -2346,6 +2394,14 @@ open class TableViewWrapper<E>(
   }
 
   val sortOrder get() = node.sortOrder
+
+  var columnResizePolicy
+	get() = node.columnResizePolicy
+	set(value) {
+	  node.columnResizePolicy = value
+	}
+
+  fun columnResizePolicyProperty() = node.columnResizePolicyProperty()
 
   var items
 	get() = node.items
