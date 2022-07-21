@@ -1798,6 +1798,7 @@ open class ListViewWrapper<E>(
   companion object {
 	fun <E> ListView<E>.wrapped() = ListViewWrapper<E>(this)
   }
+  constructor(items: ObservableList<E>): this(ListView(items))
 
   init {
 	op()
@@ -1810,6 +1811,10 @@ open class ListViewWrapper<E>(
 	}
 
   fun itemsProperty() = node.itemsProperty()
+
+  val selectionModel get() = node.selectionModel
+
+
 }
 
 
@@ -1820,6 +1825,7 @@ open class TableViewWrapper<E>(
   companion object {
 	fun <E> TableView<E>.wrapped() = TableViewWrapper<E>(this)
   }
+  constructor(items: ObservableList<E>): this(items)
 
   init {
 	op()
@@ -1837,6 +1843,8 @@ open class TableViewWrapper<E>(
   fun comparatorProperty() = node.comparatorProperty()
 
   val columns get() = node.columns
+
+  val selectionModel get() = node.selectionModel
 }
 
 
