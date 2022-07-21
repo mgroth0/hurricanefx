@@ -76,6 +76,7 @@ import javafx.scene.input.KeyEvent
 import javafx.scene.input.MouseEvent
 import javafx.scene.input.ScrollEvent
 import javafx.scene.input.TransferMode.ANY
+import javafx.scene.input.ZoomEvent
 import javafx.scene.layout.AnchorPane
 import javafx.scene.layout.Background
 import javafx.scene.layout.Border
@@ -181,6 +182,20 @@ interface NodeWrapper<N: Node>: EventTargetWrapper<N> {
 	get() = VBox.getVgrow(node)
 	set(value) {
 	  VBox.setVgrow(node, value)
+	}
+
+  fun setOnZoom(op: (ZoomEvent)->Unit) = node.setOnZoom(op)
+
+
+  var translateX
+	get() = node.translateX
+	set(value) {
+	  node.translateX = value
+	}
+  var translateY
+	get() = node.translateY
+	set(value) {
+	  node.translateY = value
 	}
 
 }
@@ -367,6 +382,7 @@ open class BorderPaneWrapper(override val node: BorderPane = BorderPane()): Pane
   companion object {
 	fun BorderPane.wrapped() = BorderPaneWrapper(this)
   }
+
   var center
 	get() = node.center
 	set(value) {
@@ -399,6 +415,7 @@ open class SplitPaneWrapper(override val node: SplitPane = SplitPane()): Control
   companion object {
 	fun SplitPane.wrapped() = SplitPaneWrapper(this)
   }
+
   var orientation
 	get() = node.orientation
 	set(value) {
@@ -445,6 +462,35 @@ open class ScrollPaneWrapper(override val node: ScrollPane = ScrollPane()): Cont
 	set(value) {
 	  node.isFitToHeight = value
 	}
+
+  override var prefViewportWidth
+	get() = node.prefViewportWidth
+	set(value) {
+	  node.prefViewportWidth = value
+	}
+  override var prefViewportHeight
+	get() = node.prefViewportHeight
+	set(value) {
+	  node.prefViewportHeight = value
+	}
+
+  override var hValue
+	get() = node.hValue
+	set(value) {
+	  node.hValue = value
+	}
+  override var vValue
+	get() = node.vValue
+	set(value) {
+	  node.vValue = value
+	}
+
+  override var content
+	get() = node.content
+	set(value) {
+	  node.content = value
+	}
+
 }
 
 
@@ -1045,7 +1091,7 @@ class ButtonBarWrapper(
 	  node.buttonOrder = value
 	}
 
-//  fun setButtonData() = node.butt
+  //  fun setButtonData() = node.butt
 }
 
 
