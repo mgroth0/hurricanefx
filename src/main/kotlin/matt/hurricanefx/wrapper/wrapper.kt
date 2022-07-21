@@ -670,8 +670,30 @@ open class FlowPaneWrapper(override val node: FlowPane = FlowPane()): PaneWrappe
 	set(value) {
 	  node.orientation = value
 	}
-
   fun orientationProperty() = node.orientationProperty()
+
+  var alignment
+	get() = node.alignment
+	set(value) {
+	  node.alignment = value
+	}
+  fun alignmentProperty() = node.alignmentProperty()
+
+  var rowValignment
+	get() = node.rowValignment
+	set(value) {
+	  node.rowValignment = value
+	}
+  fun rowValignmentProperty() = node.rowValignmentProperty()
+
+  var columnHalignment
+	get() = node.columnHalignment
+	set(value) {
+	  node.columnHalignment = value
+	}
+  fun columnHalignmentProperty() = node.columnHalignmentProperty()
+
+
 
 
   var hgap
@@ -2338,6 +2360,7 @@ open class TableViewWrapper<E>(
   val columns get() = node.columns
 
   val selectionModel get() = node.selectionModel
+  val selectedItem get() = selectionModel.selectedItem
 
   fun sort() = node.sort()
 }
