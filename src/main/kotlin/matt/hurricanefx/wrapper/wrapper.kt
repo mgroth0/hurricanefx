@@ -463,29 +463,29 @@ open class ScrollPaneWrapper(override val node: ScrollPane = ScrollPane()): Cont
 	  node.isFitToHeight = value
 	}
 
-  override var prefViewportWidth
+  var prefViewportWidth
 	get() = node.prefViewportWidth
 	set(value) {
 	  node.prefViewportWidth = value
 	}
-  override var prefViewportHeight
+  var prefViewportHeight
 	get() = node.prefViewportHeight
 	set(value) {
 	  node.prefViewportHeight = value
 	}
 
-  override var hValue
-	get() = node.hValue
+  var hvalue
+	get() = node.hvalue
 	set(value) {
-	  node.hValue = value
+	  node.hvalue = value
 	}
-  override var vValue
-	get() = node.vValue
+  var vvalue
+	get() = node.vvalue
 	set(value) {
-	  node.vValue = value
+	  node.vvalue = value
 	}
 
-  override var content
+  var content
 	get() = node.content
 	set(value) {
 	  node.content = value
