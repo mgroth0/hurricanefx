@@ -242,6 +242,23 @@ interface NodeWrapper<N: Node>: EventTargetWrapper<N> {
 
   fun layoutYProperty() = node.layoutYProperty()
 
+
+
+  var scaleX
+	get() = node.scaleX
+	set(value) {
+	  node.scaleX = value
+	}
+
+  fun scaleXProperty() = node.scaleXProperty()
+  var scaleY
+	get() = node.scaleY
+	set(value) {
+	  node.scaleY = value
+	}
+
+  fun scaleYProperty() = node.scaleYProperty()
+
   fun requestFocus() = node.requestFocus()
 
 }
@@ -1852,6 +1869,16 @@ class CanvasWrapper(override val node: Canvas = Canvas()): NodeWrapper<Canvas> {
 	width: Double,
 	height: Double
   ): this(Canvas(width, height))
+
+
+
+  val width get() = widthProperty.value
+  val widthProperty: ReadOnlyDoubleProperty get() = node.widthProperty()
+  val height get() = heightProperty.value
+  val heightProperty: ReadOnlyDoubleProperty get() = node.heightProperty()
+
+
+  val graphicsContext2D get() = node.graphicsContext2D
 
 }
 
