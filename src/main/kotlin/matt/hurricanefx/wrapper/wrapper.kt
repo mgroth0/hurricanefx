@@ -154,6 +154,23 @@ interface NodeWrapper<N: Node>: EventTargetWrapper<N> {
 	}
   }
 
+  var isCache
+	get() = node.isCache
+	set(value) {
+	  node.isCache = value
+	}
+
+  fun cacheProperty() = node.cacheProperty()
+
+  var cacheHint
+	get() = node.cacheHint
+	set(value) {
+	  node.cacheHint = value
+	}
+
+  fun cacheHintProperty() = node.cacheHintProperty()
+
+
   fun snapshot(params: SnapshotParameters, image: WritableImage?) = node.snapshot(params, image)
 
   fun startDragAndDrop(vararg transferModes: TransferMode) = node.startDragAndDrop(*transferModes)
