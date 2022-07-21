@@ -149,6 +149,16 @@ interface NodeWrapper<N: Node>: EventTargetWrapper<N> {
 	}
   }
 
+
+  var blendMode
+	get() = node.blendMode
+	set(value) {
+	  node.blendMode = value
+	}
+  fun blendModeProperty() = node.blendModeProperty()
+
+  fun autosize() = node.autosize()
+
   fun <T: Event> addEventFilter(eventType: EventType<T>, handler: EventHandler<T>) = node.addEventFilter(eventType, handler)
   fun <T: Event> addEventHandler(eventType: EventType<T>, handler: EventHandler<T>) = node.addEventHandler(eventType, handler)
 
@@ -300,6 +310,7 @@ interface ParentWrapper: NodeWrapper<Parent> {
 }
 
 val NodeWrapper<*>.parent get() : ParentWrapper? = node.parent?.wrapped()
+fun NodeWrapper<*>.parentProperty() = node.parentProperty()
 
 
 open class RegionWrapper(override val node: Region = Region()): ParentWrapper {
@@ -546,6 +557,8 @@ open class ScrollPaneWrapper(override val node: ScrollPane = ScrollPane()): Cont
 
   constructor(content: Node?): this(ScrollPane(content))
 
+
+
   var viewportBounds
 	get() = node.viewportBounds
 	set(value) {
@@ -594,11 +607,13 @@ open class ScrollPaneWrapper(override val node: ScrollPane = ScrollPane()): Cont
 	set(value) {
 	  node.isFitToWidth = value
 	}
+  fun fitToWidthProperty() = node.fitToWidthProperty()
   var isFitToHeight
 	get() = node.isFitToHeight
 	set(value) {
 	  node.isFitToHeight = value
 	}
+  fun fitToHeightProperty() = node.fitToHeightProperty()
 
   var prefViewportWidth
 	get() = node.prefViewportWidth

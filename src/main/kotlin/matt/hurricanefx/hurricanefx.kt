@@ -29,7 +29,6 @@ import javafx.scene.input.ContextMenuEvent
 import javafx.scene.input.MouseEvent
 import javafx.scene.layout.ColumnConstraints
 import javafx.scene.layout.Pane
-import javafx.scene.layout.Region
 import javafx.scene.layout.RowConstraints
 import javafx.scene.paint.Color
 import javafx.scene.shape.Rectangle
@@ -428,14 +427,14 @@ fun minimalNumberAxis() = NumberAxis().apply {
   isTickLabelsVisible = false
 }
 
-fun <N: Node> Parent.addr(child: N, op: (N.()->Unit)? = null): N {
+fun <N: NodeWrapper<*>> Parent.addr(child: N, op: (N.()->Unit)? = null): N {
   op?.invoke(child)
-  wrapped().add(child.wrapped())
+  wrapped().add(child)
   return child
 }
-fun <N: Node> NodeWrapper<out Parent>.addr(child: N, op: (N.()->Unit)? = null): N {
+fun <N: NodeWrapper<*>> NodeWrapper<out Parent>.addr(child: N, op: (N.()->Unit)? = null): N {
   op?.invoke(child)
-  add(child.wrapped())
+  add(child)
   return child
 }
 
