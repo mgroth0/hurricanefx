@@ -78,7 +78,6 @@ import javafx.scene.control.TreeItem
 import javafx.scene.control.TreeTableRow
 import javafx.scene.control.TreeTableView
 import javafx.scene.control.TreeView
-import javafx.scene.control.cell.ComboBoxListCell
 import javafx.scene.image.Image
 import javafx.scene.image.ImageView
 import javafx.scene.image.WritableImage
