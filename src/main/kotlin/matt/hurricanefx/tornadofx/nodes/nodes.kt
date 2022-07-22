@@ -68,8 +68,10 @@ import matt.hurricanefx.tornadofx.fx.addChildIfPossible
 import matt.hurricanefx.tornadofx.fx.getChildList
 import matt.hurricanefx.wrapper.EventTargetWrapper
 import matt.hurricanefx.wrapper.MenuItemWrapper
+import matt.hurricanefx.wrapper.NodeW
 import matt.hurricanefx.wrapper.NodeWrapper
 import matt.hurricanefx.wrapper.PaneWrapper
+import matt.hurricanefx.wrapper.RegionWrapper
 import matt.hurricanefx.wrapper.TreeTableViewWrapper
 
 fun EventTarget.getToggleGroup(): ToggleGroup? = properties["tornadofx.togglegroup"] as ToggleGroup?
@@ -713,27 +715,27 @@ const val TRANSITIONING_PROPERTY = "tornadofx.transitioning"
  * Whether this node is currently being used in a [ViewTransition]. Used to determine whether it can be used in a
  * transition. (Nodes can only exist once in the scenegraph, so it cannot be in two transitions at once.)
  */
-internal var Node.isTransitioning: Boolean
+internal var NodeW.isTransitioning: Boolean
   get() {
-	val x = properties[TRANSITIONING_PROPERTY]
+	val x = node.properties[TRANSITIONING_PROPERTY]
 	return x != null && (x !is Boolean || x != false)
   }
   set(value) {
-	properties[TRANSITIONING_PROPERTY] = value
+	node.properties[TRANSITIONING_PROPERTY] = value
   }
 
 
-fun Node.hide() {
+fun NodeW.hide() {
   isVisible = false
   isManaged = false
 }
 
-fun Node.show() {
+fun NodeW.show() {
   isVisible = true
   isManaged = true
 }
 
-fun Node.whenVisible(runLater: Boolean = true, op: ()->Unit) {
+fun NodeW.whenVisible(runLater: Boolean = true, op: ()->Unit) {
   visibleProperty().onChange {
 	if (it) {
 	  if (runLater) Platform.runLater(op) else op()
@@ -742,30 +744,30 @@ fun Node.whenVisible(runLater: Boolean = true, op: ()->Unit) {
 }
 
 
-val Region.paddingTopProperty: DoubleProperty
-  get() = properties.getOrPut("paddingTopProperty") {
-	proxypropDouble(paddingProperty(), { value.top }) {
+val RegionWrapper.paddingTopProperty: DoubleProperty
+  get() = node.properties.getOrPut("paddingTopProperty") {
+	proxypropDouble(paddingProperty, { value.top }) {
 	  Insets(it, value.right, value.bottom, value.left)
 	}
   } as DoubleProperty
 
-val Region.paddingBottomProperty: DoubleProperty
-  get() = properties.getOrPut("paddingBottomProperty") {
-	proxypropDouble(paddingProperty(), { value.bottom }) {
+val RegionWrapper.paddingBottomProperty: DoubleProperty
+  get() = node.properties.getOrPut("paddingBottomProperty") {
+	proxypropDouble(paddingProperty, { value.bottom }) {
 	  Insets(value.top, value.right, it, value.left)
 	}
   } as DoubleProperty
 
-val Region.paddingLeftProperty: DoubleProperty
-  get() = properties.getOrPut("paddingLeftProperty") {
-	proxypropDouble(paddingProperty(), { value.left }) {
+val RegionWrapper.paddingLeftProperty: DoubleProperty
+  get() = node.properties.getOrPut("paddingLeftProperty") {
+	proxypropDouble(paddingProperty, { value.left }) {
 	  Insets(value.top, value.right, value.bottom, it)
 	}
   } as DoubleProperty
 
-val Region.paddingRightProperty: DoubleProperty
-  get() = properties.getOrPut("paddingRightProperty") {
-	proxypropDouble(paddingProperty(), { value.right }) {
+val RegionWrapper.paddingRightProperty: DoubleProperty
+  get() = node.properties.getOrPut("paddingRightProperty") {
+	proxypropDouble(paddingProperty, { value.right }) {
 	  Insets(value.top, it, value.bottom, value.left)
 	}
   } as DoubleProperty

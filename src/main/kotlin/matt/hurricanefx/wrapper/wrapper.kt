@@ -149,7 +149,7 @@ interface EventTargetWrapper<N: EventTarget> {
 
 }
 
-
+typealias NodeW = NodeWrapper<*>
 interface NodeWrapper<N: Node>: EventTargetWrapper<N> {
   companion object {
 
@@ -157,6 +157,30 @@ interface NodeWrapper<N: Node>: EventTargetWrapper<N> {
 	  override val node = this@wrapped
 	}
   }
+
+  var opacity
+	get() = node.opacity
+	set(value) {
+	  node.opacity = value
+	}
+
+  fun opacityProperty() = node.opacityProperty()
+  var rotate
+	get() = node.rotate
+	set(value) {
+	  node.rotate = value
+	}
+  val rotateProperty get() = node.rotateProperty()
+
+  var rotationAxis
+	get() = node.rotationAxis
+	set(value) {
+	  node.rotationAxis = value
+	}
+  val rotationAxisProperty get() = node.rotationAxisProperty()
+
+
+  val properties get() = node.properties
 
   var isCache
 	get() = node.isCache
@@ -175,7 +199,7 @@ interface NodeWrapper<N: Node>: EventTargetWrapper<N> {
   fun cacheHintProperty() = node.cacheHintProperty()
 
 
-  fun snapshot(params: SnapshotParameters, image: WritableImage?) = node.snapshot(params, image)
+  fun snapshot(params: SnapshotParameters?, image: WritableImage?) = node.snapshot(params, image)
 
   fun startDragAndDrop(vararg transferModes: TransferMode) = node.startDragAndDrop(*transferModes)
   fun startFullDrag() = node.startFullDrag()
@@ -2052,12 +2076,7 @@ open class RectangleWrapper(
 	}
   val heightProperty = node.heightProperty()
 
-  var rotate
-	get() = node.rotate
-	set(value) {
-	  node.rotate = value
-	}
-  val rotateProperty = node.rotateProperty()
+
 
   init {
 	op()
