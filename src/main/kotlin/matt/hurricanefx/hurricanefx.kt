@@ -5,6 +5,7 @@ package matt.hurricanefx
 
 //import javafx.embed.swing.SwingFXUtils
 
+import com.sun.javafx.application.PlatformImpl
 import com.sun.javafx.application.PlatformImpl.runLater
 import javafx.application.Application
 import javafx.beans.property.BooleanProperty
@@ -50,6 +51,7 @@ import matt.hurricanefx.tsprogressbar.ThreadSafeNodeWrapper
 import matt.hurricanefx.wrapper.ButtonWrapper
 import matt.hurricanefx.wrapper.CheckBoxWrapper
 import matt.hurricanefx.wrapper.ImageViewWrapper
+import matt.hurricanefx.wrapper.NodeW
 import matt.hurricanefx.wrapper.NodeWrapper
 import matt.hurricanefx.wrapper.NodeWrapper.Companion.wrapped
 import matt.hurricanefx.wrapper.ParentWrapper
@@ -486,3 +488,5 @@ fun ButtonWrapper.disable() {
 fun ButtonWrapper.enable() {
   node. isDisable = false
 }
+
+fun <N: NodeW> N.runLater(op: N.() -> Unit) = PlatformImpl.runLater { op() }
