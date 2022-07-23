@@ -172,8 +172,8 @@ interface StyleableWrapper {
   val styleClass get() = node.styleClass
 
 
-
-  var style get() = node.style
+  var style
+	get() = node.style
 	set(value) {
 	  setTheStyle(value)
 	}
@@ -248,7 +248,6 @@ open class StageWrapper(override val node: Stage): WindowWrapper<Stage> {
   constructor(stageStyle: StageStyle): this(Stage(stageStyle))
 
 
-
   fun showAndWait() = node.showAndWait()
 
   val owner get() = node.owner
@@ -311,9 +310,17 @@ open class StageWrapper(override val node: Stage): WindowWrapper<Stage> {
 
 }
 
+object WRAPPER_KEY
+
+val Scene.wrapper get() = properties[WRAPPER_KEY]
+
 open class SceneWrapper(override val node: Scene): EventTargetWrapper<Scene> {
   companion object {
 	fun Scene.wrapped() = SceneWrapper(this)
+  }
+
+  init {
+	node.properties[WRAPPER_KEY] = this
   }
 
   constructor(root: ParentWrapper): this(Scene(root.node))
