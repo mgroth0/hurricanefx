@@ -191,6 +191,10 @@ interface WindowWrapper<W: Window>: EventTargetWrapper<W> {
 	}
   }
 
+
+  fun setOnCloseRequest(value: EventHandler<WindowEvent>) = node.setOnCloseRequest(value)
+  fun setOnHidden(value: EventHandler<WindowEvent>) = node.setOnHidden(value)
+
   var x
 	get() = node.x
 	set(value) {
@@ -243,7 +247,7 @@ open class StageWrapper(override val node: Stage): WindowWrapper<Stage> {
 
   constructor(stageStyle: StageStyle): this(Stage(stageStyle))
 
-  fun setOnCloseRequest(value: EventHandler<WindowEvent>) = node.setOnCloseRequest(value)
+
 
   fun showAndWait() = node.showAndWait()
 
