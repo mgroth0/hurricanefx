@@ -76,11 +76,11 @@ import matt.hurricanefx.wrapper.TreeTableViewWrapper
 
 fun EventTarget.getToggleGroup(): ToggleGroup? = properties["tornadofx.togglegroup"] as ToggleGroup?
 
-fun Node.tooltip(text: String? = null, graphic: Node? = null, op: Tooltip.()->Unit = {}): Tooltip {
+fun NodeW.tooltip(text: String? = null, graphic: Node? = null, op: Tooltip.()->Unit = {}): Tooltip {
   val newToolTip = Tooltip(text)
   graphic?.apply { newToolTip.graphic = this }
   newToolTip.op()
-  if (this is Control) tooltip = newToolTip else Tooltip.install(this, newToolTip)
+  if (this is Control) tooltip = newToolTip else Tooltip.install(this.node, newToolTip)
   return newToolTip
 }
 

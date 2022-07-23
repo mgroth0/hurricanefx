@@ -127,6 +127,7 @@ import matt.hurricanefx.eye.lib.onChange
 import matt.hurricanefx.stage
 import matt.hurricanefx.tornadofx.nodes.add
 import matt.hurricanefx.tornadofx.nodes.getToggleGroup
+import matt.hurricanefx.tornadofx.nodes.tooltip
 import matt.hurricanefx.wrapper.ParentWrapper.Companion.wrapped
 import java.time.LocalDate
 
@@ -446,7 +447,6 @@ open class RegionWrapper(override val node: Region = Region()): ParentWrapper {
   companion object {
 	fun Region.wrapped() = RegionWrapper(this)
   }
-
 
   var border: Border?
 	get() = node.border
@@ -1197,7 +1197,7 @@ interface ShapeWrapper: NodeWrapper<Shape> {
 	  node.fill = value
 	}
 
-  fun fillProperty() = node.fillProperty()
+  fun fillProperty(): ObjectProperty<Paint> = node.fillProperty()
 }
 
 

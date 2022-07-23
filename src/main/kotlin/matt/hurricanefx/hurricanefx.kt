@@ -13,6 +13,7 @@ import javafx.beans.property.DoubleProperty
 import javafx.beans.property.SimpleDoubleProperty
 import javafx.beans.value.ChangeListener
 import javafx.beans.value.ObservableValue
+import javafx.collections.ObservableList
 import javafx.event.Event
 import javafx.event.EventHandler
 import javafx.event.EventType
@@ -42,9 +43,13 @@ import matt.hurricanefx.Corner.NE
 import matt.hurricanefx.Corner.NW
 import matt.hurricanefx.Corner.SE
 import matt.hurricanefx.Corner.SW
+import matt.hurricanefx.eye.collect.asObservable
+import matt.hurricanefx.eye.collect.invalidate
+import matt.hurricanefx.eye.collect.toObservable
 import matt.hurricanefx.eye.lang.BProp
 import matt.hurricanefx.eye.lang.DProp
 import matt.hurricanefx.eye.lib.ChangeListener
+import matt.hurricanefx.eye.lib.onChange
 import matt.hurricanefx.eye.lib.onChangeUntilAfterFirst
 import matt.hurricanefx.tornadofx.nodes.add
 import matt.hurricanefx.tsprogressbar.ThreadSafeNodeWrapper
@@ -61,6 +66,24 @@ import matt.hurricanefx.wrapper.parent
 import matt.klib.commons.thisMachine
 import matt.klib.dmap.withStoringDefault
 import matt.klib.lang.NEVER
+import matt.klib.olist.AddAt
+import matt.klib.olist.AddAtEnd
+import matt.klib.olist.Addition
+import matt.klib.olist.BasicObservableList
+import matt.klib.olist.Clear
+import matt.klib.olist.MultiAddAt
+import matt.klib.olist.MultiAddAtEnd
+import matt.klib.olist.MultiAddition
+import matt.klib.olist.MultiRemoval
+import matt.klib.olist.Removal
+import matt.klib.olist.RemoveAt
+import matt.klib.olist.RemoveElement
+import matt.klib.olist.RemoveElements
+import matt.klib.olist.RemoveFirst
+import matt.klib.olist.ReplaceAt
+import matt.klib.olist.ReplaceElement
+import matt.klib.olist.Replacement
+import matt.klib.olist.RetainAll
 import matt.klib.sys.GAMING_WINDOWS
 import matt.stream.recurse.chain
 import java.awt.image.BufferedImage
@@ -68,6 +91,7 @@ import java.lang.ref.WeakReference
 import java.util.WeakHashMap
 import javax.swing.JFileChooser
 import javax.swing.filechooser.FileSystemView
+import kotlin.reflect.jvm.internal.impl.metadata.jvm.deserialization.JvmMetadataVersion
 
 fun NodeWrapper<*>.saveChoose(
   initialDir: MFile, title: String
@@ -219,6 +243,7 @@ fun Node.visibleAndManagedProp(): BooleanProperty {
   managedProperty().bind(r)
   return r
 }
+
 fun NodeWrapper<*>.visibleAndManagedProp() = node.visibleAndManagedProp()
 
 var Node.visibleAndManaged: Boolean
@@ -283,7 +308,7 @@ fun intColorToFXColor(i: Int): Color {
 
 @Deprecated("looks bad, slow, and buggy. Use my own icons.")
 val fileIcons = LRUCache<MFile, BufferedImage>(500).withStoringDefault { f ->
-  
+
   if (thisMachine is GAMING_WINDOWS) jswingIconToImage(
 	FileSystemView.getFileSystemView().getSystemIcon(f)
   )!!.toBufferedImage() else {
@@ -433,6 +458,7 @@ fun <N: NodeWrapper<*>> Parent.addr(child: N, op: (N.()->Unit)? = null): N {
   wrapped().add(child)
   return child
 }
+
 fun <N: NodeWrapper<*>> NodeWrapper<out Parent>.addr(child: N, op: (N.()->Unit)? = null): N {
   op?.invoke(child)
   add(child)
@@ -482,11 +508,71 @@ class TreeTableTreeView<T>(val table: Boolean): TreeTableView<T>() {
 }
 
 fun ButtonWrapper.disable() {
- node. isDisable = true
+  node.isDisable = true
 }
 
 fun ButtonWrapper.enable() {
-  node. isDisable = false
+  node.isDisable = false
 }
 
-fun <N: NodeW> N.runLater(op: N.() -> Unit) = PlatformImpl.runLater { op() }
+fun <N: NodeW> N.runLater(op: N.()->Unit) = PlatformImpl.runLater { op() }
+
+//
+//fun <E> BasicObservableList<E>.observableView() {
+//  val asObs = asObservable()
+//  val toObs = toObservable()
+//
+//  onChange {
+//
+//	asObs.invalidate()
+//
+//	when (it) {
+//	  is AddAtEnd       -> {
+//		toObs.add(it.added)
+//	  }
+//
+//	  is AddAt          -> {
+//		toObs.add(it.added)
+//	  }
+//
+//	  is Clear          -> {
+//		toObs.clear()
+//	  }
+//
+//	  is MultiAddAt     -> {
+//		toObs.addAll(it.index, it.added)
+//	  }
+//
+//	  is MultiAddAtEnd  -> {
+//		toObs.addAll(it.added)
+//	  }
+//
+//	  is RemoveElements -> {
+//		toObs.removeAll(it.removed)
+//	  }
+//
+//	  is RetainAll      -> {
+//		toObs.retainAll(it.retained)
+//	  }
+//
+//	  is RemoveAt       -> {
+//		toObs.removeAt(it.index)
+//	  }
+//
+//	  is RemoveElement  -> {
+//		toObs.remove(it.removed)
+//	  }
+//
+//	  is RemoveFirst    -> {
+//		toObs.removeAt(0)
+//	  }
+//
+//	  is ReplaceAt      -> {
+//		toObs.set(it.index, it.added)
+//	  }
+//
+//	  is ReplaceElement -> NEVER
+//	}
+//  }
+//
+//}
