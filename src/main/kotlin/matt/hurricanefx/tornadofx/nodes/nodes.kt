@@ -66,12 +66,18 @@ import matt.hurricanefx.eye.prop.cleanBind
 import matt.hurricanefx.tornadofx.control.properties
 import matt.hurricanefx.tornadofx.fx.addChildIfPossible
 import matt.hurricanefx.tornadofx.fx.getChildList
+import matt.hurricanefx.wrapper.ComboBoxBaseWrapper
+import matt.hurricanefx.wrapper.ComboBoxWrapper
 import matt.hurricanefx.wrapper.EventTargetWrapper
+import matt.hurricanefx.wrapper.ListViewWrapper
 import matt.hurricanefx.wrapper.MenuItemWrapper
 import matt.hurricanefx.wrapper.NodeW
 import matt.hurricanefx.wrapper.NodeWrapper
 import matt.hurricanefx.wrapper.PaneWrapper
 import matt.hurricanefx.wrapper.RegionWrapper
+import matt.hurricanefx.wrapper.SceneWrapper
+import matt.hurricanefx.wrapper.TableViewWrapper
+import matt.hurricanefx.wrapper.TextInputControlWrapper
 import matt.hurricanefx.wrapper.TreeTableViewWrapper
 
 fun EventTarget.getToggleGroup(): ToggleGroup? = properties["tornadofx.togglegroup"] as ToggleGroup?
@@ -84,7 +90,7 @@ fun NodeW.tooltip(text: String? = null, graphic: Node? = null, op: Tooltip.()->U
   return newToolTip
 }
 
-fun Scene.reloadStylesheets() {
+fun SceneWrapper.reloadStylesheets() {
   val styles = stylesheets.toMutableList()
   stylesheets.clear()
   styles.forEachIndexed { i, s ->
@@ -124,11 +130,7 @@ operator fun EventTargetWrapper<*>.plusAssign(node: NodeWrapper<*>) {
   addChildIfPossible(node)
 }
 
-fun Pane.clear() {
-  children.clear()
-}
-
-fun PaneWrapper.clear() = node.clear()
+fun PaneWrapper.clear() = children.clear()
 
 fun <T: EventTarget> T.replaceChildren(op: T.()->Unit) {
   getChildList()?.clear()
@@ -138,29 +140,31 @@ fun <T: EventTarget> T.replaceChildren(op: T.()->Unit) {
 fun EventTargetWrapper<*>.add(nw: NodeWrapper<*>) = plusAssign(nw)
 
 
-var Region.useMaxWidth: Boolean
+var RegionWrapper.useMaxWidth: Boolean
   get() = maxWidth == Double.MAX_VALUE
   set(value) = if (value) maxWidth = Double.MAX_VALUE else Unit
 
-var Region.useMaxHeight: Boolean
+var RegionWrapper.useMaxHeight: Boolean
   get() = maxHeight == Double.MAX_VALUE
   set(value) = if (value) maxHeight = Double.MAX_VALUE else Unit
 
-var Region.useMaxSize: Boolean
+var RegionWrapper.useMaxSize: Boolean
   get() = maxWidth == Double.MAX_VALUE && maxHeight == Double.MAX_VALUE
   set(value) = if (value) {
 	useMaxWidth = true; useMaxHeight = true
   } else Unit
 
-var Region.usePrefWidth: Boolean
+var RegionWrapper.usePrefWidth: Boolean
   get() = width == prefWidth
-  set(value) = if (value) setMinWidth(Region.USE_PREF_SIZE) else Unit
+  set(value) = if (value) run {
+	minWidth = (Region.USE_PREF_SIZE)
+  } else Unit
 
-var Region.usePrefHeight: Boolean
+var RegionWrapper.usePrefHeight: Boolean
   get() = height == prefHeight
-  set(value) = if (value) setMinHeight(Region.USE_PREF_SIZE) else Unit
+  set(value) = if (value) run {minHeight = (Region.USE_PREF_SIZE) } else Unit
 
-var Region.usePrefSize: Boolean
+var RegionWrapper.usePrefSize: Boolean
   get() = maxWidth == Double.MAX_VALUE && maxHeight == Double.MAX_VALUE
   set(value) = if (value) setMinSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE) else Unit
 
@@ -168,7 +172,7 @@ fun point(x: Number, y: Number) = Point2D(x.toDouble(), y.toDouble())
 fun point(x: Number, y: Number, z: Number) = Point3D(x.toDouble(), y.toDouble(), z.toDouble())
 infix fun Number.xy(y: Number) = Point2D(toDouble(), y.toDouble())
 
-fun <T> TableView<T>.selectWhere(scrollTo: Boolean = true, condition: (T)->Boolean) {
+fun <T> TableViewWrapper<T>.selectWhere(scrollTo: Boolean = true, condition: (T)->Boolean) {
   items.asSequence().filter(condition).forEach {
 	selectionModel.select(it)
 	if (scrollTo) scrollTo(it)
@@ -176,14 +180,14 @@ fun <T> TableView<T>.selectWhere(scrollTo: Boolean = true, condition: (T)->Boole
 }
 
 
-fun <T> ListView<T>.selectWhere(scrollTo: Boolean = true, condition: (T)->Boolean) {
+fun <T> ListViewWrapper<T>.selectWhere(scrollTo: Boolean = true, condition: (T)->Boolean) {
   items.asSequence().filter(condition).forEach {
 	selectionModel.select(it)
 	if (scrollTo) scrollTo(it)
   }
 }
 
-fun <T> TableView<T>.moveToTopWhere(
+fun <T> TableViewWrapper<T>.moveToTopWhere(
   backingList: ObservableList<T> = items,
   select: Boolean = true,
   predicate: (T)->Boolean
@@ -196,7 +200,7 @@ fun <T> TableView<T>.moveToTopWhere(
   }
 }
 
-fun <T> TableView<T>.moveToBottomWhere(
+fun <T> TableViewWrapper<T>.moveToBottomWhere(
   backingList: ObservableList<T> = items,
   select: Boolean = true,
   predicate: (T)->Boolean
@@ -211,24 +215,18 @@ fun <T> TableView<T>.moveToBottomWhere(
   }
 }
 
-val <T> TableView<T>.selectedItem: T?
-  get() = this.selectionModel.selectedItem
+fun <T> TableViewWrapper<T>.selectFirst() = selectionModel.selectFirst()
 
-val <T> TreeTableView<T>.selectedItem: T?
-  get() = this.selectionModel.selectedItem?.value
+fun <T> TreeTableViewWrapper<T>.selectFirst() = selectionModel.selectFirst()
 
-fun <T> TableView<T>.selectFirst() = selectionModel.selectFirst()
-
-fun <T> TreeTableView<T>.selectFirst() = selectionModel.selectFirst()
-
-val <T> ComboBox<T>.selectedItem: T?
+val <T> ComboBoxWrapper<T>.selectedItem: T?
   get() = selectionModel.selectedItem
 
-fun <S> TableView<S>.onSelectionChange(func: (S?)->Unit) =
+fun <S> TableViewWrapper<S>.onSelectionChange(func: (S?)->Unit) =
   selectionModel.selectedItemProperty().addListener({ _, _, newValue -> func(newValue) })
 
 
-fun <T> TreeTableView<T>.bindSelected(property: Property<T>) {
+fun <T> TreeTableViewWrapper<T>.bindSelected(property: Property<T>) {
   selectionModel.selectedItemProperty().onChange {
 	property.value = it?.value
   }
@@ -286,7 +284,7 @@ enum class EditEventType(val editing: Boolean) {
  * *
  * @param action The action to execute on select
  */
-fun <T> TableView<T>.onUserSelect(clickCount: Int = 2, action: (T)->Unit) {
+fun <T> TableViewWrapper<T>.onUserSelect(clickCount: Int = 2, action: (T)->Unit) {
   val isSelected = { event: InputEvent ->
 	event.target.isInsideRow() && !selectionModel.isEmpty
   }
@@ -356,26 +354,26 @@ fun NodeWrapper<*>.onRightClick(clickCount: Int = 1, filter: Boolean = false, ac
  * *
  * @param action The action to execute on select
  */
-fun <T> TreeTableView<T>.onUserSelect(clickCount: Int = 2, action: (T)->Unit) {
+fun <T> TreeTableViewWrapper<T>.onUserSelect(clickCount: Int = 2, action: (T)->Unit) {
   val isSelected = { event: InputEvent ->
 	event.target.isInsideRow() && !selectionModel.isEmpty
   }
 
   addEventFilter(MouseEvent.MOUSE_CLICKED) { event ->
 	if (event.clickCount == clickCount && isSelected(event))
-	  action(selectedItem!!)
+	  action(selectedItem!!.value)
   }
 
   addEventFilter(KeyEvent.KEY_PRESSED) { event ->
 	if (event.code == KeyCode.ENTER && !event.isMetaDown && isSelected(event))
-	  action(selectedItem!!)
+	  action(selectedItem!!.value)
   }
 }
 
 val <S, T> TableCell<S, T>.rowItem: S get() = tableView.items[index]
 val <S, T> TreeTableCell<S, T>.rowItem: S get() = treeTableView.getTreeItem(index).value
 
-fun <T> TableView<T>.onUserDelete(action: (T)->Unit) {
+fun <T> TableViewWrapper<T>.onUserDelete(action: (T)->Unit) {
   addEventFilter(KeyEvent.KEY_PRESSED, { event ->
 	if (event.code == KeyCode.BACK_SPACE && selectedItem != null)
 	  action(selectedItem!!)
@@ -425,8 +423,8 @@ class BorderPaneConstraint(
 /**
  * Access GridPane constraints to manipulate and apply on this control
  */
-inline fun <T: Node> T.gridpaneConstraints(op: (GridPaneConstraint.()->Unit)): T {
-  val gpc = GridPaneConstraint(this)
+inline fun <T: NodeW> T.gridpaneConstraints(op: (GridPaneConstraint.()->Unit)): T {
+  val gpc = GridPaneConstraint(this.node)
   gpc.op()
   return gpc.applyToNode(this)
 }
@@ -470,18 +468,18 @@ class GridPaneConstraint(
 	fillWidth = fill
   }
 
-  fun <T: Node> applyToNode(node: T): T {
-	columnIndex?.let { GridPane.setColumnIndex(node, it) }
-	rowIndex?.let { GridPane.setRowIndex(node, it) }
-	hGrow?.let { GridPane.setHgrow(node, it) }
-	vGrow?.let { GridPane.setVgrow(node, it) }
-	margin.let { GridPane.setMargin(node, it) }
-	fillHeight?.let { GridPane.setFillHeight(node, it) }
-	fillWidth?.let { GridPane.setFillWidth(node, it) }
-	hAlignment?.let { GridPane.setHalignment(node, it) }
-	vAlignment?.let { GridPane.setValignment(node, it) }
-	columnSpan?.let { GridPane.setColumnSpan(node, it) }
-	rowSpan?.let { GridPane.setRowSpan(node, it) }
+  fun <T: NodeW> applyToNode(node: T): T {
+	columnIndex?.let { GridPane.setColumnIndex(node.node, it) }
+	rowIndex?.let { GridPane.setRowIndex(node.node, it) }
+	hGrow?.let { GridPane.setHgrow(node.node, it) }
+	vGrow?.let { GridPane.setVgrow(node.node, it) }
+	margin.let { GridPane.setMargin(node.node, it) }
+	fillHeight?.let { GridPane.setFillHeight(node.node, it) }
+	fillWidth?.let { GridPane.setFillWidth(node.node, it) }
+	hAlignment?.let { GridPane.setHalignment(node.node, it) }
+	vAlignment?.let { GridPane.setValignment(node.node, it) }
+	columnSpan?.let { GridPane.setColumnSpan(node.node, it) }
+	rowSpan?.let { GridPane.setRowSpan(node.node, it) }
 	return node
   }
 }
@@ -565,7 +563,7 @@ class AnchorPaneConstraint(
   }
 }
 
-inline fun <T: Node> T.splitpaneConstraints(op: SplitPaneConstraint.()->Unit): T {
+inline fun <T: NodeW> T.splitpaneConstraints(op: SplitPaneConstraint.()->Unit): T {
   val c = SplitPaneConstraint()
   c.op()
   return c.applyToNode(this)
@@ -574,8 +572,8 @@ inline fun <T: Node> T.splitpaneConstraints(op: SplitPaneConstraint.()->Unit): T
 class SplitPaneConstraint(
   var isResizableWithParent: Boolean? = null
 ) {
-  fun <T: Node> applyToNode(node: T): T {
-	isResizableWithParent?.let { SplitPane.setResizableWithParent(node, it) }
+  fun <T: NodeW> applyToNode(node: T): T {
+	isResizableWithParent?.let { SplitPane.setResizableWithParent(node.node, it) }
 	return node
   }
 }
@@ -617,7 +615,7 @@ abstract class MarginableConstraints {
   }
 }
 
-fun <T> TableView<T>.regainFocusAfterEdit() = apply {
+fun <T> TableViewWrapper<T>.regainFocusAfterEdit() = apply {
   editingCellProperty().onChange {
 	if (it == null)
 	  requestFocus()
@@ -875,23 +873,23 @@ fun <T: NodeWrapper<*>> T.removeWhen(predicate: ObservableValue<Boolean>) = appl
   managedProperty().cleanBind(remove)
 }
 
-fun TextInputControl.editableWhen(predicate: ObservableValue<Boolean>) = apply {
+fun TextInputControlWrapper.editableWhen(predicate: ObservableValue<Boolean>) = apply {
   editableProperty().bind(predicate)
 }
 
-fun ComboBoxBase<*>.editableWhen(predicate: ObservableValue<Boolean>) = apply {
+fun ComboBoxBaseWrapper<*>.editableWhen(predicate: ObservableValue<Boolean>) = apply {
   editableProperty().bind(predicate)
 }
 
-fun TableView<*>.editableWhen(predicate: ObservableValue<Boolean>) = apply {
+fun TableViewWrapper<*>.editableWhen(predicate: ObservableValue<Boolean>) = apply {
   editableProperty().bind(predicate)
 }
 
-fun TreeTableView<*>.editableWhen(predicate: ObservableValue<Boolean>) = apply {
+fun TreeTableViewWrapper<*>.editableWhen(predicate: ObservableValue<Boolean>) = apply {
   editableProperty().bind(predicate)
 }
 
-fun ListView<*>.editableWhen(predicate: ObservableValue<Boolean>) = apply {
+fun ListViewWrapper<*>.editableWhen(predicate: ObservableValue<Boolean>) = apply {
   editableProperty().bind(predicate)
 }
 

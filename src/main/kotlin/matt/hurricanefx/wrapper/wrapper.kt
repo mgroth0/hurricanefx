@@ -7,6 +7,10 @@ import javafx.beans.property.ObjectProperty
 import javafx.beans.property.ReadOnlyDoubleProperty
 import javafx.beans.property.ReadOnlyObjectProperty
 import javafx.collections.ObservableList
+import javafx.collections.ObservableSet
+import javafx.css.CssMetaData
+import javafx.css.PseudoClass
+import javafx.css.Styleable
 import javafx.event.ActionEvent
 import javafx.event.Event
 import javafx.event.EventHandler
@@ -155,12 +159,33 @@ interface EventTargetWrapper<N: EventTarget> {
 }
 
 
+interface StyleableWrapper {
+  val node: Styleable
+  fun getTypeSelector() = node.typeSelector
+  fun getId() = node.id
+
+  fun getCssMetaData() = node.cssMetaData
+  fun getStyleableParent() = node.styleableParent
+  fun getPseudoClassStates() = node.pseudoClassStates
+
+  fun getStyleClass() = node.styleClass
+  fun getStyle() = node.style
+
+}
+
+
 interface WindowWrapper<W: Window>: EventTargetWrapper<W> {
+  companion object {
+	fun <W: Window> W.wrapped() = object: WindowWrapper<W> {
+	  override val node = this@wrapped
+	}
+  }
   var x
 	get() = node.x
 	set(value) {
 	  node.x = value
 	}
+
   fun xProperty() = node.xProperty()
 
   var y
@@ -168,6 +193,7 @@ interface WindowWrapper<W: Window>: EventTargetWrapper<W> {
 	set(value) {
 	  node.y = value
 	}
+
   fun yProperty() = node.yProperty()
 
 
@@ -176,6 +202,7 @@ interface WindowWrapper<W: Window>: EventTargetWrapper<W> {
 	set(value) {
 	  node.height = value
 	}
+
   fun heightProperty() = node.heightProperty()
 
   var width
@@ -183,6 +210,7 @@ interface WindowWrapper<W: Window>: EventTargetWrapper<W> {
 	set(value) {
 	  node.width = value
 	}
+
   fun widthProperty() = node.widthProperty()
 
   fun setOnShowing(value: EventHandler<WindowEvent>) = node.setOnShowing(value)
@@ -193,14 +221,16 @@ interface WindowWrapper<W: Window>: EventTargetWrapper<W> {
   fun hide() = node.hide()
 
 
-
-
   val scene get() = node.scene
   fun sceneProperty() = node.sceneProperty()
 }
 
 open class StageWrapper(override val node: Stage): WindowWrapper<Stage> {
+  companion object {
+	fun Stage.wrapped() = StageWrapper(this)
+  }
   constructor(stageStyle: StageStyle): this(Stage(stageStyle))
+
   fun iconifiedProperty() = node.iconifiedProperty()
   fun show() = node.show()
   fun close() = node.close()
@@ -211,6 +241,7 @@ open class StageWrapper(override val node: Stage): WindowWrapper<Stage> {
 	set(value) {
 	  node.isMaximized = value
 	}
+
   fun maximizedProperty() = node.maximizedProperty()
 
   override var scene
@@ -219,22 +250,69 @@ open class StageWrapper(override val node: Stage): WindowWrapper<Stage> {
 	  node.scene = value
 	}
 
+
+
+  fun <T: Event> addEventFilter(eventType: EventType<T>, handler: EventHandler<T>) =
+	node.addEventFilter(eventType, handler)
+
+  fun <T: Event> addEventHandler(eventType: EventType<T>, handler: EventHandler<T>) =
+	node.addEventHandler(eventType, handler)
+
+  var isAlwaysOnTop
+	get() = node.isAlwaysOnTop
+	set(value) {
+	  node.isAlwaysOnTop = value
+	}
+
+  fun alwaysOnTopProperty() = node.alwaysOnTopProperty()
+
 }
 
 open class SceneWrapper(override val node: Scene): EventTargetWrapper<Scene> {
+  companion object {
+	fun Scene.wrapped() = SceneWrapper(this)
+  }
   constructor(root: ParentWrapper): this(Scene(root.node))
+
+  val stylesheets get() = node.stylesheets
+
+
+
+  var fill
+	get() = node.fill
+	set(value) {
+	  node.fill = value
+	}
+
+  fun fillProperty() = node.fillProperty()
+
+
+  fun <T: Event> addEventFilter(eventType: EventType<T>, handler: EventHandler<T>) =
+	node.addEventFilter(eventType, handler)
+
+  fun <T: Event> addEventHandler(eventType: EventType<T>, handler: EventHandler<T>) =
+	node.addEventHandler(eventType, handler)
+
+
+  val window get() = node.window
 }
 
 
 typealias NodeW = NodeWrapper<*>
 
-interface NodeWrapper<N: Node>: EventTargetWrapper<N> {
+interface NodeWrapper<N: Node>: EventTargetWrapper<N>, StyleableWrapper {
   companion object {
 
 	fun <N: Node> N.wrapped(): NodeWrapper<N> = object: NodeWrapper<N> {
 	  override val node = this@wrapped
+
 	}
   }
+
+  fun setStyle(value: String) {
+	node.style = value
+  }
+
 
   var opacity
 	get() = node.opacity
@@ -412,12 +490,6 @@ interface NodeWrapper<N: Node>: EventTargetWrapper<N> {
   val isFocused get() = node.isFocused
   fun focusedProperty() = node.focusedProperty()
 
-  val styleClass get() = node.styleClass
-  var style
-	get() = node.style
-	set(value) {
-	  node.style = value
-	}
 
   var hGrow: Priority
 	get() = HBox.getHgrow(node)
@@ -525,6 +597,9 @@ open class RegionWrapper(override val node: Region = Region()): ParentWrapper {
 	fun Region.wrapped() = RegionWrapper(this)
   }
 
+
+  fun setMinSize(minWidth: Double, minHeight: Double) = node.setMinSize(minWidth, minHeight)
+
   var border: Border?
 	get() = node.border
 	set(value) {
@@ -561,6 +636,8 @@ open class RegionWrapper(override val node: Region = Region()): ParentWrapper {
 	set(value) {
 	  node.minWidth = value
 	}
+
+
   val maxWidthProperty: DoubleProperty get() = node.maxWidthProperty()
   var maxWidth: Double
 	get() = node.maxWidth
@@ -957,6 +1034,11 @@ class TreeViewWrapper<T>(override val node: TreeView<T> = TreeView(), op: TreeVi
   }
 
 
+  fun editableProperty() = node.editableProperty()
+
+
+
+
   var cellFactory
 	get() = node.cellFactory
 	set(value) {
@@ -999,6 +1081,9 @@ class TreeTableViewWrapper<T>(
   init {
 	op()
   }
+
+
+  fun editableProperty() = node.editableProperty()
 
 
   val sortOrder get() = node.sortOrder
@@ -1124,6 +1209,8 @@ open class ButtonWrapper(
 
 
 open class ComboBoxBaseWrapper<T>(override val node: ComboBoxBase<T>): ControlWrapper(node) {
+
+  fun editableProperty() = node.editableProperty()
 
   var value
 	get() = node.value
@@ -1321,6 +1408,11 @@ open class TextWrapper(
 
 
 open class TextInputControlWrapper(override val node: TextInputControl): ControlWrapper(node) {
+
+
+  fun editableProperty() = node.editableProperty()
+
+
   var text
 	get() = node.text
 	set(value) {
@@ -2444,6 +2536,7 @@ open class ListViewWrapper<E>(
   }
 
   fun scrollTo(i: Int) = node.scrollTo(i)
+  fun scrollTo(e: E) = node.scrollTo(e)
 
   var cellFactory
 	get() = node.cellFactory
@@ -2488,9 +2581,13 @@ open class TableViewWrapper<E>(
 
   constructor(items: ObservableList<E>): this(TableView(items))
 
+
+
   init {
 	op()
   }
+
+  fun editableProperty() = node.editableProperty()
 
   val sortOrder get() = node.sortOrder
 
@@ -2516,8 +2613,10 @@ open class TableViewWrapper<E>(
 
   val selectionModel get() = node.selectionModel
   val selectedItem get() = selectionModel.selectedItem
-
+  fun scrollTo(i: Int) = node.scrollTo(i)
+  fun scrollTo(e: E) = node.scrollTo(e)
   fun sort() = node.sort()
+  fun editingCellProperty() = node.editingCellProperty()
 }
 
 
