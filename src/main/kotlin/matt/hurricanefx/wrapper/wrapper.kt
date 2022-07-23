@@ -7,9 +7,6 @@ import javafx.beans.property.ObjectProperty
 import javafx.beans.property.ReadOnlyDoubleProperty
 import javafx.beans.property.ReadOnlyObjectProperty
 import javafx.collections.ObservableList
-import javafx.collections.ObservableSet
-import javafx.css.CssMetaData
-import javafx.css.PseudoClass
 import javafx.css.Styleable
 import javafx.event.ActionEvent
 import javafx.event.Event
@@ -138,7 +135,6 @@ import matt.hurricanefx.eye.lib.onChange
 import matt.hurricanefx.stage
 import matt.hurricanefx.tornadofx.nodes.add
 import matt.hurricanefx.tornadofx.nodes.getToggleGroup
-import matt.hurricanefx.tornadofx.nodes.tooltip
 import matt.hurricanefx.wrapper.ParentWrapper.Companion.wrapped
 import java.time.LocalDate
 
@@ -610,7 +606,14 @@ interface NodeWrapper<N: Node>: EventTargetWrapper<N>, StyleableWrapper {
 	  node.layoutX = value
 	}
 
+
+
   fun layoutXProperty() = node.layoutXProperty()
+
+
+
+
+
   var layoutY
 	get() = node.layoutY
 	set(value) {
@@ -2559,6 +2562,14 @@ open class CircleWrapper(
 
   constructor(radius: Double, fill: Paint): this(Circle(radius, fill))
   constructor(radius: Double): this(Circle(radius))
+
+
+  var radius
+	get() = node.radius
+	set(value) {
+	  node.radius = value
+	}
+  fun radiusProperty() = node.radiusProperty()
 
   init {
 	op()
