@@ -196,9 +196,6 @@ interface WindowWrapper<W: Window>: EventTargetWrapper<W> {
 
 
   val scene get() = node.scene
-//	set(value) {
-//	  node.scene = value
-//	}
   fun sceneProperty() = node.sceneProperty()
 }
 
@@ -216,6 +213,11 @@ open class StageWrapper(override val node: Stage): WindowWrapper<Stage> {
 	}
   fun maximizedProperty() = node.maximizedProperty()
 
+  override var scene
+	get() = super.scene
+	set(value) {
+	  node.scene = value
+	}
 
 }
 
