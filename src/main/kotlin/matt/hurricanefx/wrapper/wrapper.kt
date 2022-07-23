@@ -123,6 +123,7 @@ import javafx.scene.shape.SVGPath
 import javafx.scene.shape.Shape
 import javafx.scene.text.Text
 import javafx.scene.text.TextFlow
+import javafx.stage.Modality
 import javafx.stage.Stage
 import javafx.stage.StageStyle
 import javafx.stage.Window
@@ -168,7 +169,9 @@ interface StyleableWrapper {
   fun getStyleableParent() = node.styleableParent
   fun getPseudoClassStates() = node.pseudoClassStates
 
-  fun getStyleClass() = node.styleClass
+  val styleClass get() = node.styleClass
+
+
   fun getStyle() = node.style
 
 }
@@ -180,6 +183,7 @@ interface WindowWrapper<W: Window>: EventTargetWrapper<W> {
 	  override val node = this@wrapped
 	}
   }
+
   var x
 	get() = node.x
 	set(value) {
@@ -229,12 +233,41 @@ open class StageWrapper(override val node: Stage): WindowWrapper<Stage> {
   companion object {
 	fun Stage.wrapped() = StageWrapper(this)
   }
+
   constructor(stageStyle: StageStyle): this(Stage(stageStyle))
 
+  fun setOnCloseRequest(value: EventHandler<WindowEvent>) = node.setOnCloseRequest(value)
+
+  fun showAndWait() = node.showAndWait()
+
+  val owner get() = node.owner
+  fun initOwner(owner: Window?) = node.initOwner(owner)
+  fun initOwner(owner: WindowWrapper<*>?) = node.initOwner(owner?.node)
+  fun initModality(m: Modality) = node.initModality(m)
+
+  var isIconified
+	get() = node.isIconified
+	set(value) {
+	  node.isIconified = value
+	}
+
   fun iconifiedProperty() = node.iconifiedProperty()
+
+
   fun show() = node.show()
   fun close() = node.close()
   fun toFront() = node.toFront()
+  fun centerOnScreen() = node.centerOnScreen()
+
+
+  var isFullScreen
+	get() = node.isFullScreen
+	set(value) {
+	  node.isFullScreen = value
+	}
+
+  fun fullScreenProperty() = node.fullScreenProperty()
+
 
   var isMaximized
 	get() = node.isMaximized
@@ -249,7 +282,6 @@ open class StageWrapper(override val node: Stage): WindowWrapper<Stage> {
 	set(value) {
 	  node.scene = value
 	}
-
 
 
   fun <T: Event> addEventFilter(eventType: EventType<T>, handler: EventHandler<T>) =
@@ -272,7 +304,12 @@ open class SceneWrapper(override val node: Scene): EventTargetWrapper<Scene> {
   companion object {
 	fun Scene.wrapped() = SceneWrapper(this)
   }
+
   constructor(root: ParentWrapper): this(Scene(root.node))
+
+
+  fun widthProperty() = node.widthProperty()
+  fun heightProperty() = node.heightProperty()
 
   val stylesheets get() = node.stylesheets
 
@@ -314,6 +351,8 @@ interface NodeWrapper<N: Node>: EventTargetWrapper<N>, StyleableWrapper {
 
 	}
   }
+
+  //  val styleClass get() = node.styleClass
 
   fun setStyle(value: String) {
 	node.style = value
@@ -1041,8 +1080,6 @@ class TreeViewWrapper<T>(override val node: TreeView<T> = TreeView(), op: TreeVi
 
 
   fun editableProperty() = node.editableProperty()
-
-
 
 
   var cellFactory
@@ -2586,7 +2623,6 @@ open class TableViewWrapper<E>(
   }
 
   constructor(items: ObservableList<E>): this(TableView(items))
-
 
 
   init {
