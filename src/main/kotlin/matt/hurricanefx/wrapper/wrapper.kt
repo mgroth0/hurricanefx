@@ -86,6 +86,7 @@ import javafx.scene.control.TreeView
 import javafx.scene.image.Image
 import javafx.scene.image.ImageView
 import javafx.scene.image.WritableImage
+import javafx.scene.input.ContextMenuEvent
 import javafx.scene.input.DataFormat
 import javafx.scene.input.DragEvent
 import javafx.scene.input.KeyEvent
@@ -371,12 +372,17 @@ interface NodeWrapper<N: Node>: EventTargetWrapper<N>, StyleableWrapper {
 	}
   }
 
+
+  fun fireEvent(e: Event) = node.fireEvent(e)
+
   //  val styleClass get() = node.styleClass
 
   override fun setTheStyle(value: String) {
 	node.style = value
   }
 
+
+  fun setOnContextMenuRequested(value: EventHandler<ContextMenuEvent>) = node.setOnContextMenuRequested(value)
 
   var opacity
 	get() = node.opacity
@@ -1247,6 +1253,9 @@ open class ButtonBaseWrapper(override val node: ButtonBase): LabeledWrapper(node
   fun setOnAction(op: (ActionEvent)->Unit) {
 	node.setOnAction(op)
   }
+
+
+
 }
 
 
