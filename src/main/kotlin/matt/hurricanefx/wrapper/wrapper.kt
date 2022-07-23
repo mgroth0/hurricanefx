@@ -172,7 +172,14 @@ interface StyleableWrapper {
   val styleClass get() = node.styleClass
 
 
-  fun getStyle() = node.style
+
+  var style get() = node.style
+	set(value) {
+	  setTheStyle(value)
+	}
+
+  fun setTheStyle(value: String)
+
 
 }
 
@@ -354,7 +361,7 @@ interface NodeWrapper<N: Node>: EventTargetWrapper<N>, StyleableWrapper {
 
   //  val styleClass get() = node.styleClass
 
-  fun setStyle(value: String) {
+  override fun setTheStyle(value: String) {
 	node.style = value
   }
 
