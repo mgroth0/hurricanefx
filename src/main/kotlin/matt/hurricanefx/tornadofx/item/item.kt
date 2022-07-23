@@ -507,8 +507,8 @@ val <T> TreeTableViewWrapper<T>.selectedCell: TreeTablePosition<T, *>?
 val <T> TreeTableViewWrapper<T>.selectedColumn: TreeTableColumn<T, *>?
   get() = selectedCell?.tableColumn
 
-val <T> TreeTableViewWrapper<T>.selectedValue: Any?
-  get() = selectedColumn?.getCellObservableValue(selectionModel.selectedItem)?.value
+//val <T> TreeTableViewWrapper<T>.selectedValue: Any?
+//  get() = selectedColumn?.getCellObservableValue(selectionModel.selectedItem)?.value
 
 /**
  * Create a matt.hurricanefx.tableview.coolColumn with a value factory that extracts the value from the given mutable

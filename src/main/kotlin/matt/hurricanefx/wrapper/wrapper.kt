@@ -81,6 +81,7 @@ import javafx.scene.control.TreeCell
 import javafx.scene.control.TreeItem
 import javafx.scene.control.TreeTableRow
 import javafx.scene.control.TreeTableView
+import javafx.scene.control.TreeTableView.TreeTableViewSelectionModel
 import javafx.scene.control.TreeView
 import javafx.scene.image.Image
 import javafx.scene.image.ImageView
@@ -1141,6 +1142,7 @@ class TreeTableViewWrapper<T>(
 ): TreeLikeWrapper<TreeTableView<T>, T>(node) {
   init {
 	op()
+	selectionModel.selectedItem.value
   }
 
 
@@ -1172,7 +1174,7 @@ class TreeTableViewWrapper<T>(
 	node.selectionModel.selectedItemProperty().onChange(listener)
   }
 
-  override val selectionModel get() = node.selectionModel
+  override val selectionModel get(): TreeTableViewSelectionModel<T> = node.selectionModel
   override fun scrollTo(i: Int) = node.scrollTo(i)
 
   fun setRowFactory(value: Callback<TreeTableView<T>, TreeTableRow<T>>) = node.setRowFactory(value)
