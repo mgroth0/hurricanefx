@@ -276,7 +276,13 @@ open class SceneWrapper(override val node: Scene): EventTargetWrapper<Scene> {
 
   val stylesheets get() = node.stylesheets
 
+  var root
+	get() = node.root
+	set(value) {
+	  node.root = value
+	}
 
+  fun rootProperty() = node.rootProperty()
 
   var fill
 	get() = node.fill
