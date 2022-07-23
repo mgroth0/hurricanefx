@@ -195,11 +195,10 @@ interface WindowWrapper<W: Window>: EventTargetWrapper<W> {
 
 
 
-  var scene
-	get() = node.scene
-	set(value) {
-	  node.scene = value
-	}
+  val scene get() = node.scene
+//	set(value) {
+//	  node.scene = value
+//	}
   fun sceneProperty() = node.sceneProperty()
 }
 
