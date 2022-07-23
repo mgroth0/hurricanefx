@@ -1111,7 +1111,7 @@ class TreeTableViewWrapper<T>(
 	node.selectionModel.selectedItemProperty().onChange(listener)
   }
 
-  override val selectionModel: MultipleSelectionModel<TreeItem<T>> get() = node.selectionModel
+  override val selectionModel get() = node.selectionModel
   override fun scrollTo(i: Int) = node.scrollTo(i)
 
   fun setRowFactory(value: Callback<TreeTableView<T>, TreeTableRow<T>>) = node.setRowFactory(value)

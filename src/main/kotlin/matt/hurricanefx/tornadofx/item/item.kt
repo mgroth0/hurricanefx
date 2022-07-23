@@ -476,38 +476,38 @@ fun <S, T> TableColumn<S, T?>.useChoiceBox(
   }
 }
 
-fun <S> ListView<S>.useCheckbox(converter: StringConverter<S>? = null, getter: (S)->ObservableValue<Boolean>) {
+fun <S> ListViewWrapper<S>.useCheckbox(converter: StringConverter<S>? = null, getter: (S)->ObservableValue<Boolean>) {
   setCellFactory { CheckBoxListCell(getter, converter) }
 }
 
-fun <T> TableView<T>.bindSelected(property: Property<T>) {
+fun <T> TableViewWrapper<T>.bindSelected(property: Property<T>) {
   selectionModel.selectedItemProperty().onChange {
 	property.value = it
   }
 }
 
-fun <T> ComboBox<T>.bindSelected(property: Property<T>) {
+fun <T> ComboBoxWrapper<T>.bindSelected(property: Property<T>) {
   selectionModel.selectedItemProperty().onChange {
 	property.value = it
   }
 }
 
-val <T> TableView<T>.selectedCell: TablePosition<T, *>?
+val <T> TableViewWrapper<T>.selectedCell: TablePosition<T, *>?
   get() = selectionModel.selectedCells.firstOrNull() as TablePosition<T, *>?
 
-val <T> TableView<T>.selectedColumn: TableColumn<T, *>?
+val <T> TableViewWrapper<T>.selectedColumn: TableColumn<T, *>?
   get() = selectedCell?.tableColumn
 
-val <T> TableView<T>.selectedValue: Any?
+val <T> TableViewWrapper<T>.selectedValue: Any?
   get() = selectedColumn?.getCellObservableValue(selectedItem)?.value
 
-val <T> TreeTableView<T>.selectedCell: TreeTablePosition<T, *>?
+val <T> TreeTableViewWrapper<T>.selectedCell: TreeTablePosition<T, *>?
   get() = selectionModel.selectedCells.firstOrNull()
 
-val <T> TreeTableView<T>.selectedColumn: TreeTableColumn<T, *>?
+val <T> TreeTableViewWrapper<T>.selectedColumn: TreeTableColumn<T, *>?
   get() = selectedCell?.tableColumn
 
-val <T> TreeTableView<T>.selectedValue: Any?
+val <T> TreeTableViewWrapper<T>.selectedValue: Any?
   get() = selectedColumn?.getCellObservableValue(selectionModel.selectedItem)?.value
 
 /**
