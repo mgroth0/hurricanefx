@@ -119,6 +119,10 @@ import javafx.scene.shape.SVGPath
 import javafx.scene.shape.Shape
 import javafx.scene.text.Text
 import javafx.scene.text.TextFlow
+import javafx.stage.Stage
+import javafx.stage.StageStyle
+import javafx.stage.Window
+import javafx.stage.WindowEvent
 import javafx.util.Callback
 import matt.file.MFile
 import matt.file.toMFile
@@ -150,7 +154,79 @@ interface EventTargetWrapper<N: EventTarget> {
 
 }
 
+
+interface WindowWrapper<W: Window>: EventTargetWrapper<W> {
+  var x
+	get() = node.x
+	set(value) {
+	  node.x = value
+	}
+  fun xProperty() = node.xProperty()
+
+  var y
+	get() = node.y
+	set(value) {
+	  node.y = value
+	}
+  fun yProperty() = node.yProperty()
+
+
+  var height
+	get() = node.height
+	set(value) {
+	  node.height = value
+	}
+  fun heightProperty() = node.heightProperty()
+
+  var width
+	get() = node.width
+	set(value) {
+	  node.width = value
+	}
+  fun widthProperty() = node.widthProperty()
+
+  fun setOnShowing(value: EventHandler<WindowEvent>) = node.setOnShowing(value)
+
+  val isShowing get() = node.isShowing
+  fun showingProperty() = node.showingProperty()
+
+  fun hide() = node.hide()
+
+
+
+
+  var scene
+	get() = node.scene
+	set(value) {
+	  node.scene = value
+	}
+  fun sceneProperty() = node.sceneProperty()
+}
+
+open class StageWrapper(override val node: Stage): WindowWrapper<Stage> {
+  constructor(stageStyle: StageStyle): this(Stage(stageStyle))
+  fun iconifiedProperty() = node.iconifiedProperty()
+  fun show() = node.show()
+  fun close() = node.close()
+  fun toFront() = node.toFront()
+
+  var isMaximized
+	get() = node.isMaximized
+	set(value) {
+	  node.isMaximized = value
+	}
+  fun maximizedProperty() = node.maximizedProperty()
+
+
+}
+
+open class SceneWrapper(override val node: Scene): EventTargetWrapper<Scene> {
+  constructor(root: ParentWrapper): this(Scene(root.node))
+}
+
+
 typealias NodeW = NodeWrapper<*>
+
 interface NodeWrapper<N: Node>: EventTargetWrapper<N> {
   companion object {
 
@@ -677,7 +753,8 @@ open class SplitPaneWrapper(override val node: SplitPane = SplitPane()): Control
 open class GridPaneWrapper(override val node: GridPane = GridPane()): PaneWrapper(node) {
   companion object {
 	fun GridPane.wrapped() = GridPaneWrapper(this)
-	fun setConstraints(child: Node, columnIndex: Int, rowIndex: Int) = GridPane.setConstraints(child,columnIndex, rowIndex)
+	fun setConstraints(child: Node, columnIndex: Int, rowIndex: Int) =
+	  GridPane.setConstraints(child, columnIndex, rowIndex)
   }
 
   val columnConstraints = node.columnConstraints
@@ -2077,7 +2154,6 @@ open class RectangleWrapper(
   val heightProperty = node.heightProperty()
 
 
-
   init {
 	op()
   }
@@ -2195,24 +2271,28 @@ open class LineWrapper(
 	set(value) {
 	  node.startX = value
 	}
+
   fun startXProperty() = node.startXProperty()
   var startY
 	get() = node.startY
 	set(value) {
 	  node.startY = value
 	}
+
   fun startYProperty() = node.startYProperty()
   var endX
 	get() = node.endX
 	set(value) {
 	  node.endX = value
 	}
+
   fun endXProperty() = node.endXProperty()
   var endY
 	get() = node.endY
 	set(value) {
 	  node.endY = value
 	}
+
   fun endYProperty() = node.endYProperty()
 
 
