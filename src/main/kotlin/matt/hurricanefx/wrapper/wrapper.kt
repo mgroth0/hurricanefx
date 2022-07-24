@@ -1151,7 +1151,6 @@ class TreeTableViewWrapper<T>(
 ): TreeLikeWrapper<TreeTableView<T>, T>(node) {
   init {
 	op()
-	selectionModel.selectedItem.value
   }
 
 
